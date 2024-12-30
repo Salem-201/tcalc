@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة الهجمات</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            direction: rtl;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .unit img {
+            width: 24px;
+            height: 24px;
+        }
+    </style>
+</head>
+<body>
+    <h1>إدارة الهجمات</h1>
+
+    <!-- النموذج الخاص بالمزارع -->
+    <form id="customFarmList">
+        <table>
+            <thead>
+                <tr>
+                    <th>تحديد</th>
+                    <th>اسم القرية</th>
+                    <th>الإحداثيات</th>
+                    <th>عدد القوات</th>
+                </tr>
+            </thead>
+            <tbody id="farmTableBody">
+                <!-- يتم إضافة المزارع هنا -->
+            </tbody>
+        </table>
+        <button type="button" onclick="addFarm()">إضافة مزرعة جديدة</button>
+        <button type="button" onclick="sendCustomFarms()">إرسال الهجمات</button>
+    </form>
+
+    <div id="messageBox" class="error"></div>
+
+    <script>
+        // إضافة صف جديد إلى الجدول
+        function addFarm() {
+            const farmTableBody = document.getElementById('farmTableBody');
+            const row = document.createElement('tr');
+
+            row.innerHTML = `
+                <td><input type="checkbox" name="customList[]"></td>
+                <td><input type="text" name="villageName" placeholder="اسم القرية" required></td>
+                <td><input type="text" name="coordinates" placeholder="الإحداثيات" required></td>
+                <td>
+                    <img class="unit u21" src="https://s1.x-tatar.com/assets/x.gif" alt="الكتيبه" title="الكتيبه">
+                    <input type="text" name="troops" placeholder="عدد t[21]" size="6" required>
+                </td>
+            `;
+
+            farmTableBody.appendChild(row);
+        }
+
+        // إرسال الهجمات
+        function sendCustomFarms() {
+            const rows = document.querySelectorAll('#farmTableBody tr');
+            const messageBox = document.getElementById('messageBox');
+            messageBox.innerHTML = ''; // مسح الرسائل السابقة
+
+            let hasError = false;
+
+            rows.forEach((row, index) => {
+                const isChecked = row.querySelector('input[name="customList[]"]').checked;
+                if (!isChecked) return; // تخطي الصف إذا لم يتم تحديده
+
+                const villageName = row.querySelector('input[name="villageName"]').value.trim();
+                const coordinates = row.querySelector('input[name="coordinates"]').value.trim();
+                const troops = row.querySelector('input[name="troops"]').value.trim();
+
+                // التحقق من إدخال جميع البيانات
+                if (!villageName || !coordinates || !troops) {
+                    messageBox.innerHTML += `خطأ: الصف رقم ${index + 1} غير مكتمل.<br>`;
+                    hasError = true;
+                    return;
+                }
+
+                // إرسال البيانات باستخدام AJAX
+                const data = {
+                    id: coordinates, // الإحداثيات كمعرف للقرية
+                    c: '4',          // نوع الهجوم (يمكن تغييره حسب الحاجة)
+                    "t[21]": troops, // عدد القوات من النوع t[21]
+                    farm: '1'
+                };
+
+                console.log(`إرسال هجوم على ${villageName} (${coordinates}) بقوة ${troops} من t[21].`);
+                $.post("bulid", data)
+                    .done(() => {
+                        console.log(`تم إرسال الهجوم بنجاح إلى ${villageName}`);
+                    })
+                    .fail(() => {
+                        console.error(`فشل إرسال الهجوم إلى ${villageName}`);
+                    });
+            });
+
+            if (!hasError) {
+                messageBox.innerHTML = "تم إرسال جميع البيانات بنجاح.";
+                messageBox.style.color = "green";
+            } else {
+                messageBox.style.color = "red";
+            }
+        }
+    </script>
+
+    <!-- إضافة مكتبة jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</body>
+</html>
