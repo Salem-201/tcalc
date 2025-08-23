@@ -1127,6 +1127,10 @@ function toggleArtifactEffects() {
 window.addEventListener('DOMContentLoaded', () => {
   updateInputFieldsState();
   toggleArtifactEffects();
+  const tribeOnLoad = document.getElementById('tribeSelect')?.value;
+  if (tribeOnLoad) {
+    populateTroops();
+  }
 });
 </script>
    
