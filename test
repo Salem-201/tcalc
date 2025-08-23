@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+   <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-74PGK3MG17"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  // تحديد المصدر GitHub
+  gtag('config', 'G-74PGK3MG17', {
+    campaign_source: 'github',
+    page_location: window.location.href
+  });
+</script>
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>حاسبة تكلفة الجندي</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  img, video { max-width: 100%; height: auto; display: block; }
+  html, body { overflow-x: hidden; }
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f2f4f8;
+    color: #333;
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+  }
+
+  .container {
+    background: #fff;
+    border-radius: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    max-width: 680px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+  }
+
+  input[type="text"],
+  select {
+    width: 100%;
+    padding: 0.6rem;
+    margin-top: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    box-sizing: border-box;
+    direction: ltr;
+    font-size: 1rem;
+  }
+
+  .row,
+  .select-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .select-row select {
+    flex: 0 1 auto;
+    min-width: 200px;
+    max-width: 250px;
+  }
+
+  /* تنسيق قوة الجندي */
+  .troop-stats-container {
+    margin-top: 1.5rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    border: 2px solid #dee2e6;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .total-cost-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #dee2e6;
+    gap: 1rem;
+  }
+
+  .troop-power-section h3 {
+    text-align: center;
+    margin-bottom: 1rem;
+    color: #495057;
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+
+  .power-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+    justify-items: center;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .power-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    padding: 0.8rem;
+    border-radius: 0.75rem;
+    border: 1px solid #dee2e6;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    min-height: 36px;
+    transition: all 0.3s ease;
+    overflow: hidden;
+  }
+
+  .power-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-color: #007bff;
+  }
+
+  .power-item span {
+    font-weight: 600;
+    color: #495057;
+    margin-right: 0.5rem;
+  }
+
+  .power-item span {
+    color: #007bff;
+    font-weight: bold;
+    font-size: 1.1rem;
+    text-align: center;
+    line-height: 1;
+    margin-right: 0.3rem;
+  }
+
+  .power-item .bonus-text {
+    color: #28a745;
+    font-size: 0.7rem;
+    font-weight: normal;
+    margin-right: 0.2rem;
+  }
+
+  /* تأثيرات التحفة على قوة الجندي - تم إزالتها */
+
+     /* تنسيق تطوير الحداد */
+               .smithy-upgrade-section {
+       margin-top: 1rem;
+       padding-top: 1rem;
+       border-top: 2px solid #dee2e6;
+       text-align: end;
+       display: flex;
+       justify-content: space-between;
+       align-items: center;
+       gap: 1rem;
+       flex-wrap: wrap;
+       padding-bottom: 0.5rem;
+     }
+
+                                                                                                                                                                                               .smithy-checkbox {
+         display: inline-flex;
+         align-items: center;
+         background: linear-gradient(135deg, #e8f4f8 0%, #d1ecf1 100%);
+         padding: 10px 0.4rem 10px 0.4rem;
+         border-radius: 0.75rem;
+         border: 2px solid #17a2b8;
+         cursor: pointer;
+         transition: all 0.3s ease;
+         font-weight: 600;
+         color: #0c5460;
+         box-shadow: 0 2px 4px rgba(23, 162, 184, 0.2);
+         flex-shrink: 0;
+         white-space: nowrap;
+         min-width: fit-content;
+         flex: 0.5;
+       }
+
+  .smithy-checkbox:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(23, 162, 184, 0.3);
+    border-color: #138496;
+  }
+
+  .smithy-checkbox input[type="checkbox"] {
+    margin-left: 0.5rem;
+    transform: scale(1.2);
+    accent-color: #17a2b8;
+  }
+
+  .smithy-checkbox input[type="checkbox"]:checked + .smithy-checkbox-text,
+  .smithy-checkbox:has(input[type="checkbox"]:checked) {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border-color: #28a745;
+    color: #155724;
+    font-weight: bold;
+    text-shadow: 0 0 2px rgba(40, 167, 69, 0.3);
+  }
+
+     /* تأثيرات التحفة على تطوير الحداد - تم إزالتها */
+
+                                               /* تنسيق تحفة المهاجم */
+                               .attacker-artifact-section {
+           text-align: end;
+           display: flex;
+           align-items: center;
+           height: auto;
+           line-height: 1;
+           flex-shrink: 0;
+           min-width: 140px;
+           flex: 1;
+         }
+
+               .attacker-artifact-label {
+       display: inline-flex;
+       align-items: center;
+       background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+       padding: 0px 0.4rem 5px 0.4rem;
+       border-radius: 0.75rem;
+       border: 2px solid #ffc107;
+       cursor: pointer;
+       transition: all 0.3s ease;
+       font-weight: 600;
+       color: #856404;
+       box-shadow: 0 2px 4px rgba(255, 193, 7, 0.2);
+       gap: 0.5rem;
+       line-height: 1;
+       height: fit-content;
+     }
+
+   .attacker-artifact-label:hover {
+     transform: translateY(-2px);
+     box-shadow: 0 4px 8px rgba(255, 193, 7, 0.3);
+     border-color: #e0a800;
+   }
+
+       .attacker-artifact-label select {
+      background: #fff;
+      border: 1px solid #ffc107;
+      border-radius: 0.5rem;
+      padding: 0.3rem 0.5rem;
+      font-size: 0.9rem;
+      color: #856404;
+      cursor: pointer;
+      width: auto;
+      min-width: fit-content;
+    }
+
+       .attacker-artifact-label select:focus {
+      outline: none;
+      border-color: #e0a800;
+      box-shadow: 0 0 4px rgba(255, 193, 7, 0.4);
+    }
+
+    /* تنسيق التحفة الأسطورية */
+              .legendary-artifact-section {
+        text-align: end;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: auto;
+        line-height: 1;
+        flex-shrink: 0;
+        min-width: 140px;
+        justify-content: flex-start;
+        position: relative;
+        flex: 1;
+      }
+
+         .legendary-artifact-label {
+       display: inline-flex;
+       align-items: center;
+       background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+       padding: 10px 0.4rem 10px 0.4rem;
+       border-radius: 0.75rem;
+       border: 2px solid #dc3545;
+       cursor: pointer;
+       transition: all 0.3s ease;
+       font-weight: 600;
+       color: #721c24;
+       box-shadow: 0 2px 4px rgba(220, 53, 69, 0.2);
+       gap: 0.5rem;
+       line-height: 1;
+       height: fit-content;
+       white-space: nowrap;
+       min-width: fit-content;
+     }
+
+    .legendary-artifact-label:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+      border-color: #c82333;
+    }
+
+         .legendary-artifact-label input[type="checkbox"] {
+       margin-left: 0.5rem;
+       transform: scale(1.2);
+       accent-color: #dc3545;
+     }
+
+           .legendary-artifact-subtitle {
+        font-size: 0.7rem;
+        color: #721c24;
+        text-align: center;
+        margin-top: 0.2rem;
+        font-weight: normal;
+        opacity: 0.8;
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        white-space: nowrap;
+      }
+
+   .results {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: #e9f5ec;
+    border-radius: 0.5rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .results div {
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  #unitTotalCost {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #1c7c38;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .cost-display {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    font-weight: bold;
+    font-size: 1.1rem;
+    flex: 1;
+  }
+
+  .cost-display > div {
+    flex: 0 1 auto;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    min-width: 80px;
+  }
+
+  /* تأثيرات التحفة الأسطورية - تم إزالتها */
+
+  /* تأثيرات الشيك بوكس - تم إزالتها */
+
+  /* تأثيرات النتائج عند تفعيل التحفة - تم إزالتها */
+
+     /* تأثير جديد: تغيير لون النص عند تفعيل التحفة - ينحصر فقط على نص التحفة */
+   .container.artifact-active label:has(input[id="reduceCostCheckbox"]:checked) {
+     color: #dc3545 !important;
+   }
+
+   /* تأثير التحفة على cost-display */
+   .container.artifact-active .cost-display {
+     color: #dc3545 !important;
+     font-weight: bold !important;
+   }
+
+   .container.artifact-active .cost-display span {
+     color: #dc3545 !important;
+     font-weight: bold !important;
+   }
+
+  input:enabled {
+    border: 2px solid #007bff;
+    background-color: #ffffff;
+    outline: none;
+    caret-color: #007bff;
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.4);
+  }
+
+  input:disabled {
+    border: 1px solid #ccc;
+    background-color: #f8f9fa;
+    color: #888;
+  }
+
+  /* تنسيق صندوق الذهب مع الأيقونة */
+  .gold-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+
+  .gold-icon {
+    position: absolute;
+    left: 6px;
+    width: 14px;
+    height: 14px;
+    z-index: 2;
+    pointer-events: none;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .gold-input-container input[type="text"] {
+    padding-left: 21px;
+    width: 100%;
+  }
+
+  @media (max-width: 640px) {
+    .row { flex-wrap: wrap; }
+    .row > * { flex: 1 1 100%; }
+
+    .select-row { flex-wrap: wrap; }
+    .select-row select { flex: 1 1 100%; min-width: 0; max-width: 100%; }
+
+    .total-cost-section { flex-direction: column; align-items: stretch; }
+
+    .smithy-upgrade-section { flex-direction: column; align-items: stretch; }
+    .smithy-upgrade-section > * { flex: 1 1 100%; min-width: 0; }
+    .attacker-artifact-section,
+    .legendary-artifact-section { min-width: 0; }
+  }
+
+  @media (min-width: 768px) {
+    input[type="text"],
+    select {
+      font-size: 1rem;
+    }
+
+    .cost-display > div {
+      flex: 1;
+    }
+  }
+</style>
+
+</head>
+<body>
+  <div class="container">
+     
+
+    <div class="select-row">
+      <select id="tribeSelect" onchange="populateTroops()">
+        <option value="">-- اختر القبيلة 🏰 --</option>
+        <option value="german">الجرمان</option>
+        <option value="roman">الرومان</option>
+        <option value="gaul">الإغريق</option>
+        <option value="egyptian">الفراعنة</option>
+        <option value="hun">المغول</option>
+        <option value="spartan">أسبرطة</option>
+        <option value="viking">الڤايكنج</option>
+      </select>
+
+      <select id="troopSelect" onchange="setTroopCosts()">
+        <option value="">-- اختر نوع الجندي ⚔️ --</option>
+      </select>
+    </div>
+
+         <div class="troop-stats-container">
+  <div class="total-cost-section">
+    <div class="cost-display">
+      <div><img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/lumber_tiny.png" alt="خشب" style="width: 20px; height: 20px; vertical-align: middle; margin-left: 5px;"> <span id="woodCostText">0</span></div>
+      <div><img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/clay_tiny.png" alt="طين" style="width: 20px; height: 20px; vertical-align: middle; margin-left: 5px;"> <span id="clayCostText">0</span></div>
+      <div><img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/iron_tiny.png" alt="حديد" style="width: 20px; height: 20px; vertical-align: middle; margin-left: 5px;"> <span id="ironCostText">0</span></div>
+      <div><img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/crop_small.png" alt="قمح" style="width: 20px; height: 20px; vertical-align: middle; margin-left: 5px;"> <span id="wheatCostText">0</span></div>
+    </div>
+    <div id="unitTotalCost"><img src="https://testtrav.ct.ws/oie_U5bz9wzsOkhD.png" alt="تكلفة" style="width: 20px; height: 20px; vertical-align: middle; margin-left: 5px;"> Total: 0</div>
+  </div>
+  
+     <div class="troop-power-section">
+     <div class="power-grid">
+      <div class="power-item">
+        <img src="https://utatar.com/assets/default/img/a/att_all.gif" alt="هجوم" style="width: 18px; height: 18px; margin-right: 0.3rem;">
+        <span id="attackPower">0</span>
+      </div>
+      <div class="power-item">
+        <img src="https://utatar.com/assets/default/img/a/def_i.gif" alt="دفاع ضد مشاه" style="width: 18px; height: 18px; margin-right: 0.3rem;">
+        <span id="defInfPower">0</span>
+      </div>
+      <div class="power-item">
+        <img src="https://utatar.com/assets/default/img/a/def_c.gif" alt="دفاع ضد فرسان" style="width: 18px; height: 18px; margin-right: 0.3rem;">
+        <span id="defCavPower">0</span>
+      </div>
+    </div>
+  </div>
+  
+     <div class="smithy-upgrade-section">
+           <label class="smithy-checkbox">
+        <input type="checkbox" id="smithyUpgradeCheckbox" onchange="updateTroopPower()">
+               🔨 الحداد 20
+      </label>
+     
+           <div class="attacker-artifact-section">
+        <label class="attacker-artifact-label">
+          ⚔️ تحفة المهاجم:
+          <select id="attackerArtifactSelect" onchange="updateTroopPower()">
+            <option value="0">بدون</option>
+            <option value="10">10%</option>
+            <option value="15">15%</option>
+            <option value="30">30%</option>
+          </select>
+        </label>
+      </div>
+      
+                           <div class="legendary-artifact-section">
+          <label class="legendary-artifact-label">
+            <input type="checkbox" id="reduceCostCheckbox" onchange="toggleArtifactEffects(); setTroopCosts(); recalculate()">
+            🏺 التحفة الأسطورية
+          </label>
+          <div class="legendary-artifact-subtitle">(30% موارد أقل)</div>
+        </div>
+   </div>
+</div>
+
+<!-- ✅ خيارات الحساب أولاً -->
+ <div style="margin-bottom: 10px; font-size: 14px;">
+   <p>الحساب يتم عن طريق:</p>
+ <input type="radio" name="calcMode" value="resources" checked onchange="updateInputFieldsState(); recalculate()">  الموارد
+ <input type="radio" name="calcMode" value="troops" onchange="updateInputFieldsState(); recalculate()">  عدد الجنود
+ <input type="radio" name="calcMode" value="gold" onchange="updateInputFieldsState(); recalculate()">   الذهب
+ </div>
+
+<!-- 🔢 مدخلات الحساب -->
+<div class="row">
+<input type="text" id="totalResources" placeholder="إجمالي الموارد" oninput="formatInputWithCommas(this); onInputHandler('resources')">
+<input type="text" id="customTroopCount" placeholder="عدد الجنود" oninput="formatInputWithCommas(this); onInputHandler('troops')">
+<div class="gold-input-container">
+  <img src="https://utatar.com/assets/default/img/a/gold.gif" alt="ذهب" class="gold-icon">
+  <input type="text" id="goldInput" placeholder="أدخل عدد الذهب" oninput="formatInputWithCommas(this); onInputHandler('gold')">
+</div>
+</div>
+
+    <div class="results" id="results">
+      <div id="marketGoldValue">💸 تكلفة الجندي في سوق المحاربين بالذهب: 0</div>
+      <div id="goldCost">💰 تكلفة الموارد بالذهب: 0 <img src="https://utatar.com/assets/default/img/a/gold.gif" style="vertical-align: middle;"></div>
+      <div id="troopsCount">👥 يمكن تدريب: 0 جندي</div>
+             <div id="totalWood"><img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/lumber_tiny.png" alt="خشب" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> الخشب: 0</div>
+       <div id="totalClay"><img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/clay_tiny.png" alt="طين" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> الطين: 0</div>
+       <div id="totalIron"><img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/iron_tiny.png" alt="حديد" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> الحديد: 0</div>
+       <div id="totalWheat"><img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/crop_small.png" alt="قمح" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> القمح: 0</div>
+       <div id="totalResourcesUsed"><img src="https://testtrav.ct.ws/oie_U5bz9wzsOkhD.png" alt="موارد" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> إجمالي الموارد: 0</div>
+    </div>
+             <button onclick="resetAll()" style="margin-top: 1rem; padding: 0.5rem 1rem; border: none; border-radius: 0.5rem; background-color: #e74c3c; color: white; font-size: 1rem; cursor: pointer;">
+ 🔄 إعادة ضبط الصفحة
+ </button>
+  </div>
+
+  <script>
+    const troopData = {
+             german: [
+         { name: 'مقاتل بهراوة', cost: [95, 75, 40, 40], marketRate: 800, attack: 40, defInf: 20, defCav: 5 },
+         { name: 'مقاتل برمح', cost: [130, 120, 170, 70], marketRate: 588, attack: 10, defInf: 35, defCav: 60 },
+         { name: 'مقاتل بفأس', cost: [130, 120, 170, 70], marketRate: 408, attack: 65, defInf: 30, defCav: 30 },
+         { name: 'الكشاف', cost: [160, 100, 50, 50], marketRate: 555, attack: 3, defInf: 10, defCav: 5 },
+         { name: 'مقاتل القيصر', cost: [370, 270, 290, 75], marketRate: 199, attack: 55, defInf: 100, defCav: 40 },
+         { name: 'فرسان الجرمان', cost: [450, 515, 480, 150], marketRate: 131, attack: 150, defInf: 50, defCav: 75 },
+         { name: 'محطمة الأبواب', cost: [1000, 300, 350, 300], marketRate: 110, attack: 65, defInf: 30, defCav: 80 },
+         { name: 'المقلاع', cost: [900, 1200, 600, 60], marketRate: 70, attack: 50, defInf: 60, defCav: 10 },
+         { name: 'الزعيم', cost: [35500, 26500, 25000, 80], marketRate: null, attack: 40, defInf: 60, defCav: 40 },
+         { name: 'مستوطن', cost: [7200, 5500, 5800, 100], marketRate: null, attack: 10, defInf: 80, defCav: 80 }
+       ],
+      roman: [
+        { name: 'جندي أول', cost: [120, 100, 180, 40], marketRate: 454, attack: 40, defInf: 35, defCav: 50 },
+        { name: 'حراس الأمبراطور', cost: [100, 130, 160, 70], marketRate: 434, attack: 30, defInf: 65, defCav: 35 },
+        { name: 'جندي مهاجم', cost: [150, 160, 210, 80], marketRate: 333, attack: 75, defInf: 40, defCav: 25 },
+        { name: 'فرقة تجسس', cost: [140, 160, 20, 40], marketRate: 555, attack: 6, defInf: 20, defCav: 10 },
+        { name: 'سلاح الفرسان', cost: [550, 440, 320, 100], marketRate: 141, attack: 120, defInf: 65, defCav: 50 },
+        { name: 'فرسان قيصر', cost: [550, 640, 800, 180], marketRate: 92, attack: 180, defInf: 80, defCav: 105 },
+        { name: 'كبش', cost: [900, 360, 500, 70], marketRate: 109, attack: 60, defInf: 30, defCav: 75 },
+        { name: 'المقلاع الناري', cost: [950, 1350, 600, 90], marketRate: 66, attack: 75, defInf: 60, defCav: 10 },
+        { name: 'حكيم', cost: [30750, 27200, 45000, 37500], marketRate: null, attack: 50, defInf: 40, defCav: 30 },
+        { name: 'مستوطن', cost: [5800, 5300, 7200, 5500], marketRate: null, attack: 0, defInf: 80, defCav: 80 }
+      ],
+             gaul: [
+         { name: 'الكتيبة', cost: [100, 110, 50, 30], marketRate: 645, attack: 15, defInf: 40, defCav: 50 },
+         { name: 'مبارز', cost: [140, 150, 185, 60], marketRate: 380, attack: 70, defInf: 35, defCav: 20 },
+         { name: 'المستكشف', cost: [170, 150, 20, 40], marketRate: 530, attack: 6, defInf: 20, defCav: 10 },
+         { name: 'رعد الإغريق', cost: [350, 450, 230, 60], marketRate: 190, attack: 90, defInf: 25, defCav: 40 },
+         { name: 'فرسان السلت', cost: [360, 330, 280, 120], marketRate: 190, attack: 45, defInf: 115, defCav: 55 },
+         { name: 'فرسان الهيدوانر', cost: [500, 620, 675, 170], marketRate: 101, attack: 140, defInf: 50, defCav: 165 },
+         { name: 'محطمة الابواب', cost: [950, 555, 330, 75], marketRate: 104, attack: 50, defInf: 30, defCav: 105 },
+         { name: 'المقلاع الحربي', cost: [960, 1450, 630, 90], marketRate: 63, attack: 70, defInf: 45, defCav: 10 },
+         { name: 'رئيس', cost: [30750, 45400, 31000, 37500], marketRate: null, attack: 40, defInf: 50, defCav: 50 },
+         { name: 'مستوطن', cost: [5500, 7000, 5300, 4900], marketRate: null, attack: 0, defInf: 80, defCav: 80 }
+       ],
+             egyptian: [
+         { name: 'ميليشيا', cost: [45, 60, 30, 15], marketRate: 1333, attack: 10, defInf: 30, defCav: 20 },
+         { name: 'حارس الرماد', cost: [115, 100, 145, 60], marketRate: 476, attack: 30, defInf: 55, defCav: 40 },
+         { name: 'محارب خاباش', cost: [170, 180, 220, 80], marketRate: 307, attack: 65, defInf: 50, defCav: 20 },
+         { name: 'المستطلع', cost: [170, 150, 20, 40], marketRate: 526, attack: 6, defInf: 20, defCav: 10 },
+         { name: 'حارس أنجور', cost: [360, 330, 280, 120], marketRate: 183, attack: 50, defInf: 110, defCav: 50 },
+         { name: 'عربة رشب', cost: [450, 560, 610, 180], marketRate: 111, attack: 110, defInf: 120, defCav: 150 },
+         { name: 'مدكّات', cost: [900, 360, 500, 70], marketRate: null, attack: 55, defInf: 30, defCav: 95 },
+         { name: 'منجنيق ناري', cost: [995, 575, 340, 80], marketRate: null, attack: 65, defInf: 55, defCav: 10 },
+         { name: 'أمير حاتي', cost: [34000, 50000, 34000, 42000], marketRate: null, attack: 40, defInf: 50, defCav: 50 },
+         { name: 'المستوطن', cost: [4560, 5890, 4370, 4180], marketRate: null, attack: 0, defInf: 80, defCav: 80 }
+       ],
+      hun: [
+        { name: 'مرتزقة', cost: [130, 80, 40, 40], marketRate: 689, attack: 35, defInf: 40, defCav: 30 },
+        { name: 'رامي السهام', cost: [140, 110, 60, 60], marketRate: 540, attack: 50, defInf: 30, defCav: 10 },
+        { name: 'مراقب', cost: [170, 150, 20, 40], marketRate: 526, attack: 3, defInf: 20, defCav: 10 },
+        { name: 'فارس السهوب', cost: [290, 370, 190, 45], marketRate: 223, attack: 120, defInf: 30, defCav: 15 },
+        { name: 'القنّاص', cost: [320, 350, 330, 50], marketRate: 190, attack: 115, defInf: 80, defCav: 70 },
+        { name: 'صعلوك', cost: [450, 560, 610, 140], marketRate: 113, attack: 180, defInf: 60, defCav: 40 },
+        { name: 'مدقّ رأس كبش', cost: [1060, 330, 360, 70], marketRate: 109, attack: 65, defInf: 30, defCav: 90 },
+        { name: 'المنجنيق', cost: [950, 1280, 620, 60], marketRate: 68, attack: 45, defInf: 55, defCav: 10 },
+        { name: 'خان', cost: [46125, 40800, 67500, 65250], marketRate: null, attack: 50, defInf: 40, defCav: 30 },
+        { name: 'مستوطن', cost: [8700, 7950, 10800, 8250], marketRate: null, attack: 10, defInf: 80, defCav: 80 }
+      ],
+             spartan: [
+         { name: 'هوبليت', cost: [110, 185, 110, 35], marketRate: 454, attack: 50, defInf: 35, defCav: 30 },
+         { name: 'جاسوس', cost: [185, 150, 35, 75], marketRate: 449, attack: 0, defInf: 40, defCav: 22 },
+         { name: 'محارب الدروع', cost: [145, 95, 245, 45], marketRate: 377, attack: 40, defInf: 85, defCav: 45 },
+         { name: 'ثيريون', cost: [130, 200, 400, 65], marketRate: 251, attack: 90, defInf: 55, defCav: 40 },
+         { name: 'فارس إلبيدا', cost: [555, 445, 330, 110], marketRate: 138, attack: 55, defInf: 120, defCav: 90 },
+         { name: 'فارس كورنثي', cost: [660, 495, 995, 165], marketRate: 86, attack: 195, defInf: 80, defCav: 75 },
+         { name: 'كبش', cost: [525, 260, 790, 130], marketRate: 117, attack: 65, defInf: 30, defCav: 80 },
+         { name: 'العرّادة', cost: [550, 1240, 825, 135], marketRate: 72, attack: 50, defInf: 60, defCav: 10 },
+         { name: 'إيفور', cost: [33450, 30665, 36240, 13935], marketRate: null, attack: 40, defInf: 60, defCav: 40 },
+         { name: 'المستوطن', cost: [5115, 5580, 6045, 3255], marketRate: null, attack: 10, defInf: 80, defCav: 80 }
+       ],
+      viking: [
+        { name: 'الرقيق', cost: [95, 90, 70, 45], marketRate: 688, attack: 55, defInf: 25, defCav: 5 },
+        { name: 'عذراء الدرع', cost: [125, 80, 85, 40], marketRate: 590, attack: 20, defInf: 50, defCav: 55 },
+        { name: 'الهجّام', cost: [130, 120, 110, 80], marketRate: 470, attack: 90, defInf: 30, defCav: 25 },
+        { name: 'عين هايمدال', cost: [155, 95, 50, 50], marketRate: 570, attack: 0, defInf: 10, defCav: 5 },
+        { name: 'فارس هوسكارل', cost: [385, 295, 290, 85], marketRate: 180, attack: 45, defInf: 110, defCav: 115 },
+        { name: 'الڤالكيري', cost: [475, 535, 515, 100], marketRate: 122, attack: 190, defInf: 50, defCav: 75 },
+        { name: 'كبش', cost: [950, 325, 375, 70], marketRate: 116, attack: 65, defInf: 30, defCav: 90 },
+        { name: 'منجنيق', cost: [850, 1225, 625, 60], marketRate: 72, attack: 50, defInf: 60, defCav: 10 },
+        { name: 'الإيرل', cost: [35500, 26600, 25000, 27200], marketRate: null, attack: 40, defInf: 60, defCav: 60 },
+        { name: 'مستوطن', cost: [5800, 4600, 4800, 4800], marketRate: null, attack: 10, defInf: 80, defCav: 80 }
+      ]
+    };
+
+  function populateTroops() {
+    const tribe = document.getElementById('tribeSelect').value;
+    const troopSelect = document.getElementById('troopSelect');
+    troopSelect.innerHTML = '<option value="">-- اختر نوع الجندي ⚔️ --</option>';
+
+    clearResults();
+
+    if (!tribe || !troopData[tribe] || troopData[tribe].length === 0) {
+      return;
+    }
+
+    troopData[tribe].forEach(troop => {
+      const opt = document.createElement('option');
+      opt.value = troop.cost.join(',');
+      opt.textContent = troop.name;
+      troopSelect.appendChild(opt);
+    });
+    
+    // مسح قوة الجندي عند تغيير القبيلة
+    updateTroopPower();
+  }
+
+function clearResults() {
+  document.getElementById('woodCostText').textContent = '0';
+  document.getElementById('clayCostText').textContent = '0';
+  document.getElementById('ironCostText').textContent = '0';
+  document.getElementById('wheatCostText').textContent = '0';
+  document.getElementById('unitTotalCost').innerHTML = '<img src="https://testtrav.ct.ws/oie_U5bz9wzsOkhD.png" alt="تكلفة" style="width: 20px; height: 20px; vertical-align: middle; margin-left: 5px;"> Total: 0';
+  document.getElementById('goldCost').innerHTML = '💰 تكلفة الموارد بالذهب: 0 <img src="https://utatar.com/assets/default/img/a/gold.gif" style="vertical-align: middle;">';
+  document.getElementById('troopsCount').textContent = '👥 يمكن تدريب: 0 جندي';
+  document.getElementById('totalWood').innerHTML = '<img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/lumber_tiny.png" alt="خشب" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> الخشب: 0';
+  document.getElementById('totalClay').innerHTML = '<img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/clay_tiny.png" alt="طين" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> الطين: 0';
+  document.getElementById('totalIron').innerHTML = '<img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/iron_tiny.png" alt="حديد" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> الحديد: 0';
+  document.getElementById('totalWheat').innerHTML = '<img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/crop_small.png" alt="قمح" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> القمح: 0';
+  document.getElementById('totalResourcesUsed').innerHTML = '<img src="https://testtrav.ct.ws/oie_U5bz9wzsOkhD.png" alt="موارد" style="width: 20px; height: 20px; vertical-align: middle; margin-left: 5px;"> إجمالي الموارد: 0';
+  document.getElementById('marketGoldValue').textContent = '💸 تكلفة الجندي في سوق المحاربين بالذهب: 0';
+  
+  // مسح قوة الجندي
+  document.getElementById('attackPower').textContent = '0';
+  document.getElementById('defInfPower').textContent = '0';
+  document.getElementById('defCavPower').textContent = '0';
+}
+
+function setTroopCosts() {
+  const select = document.getElementById('troopSelect');
+  if (!select.value) {
+    clearResults();
+    return;
+  }
+
+  const values = select.value.split(',');
+  if (values.length !== 4) {
+    clearResults();
+    return;
+  }
+
+  let wood = parseInt(values[0]);
+  let clay = parseInt(values[1]);
+  let iron = parseInt(values[2]);
+  let wheat = parseInt(values[3]);
+
+  const isArtifactActive = document.getElementById('reduceCostCheckbox').checked;
+  if (isArtifactActive) {
+    wood = Math.floor(wood * 0.7);
+    clay = Math.floor(clay * 0.7);
+    iron = Math.floor(iron * 0.7);
+    wheat = Math.floor(wheat * 0.7);
+  }
+
+  document.getElementById('woodCostText').textContent = formatNumber(wood);
+  document.getElementById('clayCostText').textContent = formatNumber(clay);
+  document.getElementById('ironCostText').textContent = formatNumber(iron);
+  document.getElementById('wheatCostText').textContent = formatNumber(wheat);
+
+  const sum = wood + clay + iron + wheat;
+  document.getElementById('unitTotalCost').innerHTML = `<img src="https://testtrav.ct.ws/oie_U5bz9wzsOkhD.png" alt="تكلفة" style="width: 20px; height: 20px; vertical-align: middle; margin-left: 5px;"> Total: ${formatNumber(sum)}`;
+
+  // عرض قوة الجندي
+  updateTroopPower();
+
+  recalculate();
+}
+
+function recalculate() {
+  const calcMode = getSelectedCalcMode();
+  const troopSelect = document.getElementById('troopSelect');
+
+  if (!troopSelect.value) {
+    return;
+  }
+
+  if (calcMode === 'resources' && document.getElementById('totalResources').value.trim() !== '') {
+    updateEstimatedTroops();
+  } else if (calcMode === 'troops' && document.getElementById('customTroopCount').value.trim() !== '') {
+    updateResourceTotalFromTroops();
+  } else if (calcMode === 'gold' && document.getElementById('goldInput').value.trim() !== '') {
+    updateFromGold();
+  }
+}
+
+function updateResourceTotalFromTroops() {
+  if (getSelectedCalcMode() !== 'troops') return;
+
+  const countInput = document.getElementById('customTroopCount');
+  const totalResourcesInput = document.getElementById('totalResources');
+  const goldInput = document.getElementById('goldInput');
+  const select = document.getElementById('troopSelect');
+  const isArtifactActive = document.getElementById('reduceCostCheckbox').checked;
+
+  const count = parseInt(countInput.value.replace(/,/g, '') || '0');
+  const values = select.value.split(',');
+
+  if (values.length !== 4 || count === 0) {
+    totalResourcesInput.value = '';
+    goldInput.value = '';
+    document.getElementById('goldCost').innerHTML = `💰 تكلفة الموارد بالذهب: 0 <img src="https://utatar.com/assets/default/img/a/gold.gif" style="vertical-align: middle;">`;
+    document.getElementById('troopsCount').textContent = `👥 يمكن تدريب: 0 جندي`;
+    document.getElementById('totalWood').innerHTML = `<img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/lumber_tiny.png" alt="خشب" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> الخشب: 0`;
+    document.getElementById('totalClay').innerHTML = `<img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/clay_tiny.png" alt="طين" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> الطين: 0`;
+    document.getElementById('totalIron').innerHTML = `<img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/iron_tiny.png" alt="حديد" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> الحديد: 0`;
+    document.getElementById('totalWheat').innerHTML = `<img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/crop_small.png" alt="قمح" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> القمح: 0`;
+    document.getElementById('totalResourcesUsed').innerHTML = `<img src="https://testtrav.ct.ws/oie_U5bz9wzsOkhD.png" alt="موارد" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> إجمالي الموارد: 0`;
+    document.getElementById('marketGoldValue').textContent = `💸 تكلفة الجندي في سوق المحاربين بالذهب: 0`;
+
+    updateMarketValue(0, '', 0);
+    return;
+  }
+
+  let wood = parseInt(values[0]);
+  let clay = parseInt(values[1]);
+  let iron = parseInt(values[2]);
+  let wheat = parseInt(values[3]);
+
+  if (isArtifactActive) {
+    wood = Math.floor(wood * 0.7);
+    clay = Math.floor(clay * 0.7);
+    iron = Math.floor(iron * 0.7);
+    wheat = Math.floor(wheat * 0.7);
+  }
+
+  const perUnitCost = wood + clay + iron + wheat;
+  const totalCost = count * perUnitCost;
+  const goldCost = Math.ceil(totalCost / 55000);
+
+  totalResourcesInput.value = formatNumber(totalCost);
+  goldInput.value = formatNumber(goldCost);
+
+  document.getElementById('goldCost').innerHTML = `💰 تكلفة الموارد بالذهب: ${formatNumber(goldCost)} <img src="https://utatar.com/assets/default/img/a/gold.gif" style="vertical-align: middle;">`;
+  document.getElementById('troopsCount').textContent = `👥 يمكن تدريب: ${formatNumber(count)} جندي`;
+
+  document.getElementById('totalWood').innerHTML = `<img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/lumber_tiny.png" alt="خشب" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> الخشب: ${formatNumber(count * wood)}`;
+  document.getElementById('totalClay').innerHTML = `<img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/clay_tiny.png" alt="طين" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> الطين: ${formatNumber(count * clay)}`;
+  document.getElementById('totalIron').innerHTML = `<img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/iron_tiny.png" alt="حديد" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> الحديد: ${formatNumber(count * iron)}`;
+  document.getElementById('totalWheat').innerHTML = `<img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/crop_small.png" alt="قمح" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> القمح: ${formatNumber(count * wheat)}`;
+
+  const totalUsed = (count * wood) + (count * clay) + (count * iron) + (count * wheat);
+  document.getElementById('totalResourcesUsed').innerHTML = `<img src="https://testtrav.ct.ws/oie_U5bz9wzsOkhD.png" alt="موارد" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> إجمالي الموارد: ${formatNumber(totalUsed)}`;
+
+  updateMarketValue(goldCost, select.selectedOptions[0].textContent, count);
+}
+
+function updateEstimatedTroops() {
+  if (getSelectedCalcMode() !== 'resources') return;
+
+  const totalInput = document.getElementById('totalResources');
+  const troopCountInput = document.getElementById('customTroopCount');
+  const goldInput = document.getElementById('goldInput');
+  const select = document.getElementById('troopSelect');
+  const total = parseInt(totalInput.value.replace(/,/g, '') || '0');
+  const values = select.value.split(',');
+  const hasArtifact = document.getElementById('reduceCostCheckbox')?.checked;
+
+  if (values.length !== 4 || total === 0) {
+    troopCountInput.value = '';
+    goldInput.value = '';
+    document.getElementById('goldCost').innerHTML = `💰 تكلفة الموارد بالذهب: 0 <img src="https://utatar.com/assets/default/img/a/gold.gif" style="vertical-align: middle;">`;
+    document.getElementById('troopsCount').textContent = `👥 يمكن تدريب: 0 جندي`;
+    document.getElementById('totalWood').innerHTML = `<img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/lumber_tiny.png" alt="خشب" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> الخشب: 0`;
+    document.getElementById('totalClay').innerHTML = `<img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/clay_tiny.png" alt="طين" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> الطين: 0`;
+    document.getElementById('totalIron').innerHTML = `<img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/iron_tiny.png" alt="حديد" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> الحديد: 0`;
+    document.getElementById('totalWheat').innerHTML = `<img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/crop_small.png" alt="قمح" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> القمح: 0`;
+    document.getElementById('totalResourcesUsed').innerHTML = `<img src="https://testtrav.ct.ws/oie_U5bz9wzsOkhD.png" alt="موارد" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> إجمالي الموارد: 0`;
+    document.getElementById('marketGoldValue').textContent = `💸 تكلفة الجندي في سوق المحاربين بالذهب: 0`;
+
+    updateMarketValue(0, '', 0);
+    return;
+  }
+
+  let wood = parseInt(values[0]);
+  let clay = parseInt(values[1]);
+  let iron = parseInt(values[2]);
+  let wheat = parseInt(values[3]);
+
+  if (hasArtifact) {
+    wood = Math.floor(wood * 0.7);
+    clay = Math.floor(clay * 0.7);
+    iron = Math.floor(iron * 0.7);
+    wheat = Math.floor(wheat * 0.7);
+  }
+
+  const totalCostPerTroop = wood + clay + iron + wheat;
+  const count = Math.floor(total / totalCostPerTroop);
+  const totalWood = count * wood;
+  const totalClay = count * clay;
+  const totalIron = count * iron;
+  const totalWheat = count * wheat;
+  const totalUsed = totalWood + totalClay + totalIron + totalWheat;
+
+  troopCountInput.value = formatNumber(count);
+  goldInput.value = formatNumber(Math.ceil(totalUsed / 55000));
+
+  document.getElementById('goldCost').innerHTML = `💰 تكلفة الموارد بالذهب: ${formatNumber(Math.ceil(totalUsed / 55000))} <img src="https://utatar.com/assets/default/img/a/gold.gif" style="vertical-align: middle;">`;
+  document.getElementById('troopsCount').textContent = `👥 يمكن تدريب: ${formatNumber(count)} جندي`;
+  document.getElementById('totalWood').innerHTML = `<img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/lumber_tiny.png" alt="خشب" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> الخشب: ${formatNumber(totalWood)}`;
+  document.getElementById('totalClay').innerHTML = `<img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/clay_tiny.png" alt="طين" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> الطين: ${formatNumber(totalClay)}`;
+  document.getElementById('totalIron').innerHTML = `<img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/iron_tiny.png" alt="حديد" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> الحديد: ${formatNumber(totalIron)}`;
+  document.getElementById('totalWheat').innerHTML = `<img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/crop_small.png" alt="قمح" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> القمح: ${formatNumber(totalWheat)}`;
+  document.getElementById('totalResourcesUsed').innerHTML = `<img src="https://testtrav.ct.ws/oie_U5bz9wzsOkhD.png" alt="موارد" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> إجمالي الموارد: ${formatNumber(totalUsed)}`;
+
+  updateMarketValue(Math.ceil(totalUsed / 55000), select.selectedOptions[0].textContent, count);
+}
+
+function updateFromGold() {
+  if (getSelectedCalcMode() !== 'gold') return;
+
+  const goldInput = document.getElementById('goldInput');
+  const totalResourcesInput = document.getElementById('totalResources');
+  const troopCountInput = document.getElementById('customTroopCount');
+  const select = document.getElementById('troopSelect');
+  const isArtifactActive = document.getElementById('reduceCostCheckbox').checked;
+
+  const rawGold = goldInput.value.replace(/,/g, '').trim();
+
+  if (rawGold === '' || parseInt(rawGold) === 0) {
+    totalResourcesInput.value = '';
+    troopCountInput.value = '';
+    document.getElementById('goldCost').innerHTML = `💰 تكلفة الموارد بالذهب: 0 <img src="https://utatar.com/assets/default/img/a/gold.gif" style="vertical-align: middle;">`;
+    document.getElementById('troopsCount').textContent = `👥 يمكن تدريب: 0 جندي`;
+    document.getElementById('totalWood').innerHTML = `<img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/lumber_tiny.png" alt="خشب" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> الخشب: 0`;
+    document.getElementById('totalClay').innerHTML = `<img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/clay_tiny.png" alt="طين" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> الطين: 0`;
+    document.getElementById('totalIron').innerHTML = `<img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/iron_tiny.png" alt="حديد" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> الحديد: 0`;
+    document.getElementById('totalWheat').innerHTML = `<img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/crop_small.png" alt="قمح" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> القمح: 0`;
+    document.getElementById('totalResourcesUsed').innerHTML = `<img src="https://testtrav.ct.ws/oie_U5bz9wzsOkhD.png" alt="موارد" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> إجمالي الموارد: 0`;
+    document.getElementById('marketGoldValue').textContent = `💸 تكلفة الجندي في سوق المحاربين بالذهب: 0`;
+
+    updateMarketValue(0, '', 0);
+    return;
+  }
+
+  const gold = parseInt(rawGold) || 0;
+  const values = select.value.split(',');
+
+  if (values.length !== 4) return;
+
+  const totalResources = gold * 55000;
+  totalResourcesInput.value = formatNumber(totalResources);
+
+  let wood = parseInt(values[0]);
+  let clay = parseInt(values[1]);
+  let iron = parseInt(values[2]);
+  let wheat = parseInt(values[3]);
+
+  if (isArtifactActive) {
+    wood = Math.floor(wood * 0.7);
+    clay = Math.floor(clay * 0.7);
+    iron = Math.floor(iron * 0.7);
+    wheat = Math.floor(wheat * 0.7);
+  }
+
+  const perUnitCost = wood + clay + iron + wheat;
+
+  const estimatedTroops = Math.floor(totalResources / perUnitCost);
+  troopCountInput.value = formatNumber(estimatedTroops);
+
+  updateMarketValue(gold, select.selectedOptions[0].textContent, estimatedTroops);
+
+  const totalUsedWood = estimatedTroops * wood;
+  const totalUsedClay = estimatedTroops * clay;
+  const totalUsedIron = estimatedTroops * iron;
+  const totalUsedWheat = estimatedTroops * wheat;
+
+  document.getElementById('goldCost').innerHTML = `💰 تكلفة الموارد بالذهب: ${formatNumber(gold)} <img src="https://utatar.com/assets/default/img/a/gold.gif" style="vertical-align: middle;">`;
+  document.getElementById('troopsCount').textContent = `👥 يمكن تدريب: ${formatNumber(estimatedTroops)} جندي`;
+  document.getElementById('totalWood').innerHTML = `<img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/lumber_tiny.png" alt="خشب" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> الخشب: ${formatNumber(totalUsedWood)}`;
+  document.getElementById('totalClay').innerHTML = `<img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/clay_tiny.png" alt="طين" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> الطين: ${formatNumber(totalUsedClay)}`;
+  document.getElementById('totalIron').innerHTML = `<img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/iron_tiny.png" alt="حديد" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> الحديد: ${formatNumber(totalUsedIron)}`;
+  document.getElementById('totalWheat').innerHTML = `<img src="https://gpack.traviantop.com/a5232e5f/mainPage/img_rtl/general/resources/crop_small.png" alt="قمح" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> القمح: ${formatNumber(totalUsedWheat)}`;
+  document.getElementById('totalResourcesUsed').innerHTML = `<img src="https://testtrav.ct.ws/oie_U5bz9wzsOkhD.png" alt="موارد" style="width: 16px; height: 16px; vertical-align: middle; margin-left: 5px;"> إجمالي الموارد: ${formatNumber(totalUsedWood + totalUsedClay + totalUsedIron + totalUsedWheat)}`;
+}
+
+function formatNumber(num) {
+  return num.toLocaleString('en-US');
+}
+
+function resetAll() {
+  clearResults();
+
+  document.getElementById('totalResources').value = '';
+  document.getElementById('customTroopCount').value = '';
+  document.getElementById('goldInput').value = '';
+     document.getElementById('reduceCostCheckbox').checked = false;
+   document.getElementById('smithyUpgradeCheckbox').checked = false;
+   document.getElementById('attackerArtifactSelect').selectedIndex = 0;
+
+  const tribeSelect = document.getElementById('tribeSelect');
+  const troopSelect = document.getElementById('troopSelect');
+
+  tribeSelect.selectedIndex = 0;
+  troopSelect.innerHTML = '<option value="">-- اختر نوع الجندي ⚔️ --</option>';
+
+  document.querySelector('input[name="calcMode"][value="resources"]').checked = true;
+
+  updateInputFieldsState();
+
+  toggleArtifactEffects();
+}
+
+function formatInputWithCommas(input) {
+  let value = input.value.replace(/,/g, '');
+  if (value === '') {
+    input.value = '';
+    return;
+  }
+  if (!/^\d+$/.test(value)) {
+    value = value.replace(/\D/g, '');
+  }
+  input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+function getSelectedCalcMode() {
+  const radios = document.getElementsByName('calcMode');
+  for (let radio of radios) {
+    if (radio.checked) return radio.value;
+  }
+  return null;
+}
+
+function onInputHandler(type) {
+  const calcMode = getSelectedCalcMode();
+  if (calcMode !== type) return;
+
+  if (type === 'resources') {
+    updateEstimatedTroops();
+  } else if (type === 'troops') {
+    updateResourceTotalFromTroops();
+  } else if (type === 'gold') {
+    updateFromGold();
+  }
+}
+
+function updateTroopPower() {
+  const tribe = document.getElementById('tribeSelect').value;
+  const troopSelect = document.getElementById('troopSelect');
+  
+  if (!tribe || !troopSelect.value || !troopData[tribe]) {
+    document.getElementById('attackPower').textContent = '0';
+    document.getElementById('defInfPower').textContent = '0';
+    document.getElementById('defCavPower').textContent = '0';
+    return;
+  }
+
+  const troopName = troopSelect.selectedOptions[0].textContent;
+  const troop = troopData[tribe].find(t => t.name === troopName);
+  
+  if (!troop) {
+    document.getElementById('attackPower').textContent = '0';
+    document.getElementById('defInfPower').textContent = '0';
+    document.getElementById('defCavPower').textContent = '0';
+    return;
+  }
+
+     // التحقق من تطوير الحداد
+   const isSmithyUpgraded = document.getElementById('smithyUpgradeCheckbox').checked;
+   const smithyMultiplier = isSmithyUpgraded ? 1.4 : 1; // زيادة 40%
+
+   // التحقق من تحفة المهاجم
+   const attackerArtifactValue = parseInt(document.getElementById('attackerArtifactSelect').value) || 0;
+   const attackerArtifactMultiplier = 1 + (attackerArtifactValue / 100); // تحويل النسبة إلى مضاعف
+
+   // تطبيق تطوير الحداد على القوة
+   const finalAttack = Math.floor((troop.attack || 0) * smithyMultiplier * attackerArtifactMultiplier);
+   const finalDefInf = Math.floor((troop.defInf || 0) * smithyMultiplier);
+   const finalDefCav = Math.floor((troop.defCav || 0) * smithyMultiplier);
+
+  // عرض القوة مع أو بدون تطوير الحداد
+  if (isSmithyUpgraded) {
+    document.getElementById('attackPower').innerHTML = `${finalAttack} <span class="bonus-text">(+${finalAttack - (troop.attack || 0)})</span>`;
+    document.getElementById('defInfPower').innerHTML = `${finalDefInf} <span class="bonus-text">(+${finalDefInf - (troop.defInf || 0)})</span>`;
+    document.getElementById('defCavPower').innerHTML = `${finalDefCav} <span class="bonus-text">(+${finalDefCav - (troop.defCav || 0)})</span>`;
+  } else {
+    document.getElementById('attackPower').textContent = troop.attack || 0;
+    document.getElementById('defInfPower').textContent = troop.defInf || 0;
+    document.getElementById('defCavPower').textContent = troop.defCav || 0;
+  }
+}
+
+function updateMarketValue(goldCount, troopName, troopCount) {
+  const tribe = document.getElementById('tribeSelect').value;
+  if (!tribe || !troopData[tribe] || goldCount === 0) {
+    document.getElementById('marketGoldValue').textContent = '💸 تكلفة الجندي في سوق المحاربين بالذهب: 0';
+    return;
+  }
+
+  const troop = troopData[tribe].find(t => t.name === troopName);
+  if (!troop || !troop.marketRate) {
+    document.getElementById('marketGoldValue').textContent = '💸 تكلفة الجندي في سوق المحاربين بالذهب: غير متوفرة';
+    return;
+  }
+
+  const troopsByGold = goldCount * troop.marketRate;
+  document.getElementById('marketGoldValue').textContent = `💸 ${formatNumber(goldCount)} ذهب = ${formatNumber(troopsByGold)} جندي من سوق المحاربين`;
+}
+
+function updateInputFieldsState() {
+  const mode = getSelectedCalcMode();
+  const goldInput = document.getElementById('goldInput');
+  const troopCountInput = document.getElementById('customTroopCount');
+  const totalResourcesInput = document.getElementById('totalResources');
+
+  goldInput.disabled = (mode !== 'gold');
+  troopCountInput.disabled = (mode !== 'troops');
+  totalResourcesInput.disabled = (mode !== 'resources');
+}
+
+function toggleArtifactEffects() {
+  const container = document.querySelector('.container');
+  const isArtifactActive = document.getElementById('reduceCostCheckbox').checked;
+
+  if (isArtifactActive) {
+    container.classList.add('artifact-active');
+  } else {
+    container.classList.remove('artifact-active');
+  }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  updateInputFieldsState();
+  toggleArtifactEffects();
+});
+</script>
+   
+
+
+</body>
+</html>
