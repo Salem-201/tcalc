@@ -488,6 +488,22 @@
       flex: 1;
     }
   }
+
+  /* تلوين الإجمالي ومدخلات الحساب عند تفعيل التحفة */
+  .container.artifact-active #unitTotalCost {
+    color: #dc3545 !important;
+  }
+  .container.artifact-active .row {
+    color: #dc3545 !important;
+  }
+  .container.artifact-active .row input[type="text"] {
+    color: #dc3545 !important;
+  }
+  .container.artifact-active .row input[type="text"]:enabled {
+    border: 2px solid #dc3545 !important;
+    box-shadow: 0 0 4px rgba(220, 53, 69, 0.4);
+    caret-color: #dc3545;
+  }
 </style>
 
 </head>
