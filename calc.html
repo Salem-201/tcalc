@@ -22,7 +22,7 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; }
   img, video { max-width: 100%; height: auto; display: block; }
-  /* أيقونات داخل النص يجب أن تبقى ضمن السطر */
+
   .cost-display img, #unitTotalCost img, .power-item img { display: inline-block; vertical-align: middle; }
   html, body { overflow-x: hidden; }
   body {
@@ -77,7 +77,6 @@
     max-width: 250px;
   }
 
-  /* تنسيق قوة الجندي */
   .troop-stats-container {
     margin-top: 1.5rem;
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
@@ -161,9 +160,7 @@
     margin-right: 0.2rem;
   }
 
-  /* تأثيرات التحفة على قوة الجندي - تم إزالتها */
 
-     /* تنسيق تطوير الحداد */
                .smithy-upgrade-section {
        margin-top: 1rem;
        padding-top: 1rem;
@@ -216,9 +213,7 @@
     text-shadow: 0 0 2px rgba(40, 167, 69, 0.3);
   }
 
-     /* تأثيرات التحفة على تطوير الحداد - تم إزالتها */
-
-                                               /* تنسيق تحفة المهاجم */
+ 
                                .attacker-artifact-section {
            text-align: end;
            display: flex;
@@ -271,7 +266,7 @@
       box-shadow: 0 0 4px rgba(255, 193, 7, 0.4);
     }
 
-    /* تنسيق التحفة الأسطورية */
+
               .legendary-artifact-section {
         text-align: end;
         display: flex;
@@ -378,18 +373,12 @@
     min-width: 80px;
   }
 
-  /* تأثيرات التحفة الأسطورية - تم إزالتها */
 
-  /* تأثيرات الشيك بوكس - تم إزالتها */
-
-  /* تأثيرات النتائج عند تفعيل التحفة - تم إزالتها */
-
-     /* تأثير جديد: تغيير لون النص عند تفعيل التحفة - ينحصر فقط على نص التحفة */
    .container.artifact-active label:has(input[id="reduceCostCheckbox"]:checked) {
      color: #dc3545 !important;
    }
 
-   /* تأثير التحفة على cost-display */
+
    .container.artifact-active .cost-display {
      color: #dc3545 !important;
      font-weight: bold !important;
@@ -414,7 +403,7 @@
     color: #888;
   }
 
-  /* تنسيق صندوق الذهب مع الأيقونة */
+
   .gold-input-container {
     position: relative;
     display: flex;
@@ -454,7 +443,7 @@
     .attacker-artifact-section,
     .legendary-artifact-section { min-width: 0; width: 100%; }
 
-    /* توحيد عرض مربعات الحداد والتحف */
+
     .smithy-checkbox,
     .attacker-artifact-label,
     .legendary-artifact-label { width: 100%; white-space: normal; }
@@ -466,11 +455,11 @@
     .legendary-artifact-subtitle { display: block; }
     .attacker-artifact-label select { width: auto; display: inline-block; min-width: 0; max-width: 100%; }
 
-    /* جعل إجمالي الموارد صف أفقي بدون تمدد زائد */
+
     .cost-display { flex-wrap: nowrap; overflow-x: hidden; gap: 0.25rem; justify-content: space-between; }
     .cost-display > div { flex: 1 1 0; min-width: 0; }
 
-    /* عرض قوة الجندي في صف واحد من ثلاث خانات بدون سكرول */
+
     .power-grid { display: grid; grid-template-columns: 1.15fr 1.05fr 1.05fr; gap: 0.25rem; overflow: visible; }
     .power-item { min-width: 0; width: 100%; padding: 0.35rem 0.45rem; }
     .power-item img { width: 16px !important; height: 16px !important; margin-right: 0.2rem !important; }
@@ -489,7 +478,7 @@
     }
   }
 
-  /* تلوين الإجمالي ومدخلات الحساب عند تفعيل التحفة */
+
   .container.artifact-active #unitTotalCost {
     color: #dc3545 !important;
   }
@@ -584,7 +573,7 @@
    </div>
 </div>
 
-<!-- ✅ خيارات الحساب أولاً -->
+
  <div style="margin-bottom: 10px; font-size: 14px;">
    <p>الحساب يتم عن طريق:</p>
  <input type="radio" name="calcMode" value="resources" checked onchange="updateInputFieldsState(); recalculate()">  الموارد
@@ -592,7 +581,7 @@
  <input type="radio" name="calcMode" value="gold" onchange="updateInputFieldsState(); recalculate()">   الذهب
  </div>
 
-<!-- 🔢 مدخلات الحساب -->
+
 <div class="row">
 <input type="text" id="totalResources" placeholder="إجمالي الموارد" oninput="formatInputWithCommas(this); onInputHandler('resources')">
 <input type="text" id="customTroopCount" placeholder="عدد الجنود" oninput="formatInputWithCommas(this); onInputHandler('troops')">
@@ -723,7 +712,6 @@
       troopSelect.appendChild(opt);
     });
     
-    // مسح قوة الجندي عند تغيير القبيلة
     updateTroopPower();
   }
 
@@ -742,7 +730,6 @@ function clearResults() {
   document.getElementById('totalResourcesUsed').innerHTML = '<img src="https://testtrav.ct.ws/oie_U5bz9wzsOkhD.png" alt="موارد" style="width: 20px; height: 20px; vertical-align: middle; margin-left: 5px;"> إجمالي الموارد: 0';
   document.getElementById('marketGoldValue').textContent = '💸 تكلفة الجندي في سوق المحاربين بالذهب: 0';
   
-  // مسح قوة الجندي
   document.getElementById('attackPower').textContent = '0';
   document.getElementById('defInfPower').textContent = '0';
   document.getElementById('defCavPower').textContent = '0';
@@ -782,7 +769,6 @@ function setTroopCosts() {
   const sum = wood + clay + iron + wheat;
   document.getElementById('unitTotalCost').innerHTML = `<img src="https://testtrav.ct.ws/oie_U5bz9wzsOkhD.png" alt="تكلفة" style="width: 20px; height: 20px; vertical-align: middle; margin-left: 5px;"> Total: ${formatNumber(sum)}`;
 
-  // عرض قوة الجندي
   updateTroopPower();
 
   recalculate();
@@ -1076,20 +1062,19 @@ function updateTroopPower() {
     return;
   }
 
-     // التحقق من تطوير الحداد
+
    const isSmithyUpgraded = document.getElementById('smithyUpgradeCheckbox').checked;
    const smithyMultiplier = isSmithyUpgraded ? 1.4 : 1; // زيادة 40%
 
-   // التحقق من تحفة المهاجم
    const attackerArtifactValue = parseInt(document.getElementById('attackerArtifactSelect').value) || 0;
    const attackerArtifactMultiplier = 1 + (attackerArtifactValue / 100); // تحويل النسبة إلى مضاعف
 
-   // تطبيق تطوير الحداد على القوة
+ 
    const finalAttack = Math.floor((troop.attack || 0) * smithyMultiplier * attackerArtifactMultiplier);
    const finalDefInf = Math.floor((troop.defInf || 0) * smithyMultiplier);
    const finalDefCav = Math.floor((troop.defCav || 0) * smithyMultiplier);
 
-  // عرض القوة مع أو بدون تطوير الحداد
+  
   if (isSmithyUpgraded) {
     document.getElementById('attackPower').innerHTML = `${finalAttack} <span class="bonus-text">(+${finalAttack - (troop.attack || 0)})</span>`;
     document.getElementById('defInfPower').innerHTML = `${finalDefInf} <span class="bonus-text">(+${finalDefInf - (troop.defInf || 0)})</span>`;
