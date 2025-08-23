@@ -20,6 +20,11 @@
   <meta charset="UTF-8">
   <title>حاسبة تكلفة الجندي</title>
 <style>
+  *, *::before, *::after { box-sizing: border-box; }
+  img, video { max-width: 100%; height: auto; display: block; }
+  /* أيقونات داخل النص يجب أن تبقى ضمن السطر */
+  .cost-display img, #unitTotalCost img, .power-item img { display: inline-block; vertical-align: middle; }
+  html, body { overflow-x: hidden; }
   body {
     font-family: 'Segoe UI', sans-serif;
     background-color: #f2f4f8;
@@ -60,7 +65,7 @@
   .row,
   .select-row {
     display: flex;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     gap: 1rem;
     justify-content: center;
     align-items: center;
@@ -86,6 +91,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
     border-bottom: 2px solid #dee2e6;
@@ -105,7 +111,7 @@
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     gap: 1rem;
     justify-items: center;
-    max-width: 500px;
+    max-width: calc(500px + 0.5rem);
     margin: 0 auto;
   }
 
@@ -119,8 +125,10 @@
     border-radius: 0.75rem;
     border: 1px solid #dee2e6;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    width: 111px;
-    height: 14px;
+    width: auto;
+    min-width: 111px;
+    min-height: 36px;
+    white-space: nowrap;
     transition: all 0.3s ease;
     overflow: hidden;
   }
@@ -345,6 +353,9 @@
     color: #1c7c38;
     flex-shrink: 0;
     white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
   }
 
   .cost-display {
@@ -418,12 +429,53 @@
     height: 14px;
     z-index: 2;
     pointer-events: none;
-    top: 21px;
+    top: 50%;
+    transform: translateY(-50%);
   }
 
   .gold-input-container input[type="text"] {
     padding-left: 21px;
     width: 100%;
+  }
+
+  @media (max-width: 640px) {
+    body { padding: 0; }
+    .container { max-width: 100%; width: 100%; border-radius: 0; padding: 1rem; }
+    .row { flex-wrap: wrap; }
+    .row > * { flex: 1 1 100%; }
+
+    .select-row { flex-wrap: wrap; }
+    .select-row select { flex: 1 1 100%; min-width: 0; max-width: 100%; }
+
+    .total-cost-section { flex-direction: column; align-items: stretch; }
+
+    .smithy-upgrade-section { flex-direction: column; align-items: stretch; justify-content: flex-start; flex-wrap: wrap; gap: 0.75rem; overflow-x: visible; }
+    .smithy-upgrade-section > * { flex: 1 1 100%; min-width: 0; }
+    .attacker-artifact-section,
+    .legendary-artifact-section { min-width: 0; width: 100%; }
+
+    /* توحيد عرض مربعات الحداد والتحف */
+    .smithy-checkbox,
+    .attacker-artifact-label,
+    .legendary-artifact-label { width: 100%; white-space: normal; }
+    .smithy-checkbox { flex: 1 1 auto; border: 2px solid #17a2b8; box-shadow: 0 2px 4px rgba(23, 162, 184, 0.2); }
+    .attacker-artifact-label { border: 2px solid #ffc107; box-shadow: 0 2px 4px rgba(255, 193, 7, 0.2); }
+    .legendary-artifact-label { border: 2px solid #dc3545; box-shadow: 0 2px 4px rgba(220, 53, 69, 0.2); }
+    .smithy-checkbox input[type="checkbox"] { transform: scale(1.2); margin-left: 0.5rem; }
+    .attacker-artifact-label select { width: auto; }
+    .legendary-artifact-subtitle { display: block; }
+    .attacker-artifact-label select { width: auto; display: inline-block; min-width: 0; max-width: 100%; }
+
+    /* جعل إجمالي الموارد صف أفقي بدون تمدد زائد */
+    .cost-display { flex-wrap: nowrap; overflow-x: hidden; gap: 0.25rem; justify-content: space-between; }
+    .cost-display > div { flex: 1 1 0; min-width: 0; }
+
+    /* عرض قوة الجندي في صف واحد من ثلاث خانات بدون سكرول */
+    .power-grid { display: grid; grid-template-columns: 1.15fr 1.05fr 1.05fr; gap: 0.25rem; overflow: visible; }
+    .power-item { min-width: 0; width: 100%; padding: 0.35rem 0.45rem; }
+    .power-item img { width: 16px !important; height: 16px !important; margin-right: 0.2rem !important; }
+    .power-item span { font-size: 0.95rem; }
+    .power-item .bonus-text { font-size: 0.6rem; }
   }
 
   @media (min-width: 768px) {
@@ -435,6 +487,22 @@
     .cost-display > div {
       flex: 1;
     }
+  }
+
+  /* تلوين الإجمالي ومدخلات الحساب عند تفعيل التحفة */
+  .container.artifact-active #unitTotalCost {
+    color: #dc3545 !important;
+  }
+  .container.artifact-active .row {
+    color: #dc3545 !important;
+  }
+  .container.artifact-active .row input[type="text"] {
+    color: #dc3545 !important;
+  }
+  .container.artifact-active .row input[type="text"]:enabled {
+    border: 2px solid #dc3545 !important;
+    box-shadow: 0 0 4px rgba(220, 53, 69, 0.4);
+    caret-color: #dc3545;
   }
 </style>
 
@@ -1075,6 +1143,10 @@ function toggleArtifactEffects() {
 window.addEventListener('DOMContentLoaded', () => {
   updateInputFieldsState();
   toggleArtifactEffects();
+  const tribeOnLoad = document.getElementById('tribeSelect')?.value;
+  if (tribeOnLoad) {
+    populateTroops();
+  }
 });
 </script>
    
