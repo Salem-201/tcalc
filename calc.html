@@ -496,8 +496,10 @@
     
     .wheat-content-wrapper {
       margin-right: 0 !important;
-      margin-top: 1rem;
+      margin-top: -2.1rem;
       min-width: auto !important;
+      width: 100% !important;
+      flex: 1 !important;
     }
     
     #village_map {
@@ -512,6 +514,8 @@
     .wheat-content-wrapper table {
       margin-bottom: 1rem;
       font-size: 14px;
+      width: 100% !important;
+      max-width: 100% !important;
     }
     
     .wheat-content-wrapper table th {
@@ -534,7 +538,47 @@
     }
     
     .wheat-content-wrapper table #wheatProduction {
+      font-size: 20px !important;
+    }
+    
+    .wheat-content-wrapper table td.num {
+      text-align: right !important;
+    }
+    
+    /* تحسينات إضافية للحاويات في الجوال */
+    #wheat .tab-content {
+      padding: 10px !important;
+    }
+    
+    #wheat .tab-content > div:first-child > div:last-child {
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 10px !important;
+      box-sizing: border-box !important;
+    }
+    
+    #wheat .tab-content button {
+      width: 100% !important;
+      margin: 10px 0 !important;
+    }
+    
+    /* تحسين النصوص والخيارات في الجوال */
+    #wheat .tab-content p {
       font-size: 16px !important;
+      text-align: right !important;
+    }
+    
+    #wheat .tab-content > div > div:last-child > div {
+      text-align: right !important;
+    }
+    
+    #wheat .tab-content input[type="radio"] + span {
+      font-size: 15px !important;
+    }
+    
+    /* رفع الزيادات أعلى قليلاً في الجوال */
+    #wheat .tab-content > div:first-child > div:first-child > div:last-child {
+      margin-top: 0.5rem !important;
     }
   }
 
@@ -900,7 +944,7 @@
                     <div id="village_map" class="f13 II" style="left: 25px; position: relative;">
                         <img id="resfeld" src="https://salem-201.github.io/tcalc/IMAGE.png" alt="" style="width: 300px; height: 269px; object-fit: contain;">
                     </div>
-                    <div style="margin-top: 1.5rem;">
+                    <div style="margin-top: -1.5rem;">
                         <label style="display: flex; align-items: center; cursor: pointer; margin-bottom: 8px;">
                             <input type="checkbox" id="selectAllBonuses" onchange="toggleAllBonuses()" style="margin-left: 0.4rem;">
                             <span>تحديد الكل</span>
@@ -981,7 +1025,7 @@
                         
                         <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;">
                         
-                        <div style="margin-bottom: 10px; font-size: 14px;">
+                        <div style="margin-bottom: 10px; font-size: 14px; text-align: right;">
                             <p style="margin: 0 0 8px 0; font-weight: bold;">الحساب يتم عن طريق:</p>
                             <input type="radio" name="wheatCalcMode" value="fields" checked onchange="updateWheatCalculationMode()"> القمحيات
                             <input type="radio" name="wheatCalcMode" value="accounts" onchange="updateWheatCalculationMode()"> الحسابات
