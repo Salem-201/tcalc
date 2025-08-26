@@ -77,6 +77,9 @@
     flex: 0 1 auto;
     min-width: 200px;
     max-width: 250px;
+    height: 45px;
+    box-sizing: border-box;
+    line-height: 1.2;
   }
 
   .troop-stats-container {
@@ -641,7 +644,7 @@
     font-size: 0.95rem;
     font-weight: 500;
     font-family: inherit;
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     top: 0;
     outline: none;
@@ -652,20 +655,51 @@
     text-decoration: none;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow: hidden;
   }
 
   .tab-btn:hover {
-    background: #e9ecef;
+    background: linear-gradient(135deg, #e9ecef 0%, #f8f9fa 100%);
     color: #212529;
     border-color: #adb5bd;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 
   .tab-btn.active {
-    background: #fff;
+    background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
     color: #007bff;
-    border-color: #dee2e6;
+    border-color: #007bff;
     border-bottom-color: #fff;
     font-weight: bold;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
+    transform: translateY(-2px);
+    position: relative;
+    z-index: 10;
+  }
+
+  .tab-btn.active::before {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #007bff 0%, #0056b3 100%);
+    border-radius: 3px 3px 0 0;
+  }
+
+  .tab-btn.active::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 8px;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 4px;
+    background: #28a745;
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(40, 167, 69, 0.6);
   }
 
   .tab-btn:active,
@@ -865,7 +899,10 @@
 
 <div class="row">
 <input type="text" id="totalResources" placeholder="إجمالي الموارد" oninput="formatInputWithCommas(this); onInputHandler('resources')">
-<input type="text" id="customTroopCount" placeholder="عدد الجنود" oninput="formatInputWithCommas(this); onInputHandler('troops')">
+<div style="position: relative; display: inline-block; width: 100%;">
+  <input type="text" id="customTroopCount" placeholder="عدد الجنود" oninput="formatInputWithCommas(this); onInputHandler('troops')">
+  <span id="troopNameInInput" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: #6c757d; font-weight: bold; font-size: 14px; pointer-events: none; white-space: nowrap;"></span>
+</div>
 <div class="gold-input-container">
   <img src="https://utatar.com/assets/default/img/a/gold.gif" alt="ذهب" class="gold-icon">
   <input type="text" id="goldInput" placeholder="أدخل عدد الذهب" oninput="formatInputWithCommas(this); onInputHandler('gold')">
@@ -1190,13 +1227,37 @@ function clearResults() {
   document.getElementById('attackPower').textContent = '0';
   document.getElementById('defInfPower').textContent = '0';
   document.getElementById('defCavPower').textContent = '0';
+  
+  // إعادة ضبط placeholder لمربع عدد الجنود
+  const customTroopCountInput = document.getElementById('customTroopCount');
+  const troopNameInInput = document.getElementById('troopNameInInput');
+  if (customTroopCountInput) {
+    customTroopCountInput.placeholder = "عدد الجنود";
+  }
+  if (troopNameInInput) {
+    troopNameInInput.textContent = "";
+  }
 }
 
 function setTroopCosts() {
   const select = document.getElementById('troopSelect');
+  const customTroopCountInput = document.getElementById('customTroopCount');
+  const troopNameInInput = document.getElementById('troopNameInInput');
+  
   if (!select.value) {
     clearResults();
+    customTroopCountInput.placeholder = "عدد الجنود";
+    if (troopNameInInput) troopNameInInput.textContent = "";
     return;
+  }
+
+  // تحديث placeholder ليشمل اسم الجندي المختار
+  const selectedTroopName = select.options[select.selectedIndex].text;
+  customTroopCountInput.placeholder = `عدد ${selectedTroopName}`;
+  
+  // إضافة اسم الجندي داخل المربع
+  if (troopNameInInput) {
+    troopNameInInput.textContent = selectedTroopName;
   }
 
   const values = select.value.split(',');
