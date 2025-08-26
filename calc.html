@@ -23,12 +23,7 @@
   *, *::before, *::after { box-sizing: border-box; }
   img, video { max-width: 100%; height: auto; display: block; }
 
-  .num, [id*="Cost"], [id*="Power"], [id*="Count"], [id*="Total"] {
-    font-feature-settings: "tnum";
-    font-variant-numeric: tabular-nums;
-    direction: ltr !important;
-    unicode-bidi: bidi-override;
-  }
+
 
   .cost-display img, #unitTotalCost img, .power-item img { display: inline-block; vertical-align: middle; }
   html { overflow-y: scroll; }
@@ -791,12 +786,7 @@
     padding: 0;
   }
 
-  #wheatProduction {
-    font-feature-settings: "tnum";
-    font-variant-numeric: tabular-nums;
-    direction: ltr !important;
-    unicode-bidi: bidi-override;
-  }
+
 
   #wheat > div > div > div:first-child {
     min-width: 0;
@@ -1769,7 +1759,7 @@ function updateWheatProductionWithTime(timeMultiplier) {
     
     const finalProduction = singleFieldProduction * totalWheatFields * timeMultiplier;
     
-    wheatProductionElement.textContent = formatNumber(finalProduction);
+    wheatProductionElement.textContent = finalProduction.toLocaleString();
   }
 }
 
