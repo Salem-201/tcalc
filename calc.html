@@ -25,6 +25,7 @@
   img, video { max-width: 100%; height: auto; display: block; }
 
   .cost-display img, #unitTotalCost img, .power-item img { display: inline-block; vertical-align: middle; }
+  html { overflow-y: scroll; }
   html, body { overflow-x: hidden; }
   body {
     font-family: 'Segoe UI', sans-serif;
@@ -664,7 +665,7 @@
     color: #007bff;
     border-color: #dee2e6;
     border-bottom-color: #fff;
-    font-weight: 500;
+    font-weight: bold;
   }
 
   .tab-btn:active,
@@ -774,8 +775,8 @@
 
     <div class="tabs-container">
       <div class="tab-buttons">
-        <button class="tab-btn active" onclick="showTab('calculator')">حاسبة الجندي</button>
-        <button class="tab-btn" onclick="showTab('wheat')">حساب إنتاج القمحيات</button>
+        <button class="tab-btn active" onclick="showTab('calculator')">حساب الجيش</button>
+        <button class="tab-btn" onclick="showTab('wheat')">حساب القمحيات</button>
       </div>
       
 
@@ -1789,12 +1790,31 @@ function goToSoldierCalculator() {
   }
 }
 
+function showTab(tabName) {
+  // إخفاء جميع التبويبات
+  const tabs = document.querySelectorAll('.tab-content');
+  const buttons = document.querySelectorAll('.tab-btn');
 
+  tabs.forEach(tab => tab.classList.remove('active'));
+  buttons.forEach(btn => btn.classList.remove('active'));
+
+  // إظهار التبويب المختار
+  document.getElementById(tabName).classList.add('active');
+  
+  // تفعيل الزر المختار
+  if (event && event.target) {
+    event.target.classList.add('active');
+  } else {
+    // في حالة الاستدعاء من JavaScript
+    document.querySelector(`[onclick="showTab('${tabName}')"]`).classList.add('active');
+  }
+}
 
 window.addEventListener('DOMContentLoaded', () => {
   updateInputFieldsState();
   toggleArtifactEffects();
   updateTroopPower();
+  updateTimeCalculation();
   const tribeOnLoad = document.getElementById('tribeSelect')?.value;
   if (tribeOnLoad) {
     populateTroops();
