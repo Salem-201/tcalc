@@ -19,6 +19,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
   <title>حاسبة تكلفة الجندي</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; }
   img, video { max-width: 100%; height: auto; display: block; }
@@ -158,6 +159,27 @@
     font-size: 0.7rem;
     font-weight: normal;
     margin-right: 0.2rem;
+  }
+
+  /* تأثير مرئي عند تفعيل تحفة المهاجم */
+  .container.attacker-artifact-active .power-item:has(#attackPower) {
+    border-color: #ffc107;
+    background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%);
+    box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.25) inset, 0 0 10px rgba(255, 193, 7, 0.25);
+    animation: powerPulse 1.8s ease-in-out infinite;
+  }
+
+  .container.attacker-artifact-active .power-item:has(#attackPower) span {
+    color: #e0a800;
+  }
+
+  @keyframes powerPulse {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.25), 0 0 6px rgba(255, 193, 7, 0.2);
+    }
+    50% {
+      box-shadow: 0 0 0 4px rgba(255, 193, 7, 0.18), 0 0 12px rgba(255, 193, 7, 0.35);
+    }
   }
 
 
@@ -467,6 +489,47 @@
     .power-item .bonus-text { font-size: 0.6rem; }
   }
 
+  /* Dark Mode Styles */
+  body.dark-mode {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    color: #e0e0e0;
+  }
+
+  body.dark-mode .container {
+    background: rgba(40, 40, 40, 0.95);
+    color: #e0e0e0;
+  }
+
+  body.dark-mode .tab-btn {
+    background: #3a3a3a;
+    color: #e0e0e0;
+    border-color: #555;
+  }
+
+  body.dark-mode .tab-btn.active {
+    background: #007bff;
+    color: white;
+  }
+
+  body.dark-mode input[type="text"],
+  body.dark-mode select {
+    background: #2a2a2a;
+    color: #e0e0e0;
+    border-color: #555;
+  }
+
+  body.dark-mode table {
+    background: #2a2a2a !important;
+  }
+
+  body.dark-mode .theme-toggle {
+    background: rgba(40, 40, 40, 0.9) !important;
+  }
+
+  body.dark-mode .theme-toggle button:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
   @media (min-width: 768px) {
     input[type="text"],
     select {
@@ -493,14 +556,183 @@
     box-shadow: 0 0 4px rgba(220, 53, 69, 0.4);
     caret-color: #dc3545;
   }
+
+  .tabs-container {
+    margin-bottom: 2rem;
+  }
+
+  .tab-buttons {
+    display: flex;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #dee2e6;
+    padding-bottom: 0.5rem;
+  }
+
+  .tab-btn {
+    padding: 0.75rem 1.5rem;
+    border: 2px solid #dee2e6;
+    background: #f8f9fa;
+    color: #495057;
+    border-radius: 0.75rem 0.75rem 0 0;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    font-family: inherit;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    position: relative;
+    top: 0;
+    outline: none;
+    min-width: 150px;
+    text-align: center;
+    line-height: 1.2;
+    letter-spacing: normal;
+    text-decoration: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .tab-btn:hover {
+    background: #e9ecef;
+    color: #212529;
+    border-color: #adb5bd;
+  }
+
+  .tab-btn.active {
+    background: #fff;
+    color: #007bff;
+    border-color: #dee2e6;
+    border-bottom-color: #fff;
+    font-weight: 500;
+  }
+
+  .tab-btn:active,
+  .tab-btn:focus {
+    background: #fff;
+    color: #007bff;
+    border-color: #dee2e6;
+    border-bottom-color: #fff;
+    font-weight: 500;
+    outline: none;
+  }
+
+  .tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .tab-content.active {
+    display: block;
+  }
+
+
+
+
+
+  .village1 #map_details {
+    margin-top: -9px;
+  }
+
+  .village1 b.hover {
+    scale: 1.2;
+  }
+
+  .village1 .f13 {
+    position: relative;
+  }
+
+  .village1 b.rf16 {
+    left: 65px;
+    top: 202px;
+  }
+
+
+
+  @keyframes pulse {
+    0% { box-shadow: 0 2px 4px rgba(0,0,0,0.2), 0 0 0 0 rgba(40, 167, 69, 0.4); }
+    50% { box-shadow: 0 2px 4px rgba(0,0,0,0.2), 0 0 0 8px rgba(40, 167, 69, 0); }
+    100% { box-shadow: 0 2px 4px rgba(0,0,0,0.2), 0 0 0 0 rgba(40, 167, 69, 0); }
+  }
+
+  @media (max-width: 900px) {
+    #wheat > div > div {
+      flex-direction: column;
+      text-align: center;
+      gap: 1rem;
+    }
+
+    #wheat img {
+      width: 100%;
+      max-width: 300px;
+      height: auto;
+    }
+
+    .village1 {
+      font-size: 0.9em;
+    }
+  }
+
+  @media (max-width: 768px) {
+    #wheat img {
+      width: 100%;
+      max-width: 250px;
+      height: auto;
+    }
+  }
+
+  #wheat img {
+    flex-shrink: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    padding: 0;
+  }
+
+  #wheat > div > div > div:first-child {
+    min-width: 0;
+    max-width: 300px;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 </style>
 
 </head>
 <body>
   <div class="container">
-     
+    <div class="theme-toggle" style="position: absolute; top: 10px; left: 10px; z-index: 100; display: flex; align-items: center; gap: 6px; background: rgba(255, 255, 255, 0.9); padding: 4px 8px; border-radius: 15px; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1); backdrop-filter: blur(10px);">
+      <button id="lightModeBtn" onclick="setTheme('light')" style="background: none; border: none; cursor: pointer; padding: 3px; border-radius: 50%; transition: background-color 0.3s ease;" title="Light Mode">
+        <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.414a.5.5 0 1 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707z"/>
+        </svg>
+      </button>
+      <button id="darkModeBtn" onclick="setTheme('dark')" style="background: none; border: none; cursor: pointer; padding: 3px; border-radius: 50%; transition: background-color 0.3s ease;" title="Dark Mode">
+        <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/>
+        </svg>
+      </button>
+    </div>
+    <div class="tabs-container">
+      <div class="tab-buttons">
+        <button class="tab-btn active" onclick="showTab('calculator')">حاسبة الجندي</button>
+        <button class="tab-btn" onclick="showTab('wheat')">حساب إنتاج القمحيات</button>
+      </div>
 
-    <div class="select-row">
+      <div id="calculator" class="tab-content active">
+        <h1>حاسبة تكلفة الجندي</h1>
+
+        <div class="select-row">
       <select id="tribeSelect" onchange="populateTroops()">
         <option value="">-- اختر القبيلة 🏰 --</option>
         <option value="german">الجرمان</option>
@@ -604,9 +836,185 @@
              <button onclick="resetAll()" style="margin-top: 1rem; padding: 0.5rem 1rem; border: none; border-radius: 0.5rem; background-color: #e74c3c; color: white; font-size: 1rem; cursor: pointer;">
  🔄 إعادة ضبط الصفحة
  </button>
-  </div>
+      </div>
+
+      <div id="wheat" class="tab-content">
+        <div id="content" class="village1">
+            <div class="top"></div>
+
+            <style>
+                .village1 #village_map{ position: relative; display: inline-block; }
+                .village1 #village_map img{ display: block; }
+            </style>
+
+            <div style="display: flex; gap: 2rem; align-items: flex-start;">
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+                    <div id="village_map" class="f13 II" style="left: 25px; position: relative;">
+                        <img id="resfeld" src="https://salem-201.github.io/tcalc/IMAGE.png" alt="" style="width: 300px; height: 269px; object-fit: contain;">
+                    </div>
+                    <button onclick="goToSoldierCalculator()" style="padding: 12px 20px; background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3); transition: all 0.3s ease; min-width: 200px;">
+                        الذهاب لاحتساب عدد الجنود
+                    </button>
+                </div>
+                <div style="flex: 1; min-width: 30px; margin-right: -35px;">
+                    <table id="production" cellpadding="1" cellspacing="1" style="width: 100%; border-collapse: collapse; background: #f8f9fa; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        <thead>
+                            <tr><th colspan="3" style="background: #28a745; color: white; padding: 12px; text-align: center; font-size: 16px; font-weight: bold;">إنتاج القمح:</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr style="background: white;">
+                                <td class="ico" style="width: 60px; padding: 12px 8px; text-align: left; border-bottom: 1px solid #dee2e6;">
+                                    <div style="position: relative; display: inline-block; width: 24px; height: 24px; margin-left: 8px;">
+                                        <img src="https://utatar.com/assets/images/r4.png" alt="القمح" title="القمح" style="width: 24px; height: 24px; position: absolute; top: 0; left: 0;">
+                                        <img class="r4" src="https://utatar.com/assets/default/img/a/greenPlus.png" alt="القمح" title="القمح" style="width: 24px; height: 24px; position: absolute; top: 0; left: 0; z-index: 1;">
+                                    </div>
+                                </td>
+                                <td class="num" style="direction: ltr; padding: 12px; text-align: left; border-bottom: 1px solid #dee2e6; width: auto;">
+                                    <div class="Tit">
+                                        <span id="wheatProduction" style="font-size: 18px; font-weight: bold; color: #28a745;">22,049,638</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div style="margin-top: 1rem; padding: 12px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
+                        <div style="margin-bottom: 8px; font-size: 14px; font-weight: bold;">الحساب لفترة:</div>
+                        <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap; margin-bottom: 10px;">
+                            <label style="display: flex; align-items: center; cursor: pointer;">
+                                <input type="radio" name="timeCalcMode" value="hour" checked onchange="updateTimeCalculation()" style="margin-left: 0.4rem;">
+                                <span style="font-size: 13px;">بالساعة</span>
+                            </label>
+                            <label style="display: flex; align-items: center; cursor: pointer;">
+                                <input type="radio" name="timeCalcMode" value="day" onchange="updateTimeCalculation()" style="margin-left: 0.4rem;">
+                                <span style="font-size: 13px;">باليوم</span>
+                            </label>
+                            <label style="display: flex; align-items: center; cursor: pointer;">
+                                <input type="radio" name="timeCalcMode" value="custom" onchange="updateTimeCalculation()" style="margin-left: 0.4rem;">
+                                <span style="font-size: 13px;">اختياري</span>
+                            </label>
+                        </div>
+                        <div id="customTimeSection" style="display: none;">
+                            <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+                                <label style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="font-size: 13px; font-weight: bold;">عدد الساعات:</span>
+                                    <input type="text" id="customHours" placeholder="1" oninput="handleCustomHoursInput(this)" onkeypress="return /[0-9]/.test(event.key)" onfocus="this.select()" style="width: 60px; padding: 4px 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; text-align: center;">
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="font-size: 13px; font-weight: bold;">عدد الأيام:</span>
+                                    <input type="text" id="customDays" placeholder="0" oninput="handleCustomDaysInput(this)" onkeypress="return /[0-9]/.test(event.key)" onfocus="this.select()" style="width: 60px; padding: 4px 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; text-align: center;">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 1.5rem;">
+                        <label style="display: flex; align-items: center; cursor: pointer; margin-bottom: 8px;">
+                            <input type="checkbox" id="selectAllBonuses" onchange="toggleAllBonuses()" style="margin-left: 0.4rem;">
+                            <span>تحديد الكل</span>
+                        </label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: start; margin-bottom: 1rem;">
+                            <label style="display: flex; align-items: center; background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%); padding: 6px 8px; border-radius: 4px; border: 1px solid #ffc107; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 1px 2px rgba(255, 193, 7, 0.1); font-size: 12px;">
+                                <input type="checkbox" id="wheatBonusCheckbox" onchange="updateWheatProduction()" style="margin-left: 0.4rem; transform: scale(0.9); accent-color: #ffc107;">
+                                <span style="font-weight: bold; color: #856404;"><b><font color="#71D000">ب</font><font color="#FF6F0F">ل</font>ا<font color="#71D000">س </font></b> 25%</span>
+                            </label>
+                            <label style="display: flex; align-items: center; background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%); padding: 6px 8px; border-radius: 4px; border: 1px solid #28a745; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 1px 2px rgba(40, 167, 69, 0.1); font-size: 12px;">
+                                <input type="checkbox" id="oasisBonusCheckbox" onchange="updateWheatProduction()" style="margin-left: 0.4rem; transform: scale(0.9); accent-color: #28a745;">
+                                <span style="font-weight: bold; color: #155724;">واحات قمحية 200%</span>
+                            </label>
+                            <label style="display: flex; align-items: center; background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%); padding: 6px 8px; border-radius: 4px; border: 1px solid #9c27b0; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 1px 2px rgba(156, 39, 176, 0.1); font-size: 12px;">
+                                <input type="checkbox" id="millsBonusCheckbox" onchange="updateWheatProduction()" style="margin-left: 0.4rem; transform: scale(0.9); accent-color: #9c27b0;">
+                                <span style="font-weight: bold; color: #4a148c;">مطاحن ومخابز 100%</span>
+                            </label>
+                            <div>
+                                <label style="display: flex; align-items: center; background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); padding: 6px 8px; border-radius: 4px; border: 1px solid #2196f3; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 1px 2px rgba(33, 150, 243, 0.1); font-size: 12px;">
+                                    <input type="checkbox" id="waterBonusCheckbox" onchange="updateWheatProduction()" style="margin-left: 0.4rem; transform: scale(0.9); accent-color: #2196f3;">
+                                    <span style="font-weight: bold; color: #0d47a1;">محطات المياه 14%</span>
+                                </label>
+                                <div style="font-size: 9px; margin-top: 2px; text-align: center;">(للقرى الفرعونيه)</div>
+                            </div>
+                        </div>
+                        
+                        <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;">
+                        
+                        <div style="margin-bottom: 10px; font-size: 14px;">
+                            <p style="margin: 0 0 8px 0; font-weight: bold;">الحساب يتم عن طريق:</p>
+                            <input type="radio" name="wheatCalcMode" value="fields" checked onchange="updateWheatCalculationMode()"> القمحيات
+                            <input type="radio" name="wheatCalcMode" value="accounts" onchange="updateWheatCalculationMode()"> الحسابات
+                        </div>
+                        
+                        <div style="display: flex; align-items: center; gap: 15px; margin-top: 15px; flex-wrap: wrap;">
+                            <div id="wheatFieldsSection" style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 14px; font-weight: bold;">عدد القمحيات:</span>
+                                <input type="text" id="wheatFieldsCount" placeholder="1" oninput="handleWheatFieldsInput(this)" onkeypress="return /[0-9]/.test(event.key)" onfocus="this.select()" style="width: 80px; padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; text-align: center;">
+                            </div>
+                            <div id="accountsSection" style="display: none; align-items: center; gap: 10px;">
+                                <span style="font-size: 14px; font-weight: bold;">عدد الحسابات:</span>
+                                <input type="text" id="accountsCount" placeholder="0" oninput="handleAccountsInput(this)" onkeypress="return /[0-9]/.test(event.key)" onfocus="this.select()" style="width: 80px; padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; text-align: center;">
+                                <span style="font-size: 12px; color: #8b0000; font-weight: normal;">(1 حساب = 200 قمحية)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+      </div>
+    </div>
 
   <script>
+    function showTab(tabName) {
+      const tabs = document.querySelectorAll('.tab-content');
+      const buttons = document.querySelectorAll('.tab-btn');
+
+      tabs.forEach(tab => tab.classList.remove('active'));
+      buttons.forEach(btn => btn.classList.remove('active'));
+
+      document.getElementById(tabName).classList.add('active');
+      event.target.classList.add('active');
+
+      // عند تفعيل تبويب القمحيات، أعد تموضع الأرقام بعد أن تصبح الصورة مرئية
+      if (tabName === 'wheat') {
+        positionLevelBadges();
+      }
+    }
+
+
+    // تموضع أرقام اللفلات فوق الدوائر بدقة اعتمادًا على إحداثيات image map
+    function positionLevelBadges() {
+      const img = document.getElementById('resfeld');
+      const map = document.getElementById('rx');
+      const container = document.getElementById('village_map');
+      if (!img || !map || !container) return;
+
+      const naturalWidth = 300;  // عرض تصميم الإحداثيات الأصلي للصورة الحالية
+      const naturalHeight = 240; // ارتفاع تصميم الإحداثيات الأصلي
+
+      const rect = img.getBoundingClientRect();
+      const width = rect.width || naturalWidth;
+      const height = rect.height || naturalHeight;
+
+      const areas = Array.from(map.querySelectorAll('area[shape="circle"]'));
+      areas.forEach((area, index) => {
+        const coords = area.coords.split(',').map(c => parseFloat(c));
+        if (coords.length < 3) return;
+        const [cx, cy, r] = coords;
+        let badge = container.querySelector(`b.rf${index + 1}`);
+        if (!badge) return;
+        const xPercent = (cx / naturalWidth) * 100;
+        const yPercent = (cy / naturalHeight) * 100;
+        badge.style.left = `${xPercent}%`;
+        badge.style.top = `${yPercent}%`;
+      });
+    }
+
+    window.addEventListener('load', () => {
+      positionLevelBadges();
+    });
+    window.addEventListener('resize', positionLevelBadges);
+
+
     const troopData = {
              german: [
          { name: 'مقاتل بهراوة', cost: [95, 75, 40, 40], marketRate: 800, attack: 40, defInf: 20, defCav: 5 },
@@ -1045,6 +1453,20 @@ function updateTroopPower() {
   const tribe = document.getElementById('tribeSelect').value;
   const troopSelect = document.getElementById('troopSelect');
   
+  const container = document.querySelector('.container');
+  // attackerArtifactValue will be read below and reused here
+  let attackerArtifactValue;
+  try {
+    attackerArtifactValue = parseInt(document.getElementById('attackerArtifactSelect').value) || 0;
+  } catch (e) {
+    attackerArtifactValue = 0;
+  }
+  if (attackerArtifactValue > 0) {
+    container.classList.add('attacker-artifact-active');
+  } else {
+    container.classList.remove('attacker-artifact-active');
+  }
+  
   if (!tribe || !troopSelect.value || !troopData[tribe]) {
     document.getElementById('attackPower').textContent = '0';
     document.getElementById('defInfPower').textContent = '0';
@@ -1066,7 +1488,7 @@ function updateTroopPower() {
    const isSmithyUpgraded = document.getElementById('smithyUpgradeCheckbox').checked;
    const smithyMultiplier = isSmithyUpgraded ? 1.4 : 1; // زيادة 40%
 
-   const attackerArtifactValue = parseInt(document.getElementById('attackerArtifactSelect').value) || 0;
+   // use attackerArtifactValue defined earlier above
    const attackerArtifactMultiplier = 1 + (attackerArtifactValue / 100); // تحويل النسبة إلى مضاعف
 
  
@@ -1080,9 +1502,9 @@ function updateTroopPower() {
     document.getElementById('defInfPower').innerHTML = `${finalDefInf} <span class="bonus-text">(+${finalDefInf - (troop.defInf || 0)})</span>`;
     document.getElementById('defCavPower').innerHTML = `${finalDefCav} <span class="bonus-text">(+${finalDefCav - (troop.defCav || 0)})</span>`;
   } else {
-    document.getElementById('attackPower').textContent = troop.attack || 0;
-    document.getElementById('defInfPower').textContent = troop.defInf || 0;
-    document.getElementById('defCavPower').textContent = troop.defCav || 0;
+    document.getElementById('attackPower').textContent = finalAttack;
+    document.getElementById('defInfPower').textContent = finalDefInf;
+    document.getElementById('defCavPower').textContent = finalDefCav;
   }
 }
 
@@ -1125,9 +1547,229 @@ function toggleArtifactEffects() {
   }
 }
 
+function handleWheatFieldsInput(input) {
+  // إزالة أي أحرف غير رقمية
+  input.value = input.value.replace(/[^0-9]/g, '');
+  
+  // السماح بالمربع الفارغ للكتابة، لكن استخدام 1 كقيمة افتراضية للحساب
+  
+  // تحديث الإنتاج فوراً
+  updateWheatProduction();
+}
+
+function handleAccountsInput(input) {
+  // إزالة أي أحرف غير رقمية
+  input.value = input.value.replace(/[^0-9]/g, '');
+  
+  // السماح بالمربع الفارغ للكتابة، لكن استخدام 0 كقيمة افتراضية للحساب
+  
+  // تحديث الإنتاج فوراً
+  updateWheatProduction();
+}
+
+function handleCustomHoursInput(input) {
+  // إزالة أي أحرف غير رقمية
+  input.value = input.value.replace(/[^0-9]/g, '');
+  
+  // تحديث الحساب فوراً
+  updateTimeCalculation();
+}
+
+function handleCustomDaysInput(input) {
+  // إزالة أي أحرف غير رقمية
+  input.value = input.value.replace(/[^0-9]/g, '');
+  
+  // تحديث الحساب فوراً
+  updateTimeCalculation();
+}
+
+function updateTimeCalculation() {
+  const hourRadio = document.querySelector('input[name="timeCalcMode"][value="hour"]');
+  const dayRadio = document.querySelector('input[name="timeCalcMode"][value="day"]');
+  const customRadio = document.querySelector('input[name="timeCalcMode"][value="custom"]');
+  const customTimeSection = document.getElementById('customTimeSection');
+  const customHoursInput = document.getElementById('customHours');
+  const customDaysInput = document.getElementById('customDays');
+  
+  // إظهار/إخفاء مربع الساعات والأيام المخصص
+  if (customRadio && customRadio.checked) {
+    customTimeSection.style.display = 'block';
+  } else {
+    customTimeSection.style.display = 'none';
+  }
+  
+  // حساب المضاعف الزمني
+  let timeMultiplier = 1;
+  if (dayRadio && dayRadio.checked) {
+    timeMultiplier = 24; // يوم = 24 ساعة
+  } else if (customRadio && customRadio.checked) {
+    const customHours = customHoursInput && customHoursInput.value !== '' ? (parseInt(customHoursInput.value) || 0) : 0;
+    const customDays = customDaysInput && customDaysInput.value !== '' ? (parseInt(customDaysInput.value) || 0) : 0;
+    
+    // حساب إجمالي الساعات (الأيام × 24 + الساعات)
+    const totalHours = (customDays * 24) + customHours;
+    timeMultiplier = totalHours > 0 ? totalHours : 1; // إذا كان المجموع 0، استخدم 1 ساعة افتراضي
+  }
+  // إذا كان "بالساعة" مختار، المضاعف = 1 (افتراضي)
+  
+  // تحديث إنتاج القمح مع الوقت
+  updateWheatProductionWithTime(timeMultiplier);
+}
+
+function updateWheatProductionWithTime(timeMultiplier) {
+  // نفس منطق updateWheatProduction لكن مع ضرب النتيجة في المضاعف الزمني
+  const baseProduction = 22049638;
+  const bonusCheckbox = document.getElementById('wheatBonusCheckbox');
+  const oasisCheckbox = document.getElementById('oasisBonusCheckbox');
+  const millsCheckbox = document.getElementById('millsBonusCheckbox');
+  const waterCheckbox = document.getElementById('waterBonusCheckbox');
+  const wheatFieldsCountInput = document.getElementById('wheatFieldsCount');
+  const accountsCountInput = document.getElementById('accountsCount');
+  const wheatProductionElement = document.getElementById('wheatProduction');
+  
+  if (bonusCheckbox && oasisCheckbox && millsCheckbox && waterCheckbox && wheatFieldsCountInput && accountsCountInput && wheatProductionElement) {
+    const isBonus = bonusCheckbox.checked;
+    const isOasis = oasisCheckbox.checked;
+    const isMills = millsCheckbox.checked;
+    const isWater = waterCheckbox.checked;
+    const wheatFieldsCount = wheatFieldsCountInput.value === '' ? 1 : (parseInt(wheatFieldsCountInput.value) || 1);
+    const accountsCount = accountsCountInput.value === '' ? 0 : (parseInt(accountsCountInput.value) || 0);
+    
+    // تطبيق زيادة 25% أولاً
+    let currentProduction = baseProduction;
+    if (isBonus) {
+      currentProduction = Math.floor(currentProduction * 1.25);
+    }
+    
+    // إضافة المطاحن والمخابز على الرقم الأساسي
+    let millsBonus = 0;
+    if (isMills) {
+      millsBonus = Math.floor(baseProduction * 1);
+    }
+    
+    // إضافة الواحات على الرقم الأساسي
+    let oasisBonus = 0;
+    if (isOasis) {
+      oasisBonus = Math.floor(baseProduction * 2);
+    }
+    
+    // حساب النتيجة بدون المحطات أولاً
+    let productionBeforeWater = currentProduction + millsBonus + oasisBonus;
+    
+    // تطبيق زيادة المحطات على النتيجة النهائية
+    let singleFieldProduction = productionBeforeWater;
+    if (isWater) {
+      singleFieldProduction = Math.floor(productionBeforeWater * 1.14);
+    }
+    
+    // تحديد نوع الحساب المختار
+    const fieldsRadio = document.querySelector('input[name="wheatCalcMode"][value="fields"]');
+    const accountsRadio = document.querySelector('input[name="wheatCalcMode"][value="accounts"]');
+    
+    let totalWheatFields;
+    if (fieldsRadio && fieldsRadio.checked) {
+      totalWheatFields = wheatFieldsCount;
+    } else if (accountsRadio && accountsRadio.checked) {
+      const accounts = accountsCount === 0 ? 1 : accountsCount;
+      totalWheatFields = accounts * 200;
+    } else {
+      totalWheatFields = wheatFieldsCount;
+    }
+    
+    // ضرب النتيجة في إجمالي عدد القمحيات ثم في المضاعف الزمني
+    const finalProduction = singleFieldProduction * totalWheatFields * timeMultiplier;
+    
+    wheatProductionElement.textContent = finalProduction.toLocaleString();
+  }
+}
+
+function updateWheatCalculationMode() {
+  const fieldsRadio = document.querySelector('input[name="wheatCalcMode"][value="fields"]');
+  const accountsRadio = document.querySelector('input[name="wheatCalcMode"][value="accounts"]');
+  const wheatFieldsSection = document.getElementById('wheatFieldsSection');
+  const accountsSection = document.getElementById('accountsSection');
+  
+  if (fieldsRadio.checked) {
+    wheatFieldsSection.style.display = 'flex';
+    accountsSection.style.display = 'none';
+  } else if (accountsRadio.checked) {
+    wheatFieldsSection.style.display = 'none';
+    accountsSection.style.display = 'flex';
+  }
+  
+  // تحديث الإنتاج فوراً
+  updateWheatProduction();
+}
+
+function toggleAllBonuses() {
+  const selectAllCheckbox = document.getElementById('selectAllBonuses');
+  const wheatBonusCheckbox = document.getElementById('wheatBonusCheckbox');
+  const oasisBonusCheckbox = document.getElementById('oasisBonusCheckbox');
+  const millsBonusCheckbox = document.getElementById('millsBonusCheckbox');
+  const waterBonusCheckbox = document.getElementById('waterBonusCheckbox');
+  
+  const isChecked = selectAllCheckbox.checked;
+  
+  wheatBonusCheckbox.checked = isChecked;
+  oasisBonusCheckbox.checked = isChecked;
+  millsBonusCheckbox.checked = isChecked;
+  waterBonusCheckbox.checked = isChecked;
+  
+  updateWheatProduction();
+}
+
+function updateWheatProduction() {
+  // استدعاء الحساب مع الوقت مع المضاعف الافتراضي (ساعة واحدة)
+  updateTimeCalculation();
+}
+
+function goToSoldierCalculator() {
+  // الحصول على قيمة إنتاج القمح الحالية
+  const wheatProductionElement = document.getElementById('wheatProduction');
+  const currentProduction = wheatProductionElement ? wheatProductionElement.textContent : '0';
+  
+  // التبديل إلى تبويب حاسبة الجندي
+  showTab('calculator');
+  
+  // وضع القيمة في مربع إجمالي الموارد
+  const totalResourcesInput = document.getElementById('totalResources');
+  if (totalResourcesInput) {
+    totalResourcesInput.value = currentProduction;
+    // تحديث الحسابات
+    formatInputWithCommas(totalResourcesInput);
+    onInputHandler('resources');
+  }
+}
+
+function setTheme(theme) {
+  const body = document.body;
+  const lightBtn = document.getElementById('lightModeBtn');
+  const darkBtn = document.getElementById('darkModeBtn');
+  
+  if (theme === 'dark') {
+    body.classList.add('dark-mode');
+    darkBtn.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+    lightBtn.style.backgroundColor = 'transparent';
+    localStorage.setItem('theme', 'dark');
+  } else {
+    body.classList.remove('dark-mode');
+    lightBtn.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
+    darkBtn.style.backgroundColor = 'transparent';
+    localStorage.setItem('theme', 'light');
+  }
+}
+
+// تحميل الثيم المحفوظ عند تحميل الصفحة
+function loadTheme() {
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  setTheme(savedTheme);
+}
+
 window.addEventListener('DOMContentLoaded', () => {
+  loadTheme();
   updateInputFieldsState();
   toggleArtifactEffects();
+  updateTroopPower();
   const tribeOnLoad = document.getElementById('tribeSelect')?.value;
   if (tribeOnLoad) {
     populateTroops();
