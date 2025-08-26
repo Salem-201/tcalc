@@ -8,7 +8,6 @@
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
-  // تحديد المصدر GitHub
   gtag('config', 'G-74PGK3MG17', {
     campaign_source: 'github',
     page_location: window.location.href
@@ -23,6 +22,13 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; }
   img, video { max-width: 100%; height: auto; display: block; }
+
+  .num, [id*="Cost"], [id*="Power"], [id*="Count"], [id*="Total"] {
+    font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
+    direction: ltr !important;
+    unicode-bidi: bidi-override;
+  }
 
   .cost-display img, #unitTotalCost img, .power-item img { display: inline-block; vertical-align: middle; }
   html { overflow-y: scroll; }
@@ -492,7 +498,6 @@
     .power-item span { font-size: 0.95rem; }
     .power-item .bonus-text { font-size: 0.6rem; }
 
-    /* تنسيقات تبويب القمحيات للجوال */
     #wheat .tab-content > div:first-child {
       flex-direction: column !important;
       gap: 1rem !important;
@@ -549,7 +554,7 @@
       text-align: right !important;
     }
     
-    /* تحسينات إضافية للحاويات في الجوال */
+
     #wheat .tab-content {
       padding: 10px !important;
     }
@@ -566,7 +571,7 @@
       margin: 10px 0 !important;
     }
     
-    /* تحسين النصوص والخيارات في الجوال */
+
     #wheat .tab-content p {
       font-size: 16px !important;
       text-align: right !important;
@@ -582,7 +587,7 @@
     
 
     
-    /* رفع الزيادات أعلى قليلاً في الجوال */
+
     #wheat .tab-content > div:first-child > div:first-child > div:last-child {
       margin-top: 0.5rem !important;
     }
@@ -784,6 +789,13 @@
     z-index: 1;
     margin: 0;
     padding: 0;
+  }
+
+  #wheatProduction {
+    font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
+    direction: ltr !important;
+    unicode-bidi: bidi-override;
   }
 
   #wheat > div > div > div:first-child {
@@ -1060,22 +1072,20 @@
       document.getElementById(tabName).classList.add('active');
       event.target.classList.add('active');
 
-      // عند تفعيل تبويب القمحيات، أعد تموضع الأرقام بعد أن تصبح الصورة مرئية
       if (tabName === 'wheat') {
         positionLevelBadges();
       }
     }
 
 
-    // تموضع أرقام اللفلات فوق الدوائر بدقة اعتمادًا على إحداثيات image map
     function positionLevelBadges() {
       const img = document.getElementById('resfeld');
       const map = document.getElementById('rx');
       const container = document.getElementById('village_map');
       if (!img || !map || !container) return;
 
-      const naturalWidth = 300;  // عرض تصميم الإحداثيات الأصلي للصورة الحالية
-      const naturalHeight = 240; // ارتفاع تصميم الإحداثيات الأصلي
+      const naturalWidth = 300;
+      const naturalHeight = 240;
 
       const rect = img.getBoundingClientRect();
       const width = rect.width || naturalWidth;
@@ -1228,7 +1238,6 @@ function clearResults() {
   document.getElementById('defInfPower').textContent = '0';
   document.getElementById('defCavPower').textContent = '0';
   
-  // إعادة ضبط placeholder لمربع عدد الجنود
   const customTroopCountInput = document.getElementById('customTroopCount');
   const troopNameInInput = document.getElementById('troopNameInInput');
   if (customTroopCountInput) {
@@ -1251,11 +1260,9 @@ function setTroopCosts() {
     return;
   }
 
-  // تحديث placeholder ليشمل اسم الجندي المختار
   const selectedTroopName = select.options[select.selectedIndex].text;
   customTroopCountInput.placeholder = `عدد ${selectedTroopName}`;
   
-  // إضافة اسم الجندي داخل المربع
   if (troopNameInInput) {
     troopNameInInput.textContent = selectedTroopName;
   }
@@ -1564,7 +1571,6 @@ function updateTroopPower() {
   const troopSelect = document.getElementById('troopSelect');
   
   const container = document.querySelector('.container');
-  // attackerArtifactValue will be read below and reused here
   let attackerArtifactValue;
   try {
     attackerArtifactValue = parseInt(document.getElementById('attackerArtifactSelect').value) || 0;
@@ -1596,10 +1602,9 @@ function updateTroopPower() {
 
 
    const isSmithyUpgraded = document.getElementById('smithyUpgradeCheckbox').checked;
-   const smithyMultiplier = isSmithyUpgraded ? 1.4 : 1; // زيادة 40%
+   const smithyMultiplier = isSmithyUpgraded ? 1.4 : 1;
 
-   // use attackerArtifactValue defined earlier above
-   const attackerArtifactMultiplier = 1 + (attackerArtifactValue / 100); // تحويل النسبة إلى مضاعف
+   const attackerArtifactMultiplier = 1 + (attackerArtifactValue / 100);
 
  
    const finalAttack = Math.floor((troop.attack || 0) * smithyMultiplier * attackerArtifactMultiplier);
@@ -1658,38 +1663,26 @@ function toggleArtifactEffects() {
 }
 
 function handleWheatFieldsInput(input) {
-  // إزالة أي أحرف غير رقمية
   input.value = input.value.replace(/[^0-9]/g, '');
   
-  // السماح بالمربع الفارغ للكتابة، لكن استخدام 1 كقيمة افتراضية للحساب
-  
-  // تحديث الإنتاج فوراً
   updateWheatProduction();
 }
 
 function handleAccountsInput(input) {
-  // إزالة أي أحرف غير رقمية
   input.value = input.value.replace(/[^0-9]/g, '');
   
-  // السماح بالمربع الفارغ للكتابة، لكن استخدام 0 كقيمة افتراضية للحساب
-  
-  // تحديث الإنتاج فوراً
   updateWheatProduction();
 }
 
 function handleCustomHoursInput(input) {
-  // إزالة أي أحرف غير رقمية
   input.value = input.value.replace(/[^0-9]/g, '');
   
-  // تحديث الحساب فوراً
   updateTimeCalculation();
 }
 
 function handleCustomDaysInput(input) {
-  // إزالة أي أحرف غير رقمية
   input.value = input.value.replace(/[^0-9]/g, '');
   
-  // تحديث الحساب فوراً
   updateTimeCalculation();
 }
 
@@ -1701,33 +1694,27 @@ function updateTimeCalculation() {
   const customHoursInput = document.getElementById('customHours');
   const customDaysInput = document.getElementById('customDays');
   
-  // إظهار/إخفاء مربع الساعات والأيام المخصص
   if (customRadio && customRadio.checked) {
     customTimeSection.style.display = 'block';
   } else {
     customTimeSection.style.display = 'none';
   }
   
-  // حساب المضاعف الزمني
   let timeMultiplier = 1;
   if (dayRadio && dayRadio.checked) {
-    timeMultiplier = 24; // يوم = 24 ساعة
+    timeMultiplier = 24;
   } else if (customRadio && customRadio.checked) {
     const customHours = customHoursInput && customHoursInput.value !== '' ? (parseInt(customHoursInput.value) || 0) : 0;
     const customDays = customDaysInput && customDaysInput.value !== '' ? (parseInt(customDaysInput.value) || 0) : 0;
     
-    // حساب إجمالي الساعات (الأيام × 24 + الساعات)
     const totalHours = (customDays * 24) + customHours;
-    timeMultiplier = totalHours > 0 ? totalHours : 1; // إذا كان المجموع 0، استخدم 1 ساعة افتراضي
+    timeMultiplier = totalHours > 0 ? totalHours : 1;
   }
-  // إذا كان "بالساعة" مختار، المضاعف = 1 (افتراضي)
   
-  // تحديث إنتاج القمح مع الوقت
   updateWheatProductionWithTime(timeMultiplier);
 }
 
 function updateWheatProductionWithTime(timeMultiplier) {
-  // نفس منطق updateWheatProduction لكن مع ضرب النتيجة في المضاعف الزمني
   const baseProduction = 22049638;
   const bonusCheckbox = document.getElementById('wheatBonusCheckbox');
   const oasisCheckbox = document.getElementById('oasisBonusCheckbox');
@@ -1745,34 +1732,28 @@ function updateWheatProductionWithTime(timeMultiplier) {
     const wheatFieldsCount = wheatFieldsCountInput.value === '' ? 1 : (parseInt(wheatFieldsCountInput.value) || 1);
     const accountsCount = accountsCountInput.value === '' ? 0 : (parseInt(accountsCountInput.value) || 0);
     
-    // تطبيق زيادة 25% أولاً
     let currentProduction = baseProduction;
     if (isBonus) {
       currentProduction = Math.floor(currentProduction * 1.25);
     }
     
-    // إضافة المطاحن والمخابز على الرقم الأساسي
     let millsBonus = 0;
     if (isMills) {
       millsBonus = Math.floor(baseProduction * 1);
     }
     
-    // إضافة الواحات على الرقم الأساسي
     let oasisBonus = 0;
     if (isOasis) {
       oasisBonus = Math.floor(baseProduction * 2);
     }
     
-    // حساب النتيجة بدون المحطات أولاً
     let productionBeforeWater = currentProduction + millsBonus + oasisBonus;
     
-    // تطبيق زيادة المحطات على النتيجة النهائية
     let singleFieldProduction = productionBeforeWater;
     if (isWater) {
       singleFieldProduction = Math.floor(productionBeforeWater * 1.14);
     }
     
-    // تحديد نوع الحساب المختار
     const fieldsRadio = document.querySelector('input[name="wheatCalcMode"][value="fields"]');
     const accountsRadio = document.querySelector('input[name="wheatCalcMode"][value="accounts"]');
     
@@ -1786,10 +1767,9 @@ function updateWheatProductionWithTime(timeMultiplier) {
       totalWheatFields = wheatFieldsCount;
     }
     
-    // ضرب النتيجة في إجمالي عدد القمحيات ثم في المضاعف الزمني
     const finalProduction = singleFieldProduction * totalWheatFields * timeMultiplier;
     
-    wheatProductionElement.textContent = finalProduction.toLocaleString();
+    wheatProductionElement.textContent = formatNumber(finalProduction);
   }
 }
 
@@ -1807,7 +1787,6 @@ function updateWheatCalculationMode() {
     accountsSection.style.display = 'flex';
   }
   
-  // تحديث الإنتاج فوراً
   updateWheatProduction();
 }
 
@@ -1829,44 +1808,35 @@ function toggleAllBonuses() {
 }
 
 function updateWheatProduction() {
-  // استدعاء الحساب مع الوقت مع المضاعف الافتراضي (ساعة واحدة)
   updateTimeCalculation();
 }
 
 function goToSoldierCalculator() {
-  // الحصول على قيمة إنتاج القمح الحالية
   const wheatProductionElement = document.getElementById('wheatProduction');
   const currentProduction = wheatProductionElement ? wheatProductionElement.textContent : '0';
   
-  // التبديل إلى تبويب حاسبة الجندي
   showTab('calculator');
   
-  // وضع القيمة في مربع إجمالي الموارد
   const totalResourcesInput = document.getElementById('totalResources');
   if (totalResourcesInput) {
     totalResourcesInput.value = currentProduction;
-    // تحديث الحسابات
     formatInputWithCommas(totalResourcesInput);
     onInputHandler('resources');
   }
 }
 
 function showTab(tabName) {
-  // إخفاء جميع التبويبات
   const tabs = document.querySelectorAll('.tab-content');
   const buttons = document.querySelectorAll('.tab-btn');
 
   tabs.forEach(tab => tab.classList.remove('active'));
   buttons.forEach(btn => btn.classList.remove('active'));
 
-  // إظهار التبويب المختار
   document.getElementById(tabName).classList.add('active');
   
-  // تفعيل الزر المختار
   if (event && event.target) {
     event.target.classList.add('active');
   } else {
-    // في حالة الاستدعاء من JavaScript
     document.querySelector(`[onclick="showTab('${tabName}')"]`).classList.add('active');
   }
 }
