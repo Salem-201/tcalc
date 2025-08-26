@@ -487,6 +487,55 @@
     .power-item img { width: 16px !important; height: 16px !important; margin-right: 0.2rem !important; }
     .power-item span { font-size: 0.95rem; }
     .power-item .bonus-text { font-size: 0.6rem; }
+
+    /* تنسيقات تبويب القمحيات للجوال */
+    #wheat .tab-content > div:first-child {
+      flex-direction: column !important;
+      gap: 1rem !important;
+    }
+    
+    .wheat-content-wrapper {
+      margin-right: 0 !important;
+      margin-top: 1rem;
+      min-width: auto !important;
+    }
+    
+    #village_map {
+      left: 0 !important;
+    }
+    
+    #resfeld {
+      width: 280px !important;
+      height: 250px !important;
+    }
+    
+    .wheat-content-wrapper table {
+      margin-bottom: 1rem;
+      font-size: 14px;
+    }
+    
+    .wheat-content-wrapper table th {
+      font-size: 14px !important;
+      padding: 8px !important;
+    }
+    
+    .wheat-content-wrapper table td {
+      padding: 8px 4px !important;
+      font-size: 13px !important;
+    }
+    
+    .wheat-content-wrapper table td.ico {
+      width: 50px !important;
+      padding: 8px 4px !important;
+    }
+    
+    .wheat-content-wrapper table td.ico div {
+      margin-left: 4px !important;
+    }
+    
+    .wheat-content-wrapper table #wheatProduction {
+      font-size: 16px !important;
+    }
   }
 
   /* Dark Mode Styles */
@@ -711,27 +760,26 @@
 </head>
 <body>
   <div class="container">
-    <div class="theme-toggle" style="position: absolute; top: 10px; left: 10px; z-index: 100; display: flex; align-items: center; gap: 6px; background: rgba(255, 255, 255, 0.9); padding: 4px 8px; border-radius: 15px; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1); backdrop-filter: blur(10px);">
-      <button id="lightModeBtn" onclick="setTheme('light')" style="background: none; border: none; cursor: pointer; padding: 3px; border-radius: 50%; transition: background-color 0.3s ease;" title="Light Mode">
-        <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.414a.5.5 0 1 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707z"/>
-        </svg>
-      </button>
-      <button id="darkModeBtn" onclick="setTheme('dark')" style="background: none; border: none; cursor: pointer; padding: 3px; border-radius: 50%; transition: background-color 0.3s ease;" title="Dark Mode">
-        <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/>
-        </svg>
-      </button>
-    </div>
+
     <div class="tabs-container">
       <div class="tab-buttons">
         <button class="tab-btn active" onclick="showTab('calculator')">حاسبة الجندي</button>
         <button class="tab-btn" onclick="showTab('wheat')">حساب إنتاج القمحيات</button>
       </div>
+      <div class="theme-toggle" style="position: absolute; top: 79px; left: 10px; z-index: 100; display: flex; align-items: center; gap: 6px; background: rgba(255, 255, 255, 0.9); padding: 4px 8px; border-radius: 15px; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1); backdrop-filter: blur(10px);">
+        <button id="lightModeBtn" onclick="setTheme('light')" style="background: none; border: none; cursor: pointer; padding: 3px; border-radius: 50%; transition: background-color 0.3s ease;" title="Light Mode">
+          <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.414a.5.5 0 1 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707z"/>
+          </svg>
+        </button>
+        <button id="darkModeBtn" onclick="setTheme('dark')" style="background: none; border: none; cursor: pointer; padding: 3px; border-radius: 50%; transition: background-color 0.3s ease;" title="Dark Mode">
+          <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/>
+          </svg>
+        </button>
+      </div>
 
       <div id="calculator" class="tab-content active">
-        <h1>حاسبة تكلفة الجندي</h1>
-
         <div class="select-row">
       <select id="tribeSelect" onchange="populateTroops()">
         <option value="">-- اختر القبيلة 🏰 --</option>
@@ -852,11 +900,35 @@
                     <div id="village_map" class="f13 II" style="left: 25px; position: relative;">
                         <img id="resfeld" src="https://salem-201.github.io/tcalc/IMAGE.png" alt="" style="width: 300px; height: 269px; object-fit: contain;">
                     </div>
-                    <button onclick="goToSoldierCalculator()" style="padding: 12px 20px; background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3); transition: all 0.3s ease; min-width: 200px;">
-                        الذهاب لاحتساب عدد الجنود
-                    </button>
+                    <div style="margin-top: 1.5rem;">
+                        <label style="display: flex; align-items: center; cursor: pointer; margin-bottom: 8px;">
+                            <input type="checkbox" id="selectAllBonuses" onchange="toggleAllBonuses()" style="margin-left: 0.4rem;">
+                            <span>تحديد الكل</span>
+                        </label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: start; margin-bottom: 1rem;">
+                            <label style="display: flex; align-items: center; background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%); padding: 6px 8px; border-radius: 4px; border: 1px solid #ffc107; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 1px 2px rgba(255, 193, 7, 0.1); font-size: 12px;">
+                                <input type="checkbox" id="wheatBonusCheckbox" onchange="updateWheatProduction()" style="margin-left: 0.4rem; transform: scale(0.9); accent-color: #ffc107;">
+                                <span style="font-weight: bold; color: #b8860b;"><b><font color="#71D000">ب</font><font color="#FF6F0F">ل</font>ا<font color="#71D000">س </font></b> 25%</span>
+                            </label>
+                            <label style="display: flex; align-items: center; background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%); padding: 6px 8px; border-radius: 4px; border: 1px solid #28a745; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 1px 2px rgba(40, 167, 69, 0.1); font-size: 12px;">
+                                <input type="checkbox" id="oasisBonusCheckbox" onchange="updateWheatProduction()" style="margin-left: 0.4rem; transform: scale(0.9); accent-color: #28a745;">
+                                <span style="font-weight: bold; color: #155724;">واحات قمحية 200%</span>
+                            </label>
+                            <label style="display: flex; align-items: center; background: linear-gradient(135deg, #fff0f0 0%, #f8d7da 100%); padding: 6px 8px; border-radius: 4px; border: 1px solid #dc3545; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 1px 2px rgba(220, 53, 69, 0.1); font-size: 12px;">
+                                <input type="checkbox" id="millsBonusCheckbox" onchange="updateWheatProduction()" style="margin-left: 0.3rem; transform: scale(0.9); accent-color: #dc3545;">
+                                <span style="font-weight: bold; color: #721c24;">مطاحن ومخابز 100%</span>
+                            </label>
+                            <div>
+                                <label style="display: flex; align-items: center; background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); padding: 6px 8px; border-radius: 4px; border: 1px solid #0d47a1; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 1px 2px rgba(13, 71, 161, 0.1); font-size: 12px;">
+                                    <input type="checkbox" id="waterBonusCheckbox" onchange="updateWheatProduction()" style="margin-left: 0.4rem; transform: scale(0.9); accent-color: #0d47a1;">
+                                    <span style="font-weight: bold; color: #0d47a1;">محطات المياه 14%</span>
+                                </label>
+                                <div style="font-size: 9px; margin-top: 2px; text-align: center;">(للقرى الفرعونيه)</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div style="flex: 1; min-width: 30px; margin-right: -35px;">
+                <div class="wheat-content-wrapper" style="flex: 1; min-width: 30px; margin-right: -25px;">
                     <table id="production" cellpadding="1" cellspacing="1" style="width: 100%; border-collapse: collapse; background: #f8f9fa; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                         <thead>
                             <tr><th colspan="3" style="background: #28a745; color: white; padding: 12px; text-align: center; font-size: 16px; font-weight: bold;">إنتاج القمح:</th></tr>
@@ -906,34 +978,6 @@
                                 </label>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div style="margin-top: 1.5rem;">
-                        <label style="display: flex; align-items: center; cursor: pointer; margin-bottom: 8px;">
-                            <input type="checkbox" id="selectAllBonuses" onchange="toggleAllBonuses()" style="margin-left: 0.4rem;">
-                            <span>تحديد الكل</span>
-                        </label>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: start; margin-bottom: 1rem;">
-                            <label style="display: flex; align-items: center; background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%); padding: 6px 8px; border-radius: 4px; border: 1px solid #ffc107; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 1px 2px rgba(255, 193, 7, 0.1); font-size: 12px;">
-                                <input type="checkbox" id="wheatBonusCheckbox" onchange="updateWheatProduction()" style="margin-left: 0.4rem; transform: scale(0.9); accent-color: #ffc107;">
-                                <span style="font-weight: bold; color: #856404;"><b><font color="#71D000">ب</font><font color="#FF6F0F">ل</font>ا<font color="#71D000">س </font></b> 25%</span>
-                            </label>
-                            <label style="display: flex; align-items: center; background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%); padding: 6px 8px; border-radius: 4px; border: 1px solid #28a745; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 1px 2px rgba(40, 167, 69, 0.1); font-size: 12px;">
-                                <input type="checkbox" id="oasisBonusCheckbox" onchange="updateWheatProduction()" style="margin-left: 0.4rem; transform: scale(0.9); accent-color: #28a745;">
-                                <span style="font-weight: bold; color: #155724;">واحات قمحية 200%</span>
-                            </label>
-                            <label style="display: flex; align-items: center; background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%); padding: 6px 8px; border-radius: 4px; border: 1px solid #9c27b0; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 1px 2px rgba(156, 39, 176, 0.1); font-size: 12px;">
-                                <input type="checkbox" id="millsBonusCheckbox" onchange="updateWheatProduction()" style="margin-left: 0.4rem; transform: scale(0.9); accent-color: #9c27b0;">
-                                <span style="font-weight: bold; color: #4a148c;">مطاحن ومخابز 100%</span>
-                            </label>
-                            <div>
-                                <label style="display: flex; align-items: center; background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); padding: 6px 8px; border-radius: 4px; border: 1px solid #2196f3; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 1px 2px rgba(33, 150, 243, 0.1); font-size: 12px;">
-                                    <input type="checkbox" id="waterBonusCheckbox" onchange="updateWheatProduction()" style="margin-left: 0.4rem; transform: scale(0.9); accent-color: #2196f3;">
-                                    <span style="font-weight: bold; color: #0d47a1;">محطات المياه 14%</span>
-                                </label>
-                                <div style="font-size: 9px; margin-top: 2px; text-align: center;">(للقرى الفرعونيه)</div>
-                            </div>
-                        </div>
                         
                         <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;">
                         
@@ -955,6 +999,10 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <button onclick="goToSoldierCalculator()" style="margin-top: 1.5rem; padding: 12px 20px; background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3); transition: all 0.3s ease; width: 100%;">
+                        الذهاب لاحتساب عدد الجنود
+                    </button>
                 </div>
             </div>
 
