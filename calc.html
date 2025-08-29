@@ -22,6 +22,15 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; }
   img, video { max-width: 100%; height: auto; display: block; }
+  
+  /* Force English numbers display */
+  #wheatProduction {
+    font-family: 'Courier New', monospace !important;
+    direction: ltr !important;
+    unicode-bidi: bidi-override !important;
+    font-feature-settings: "tnum" 1 !important;
+    font-variant-numeric: tabular-nums !important;
+  }
 
 
 
@@ -983,7 +992,7 @@
                                 </td>
                                 <td class="num" style="direction: ltr; padding: 12px; text-align: left; border-bottom: 1px solid #dee2e6; width: auto;">
                                     <div class="Tit">
-                                        <span id="wheatProduction" style="font-size: 18px; font-weight: bold; color: #28a745; font-family: 'Courier New', monospace; direction: ltr;">22,049,638</span>
+                                        <span id="wheatProduction" style="font-size: 18px; font-weight: bold; color: #28a745; font-family: 'Courier New', monospace; direction: ltr; unicode-bidi: bidi-override;">22,049,638</span>
                                     </div>
                                 </td>
                             </tr>
@@ -1759,7 +1768,10 @@ function updateWheatProductionWithTime(timeMultiplier) {
     
     const finalProduction = singleFieldProduction * totalWheatFields * timeMultiplier;
     
-    wheatProductionElement.textContent = finalProduction.toLocaleString();
+    // Force English numbers display
+    wheatProductionElement.textContent = finalProduction.toLocaleString('en-US');
+    wheatProductionElement.style.unicodeBidi = 'bidi-override';
+    wheatProductionElement.style.direction = 'ltr';
   }
 }
 
@@ -1836,6 +1848,15 @@ window.addEventListener('DOMContentLoaded', () => {
   toggleArtifactEffects();
   updateTroopPower();
   updateTimeCalculation();
+  
+  // Force English numbers display for wheat production
+  const wheatProductionElement = document.getElementById('wheatProduction');
+  if (wheatProductionElement) {
+    wheatProductionElement.style.unicodeBidi = 'bidi-override';
+    wheatProductionElement.style.direction = 'ltr';
+    wheatProductionElement.style.fontFamily = 'Courier New, monospace';
+  }
+  
   const tribeOnLoad = document.getElementById('tribeSelect')?.value;
   if (tribeOnLoad) {
     populateTroops();
