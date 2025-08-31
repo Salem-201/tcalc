@@ -779,14 +779,15 @@ $(document).ready(function(){
 
 
 function getZoomLevel() {
-    if (window.visualViewport) {
-        return window.visualViewport.scale;
-    }
-    return window.devicePixelRatio || 1;
+    const screenWidth = window.screen.width;
+    const windowWidth = window.innerWidth;
+    const zoom = screenWidth / windowWidth;
+    return zoom;
 }
 
 function isZoomedIn() {
-    return getZoomLevel() > 1.2;
+    const zoom = getZoomLevel();
+    return zoom > 1.2;
 }
 
 function smartNavigation(url) {
