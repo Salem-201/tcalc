@@ -1,192 +1,228 @@
-// كود بسيط ونظيف للجوال - اختبار الزوم والتنقل الديناميكي
-// Mobile Zoom & Dynamic Navigation Test
-
-// متغيرات أساسية
-let isLoading = false;
-let currentPage = 'home';
-
-// دالة كشف مستوى الزوم
-function getZoomLevel() {
-    if (window.visualViewport && window.visualViewport.scale) {
-        return window.visualViewport.scale;
-    }
-    const screenWidth = window.screen.width;
-    const windowWidth = window.innerWidth;
-    const zoom = screenWidth / windowWidth;
-    return zoom;
-}
-
-// دالة كشف إذا كان المستخدم في وضع زوم
-function isZoomedIn() {
-    const zoom = getZoomLevel();
-    return zoom > 1.1;
-}
-
-// دالة إعادة تعيين الزوم
-function resetZoom() {
-    let viewport = document.querySelector("meta[name=viewport]");
-    
-    if (viewport) {
-        viewport.remove();
-    }
-
-    viewport = document.createElement("meta");
-    viewport.name = "viewport";
-    viewport.content = "width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no";
-    document.head.appendChild(viewport);
-
-    document.documentElement.style.transform = "scale(1)";
-    document.documentElement.style.transformOrigin = "top left";
-
-    setTimeout(() => {
-        viewport.content = "width=device-width, initial-scale=1, maximum-scale=5, minimum-scale=1, user-scalable=yes";
-        document.head.appendChild(viewport);
-        document.documentElement.style.transform = "";
-    }, 200);
-    
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
-}
-
-// دالة التنقل الديناميكي (AJAX)
-function dynamicLoad(url) {
-    if (isLoading) return;
-    
-    isLoading = true;
-    showLoading(true);
-    
-    // محاكاة طلب AJAX
-    setTimeout(() => {
-        updateContent(url);
-        showLoading(false);
-        isLoading = false;
-        logEvent('تم التنقل الديناميكي إلى: ' + url);
-    }, 1000);
-}
-
-// دالة التنقل الذكي
-function smartNavigation(url) {
-    if (isZoomedIn()) {
-        logEvent('تم كشف الزوم - سيتم إعادة تحميل الصفحة');
-        resetZoom();
-        setTimeout(() => {
-            window.location.href = url;
-        }, 100);
-    } else {
-        logEvent('الزوم طبيعي - سيتم التنقل الديناميكي');
-        dynamicLoad(url);
-    }
-}
-
-// دالة تحديث المحتوى
-function updateContent(url) {
-    const content = document.getElementById('content');
-    if (!content) return;
-    
-    let newContent = '';
-    
-    switch(url) {
-        case 'page1':
-            newContent = '<h2>الصفحة الأولى</h2><p>هذا محتوى الصفحة الأولى</p>';
-            break;
-        case 'page2':
-            newContent = '<h2>الصفحة الثانية</h2><p>هذا محتوى الصفحة الثانية</p>';
-            break;
-        case 'page3':
-            newContent = '<h2>الصفحة الثالثة</h2><p>هذا محتوى الصفحة الثالثة</p>';
-            break;
-        default:
-            newContent = '<h2>الصفحة الرئيسية</h2><p>مرحباً بك في الصفحة الرئيسية</p>';
-    }
-    
-    content.innerHTML = newContent;
-    currentPage = url;
-}
-
-// دالة إظهار/إخفاء التحميل
-function showLoading(show) {
-    const loading = document.getElementById('loading');
-    if (loading) {
-        loading.style.display = show ? 'block' : 'none';
-    }
-}
-
-// دالة تسجيل الأحداث
-function logEvent(message) {
-    const log = document.getElementById('log');
-    if (!log) return;
-    
-    const time = new Date().toLocaleTimeString();
-    const logEntry = document.createElement('div');
-    logEntry.innerHTML = `[${time}] ${message}`;
-    log.appendChild(logEntry);
-    log.scrollTop = log.scrollHeight;
-}
-
-// دالة تحديث معلومات الزوم
-function updateZoomInfo() {
-    const zoomLevel = document.getElementById('zoomLevel');
-    const zoomStatus = document.getElementById('zoomStatus');
-    
-    if (zoomLevel) {
-        const level = Math.round(getZoomLevel() * 100);
-        zoomLevel.textContent = level + '%';
-    }
-    
-    if (zoomStatus) {
-        zoomStatus.textContent = isZoomedIn() ? 'مكبر' : 'طبيعي';
-        zoomStatus.style.color = isZoomedIn() ? '#d32f2f' : '#388e3c';
-    }
-}
-
-// تهيئة الصفحة
-function init() {
-    logEvent('تم تحميل الصفحة');
-    updateZoomInfo();
-    
-    // إعادة تعيين الزوم عند تحميل الصفحة
-    setTimeout(function() {
-        if (window.visualViewport && window.visualViewport.scale > 1.1) {
-            logEvent('تم كشف الزوم عند التحميل - سيتم إعادة تعيينه');
-            resetZoom();
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار الزوم والتنقل - الجوال</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-    }, 500);
-    
-    // تحديث معلومات الزوم كل ثانية
-    setInterval(updateZoomInfo, 1000);
-    
-    // ربط الأحداث
-    document.addEventListener('click', function(e) {
-        if (e.target.matches('a[data-page]')) {
-            e.preventDefault();
-            const page = e.target.getAttribute('data-page');
-            logEvent('تم النقر على: ' + page);
-            smartNavigation(page);
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            direction: rtl;
+            padding: 10px;
         }
-    });
-    
-    // ربط النماذج
-    document.addEventListener('submit', function(e) {
-        if (e.target.matches('form[data-action]')) {
-            e.preventDefault();
-            const action = e.target.getAttribute('data-action');
-            logEvent('تم إرسال النموذج: ' + action);
-            
-            if (isZoomedIn()) {
-                logEvent('تم كشف الزوم في النموذج - سيتم إعادة تحميل الصفحة');
-                resetZoom();
-                setTimeout(() => {
-                    window.location.reload();
-                }, 100);
-            } else {
-                logEvent('الزوم طبيعي في النموذج - سيتم التنقل الديناميكي');
-                dynamicLoad(action);
-            }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
         }
-    });
-}
-
-// تشغيل التهيئة عند تحميل الصفحة
-document.addEventListener('DOMContentLoaded', init);
+        
+        .header {
+            background: #2196F3;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .zoom-info {
+            background: #E3F2FD;
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #BBDEFB;
+        }
+        
+        .content {
+            padding: 20px;
+            min-height: 200px;
+        }
+        
+        .navigation {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .nav-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .nav-btn:hover {
+            background: #45a049;
+        }
+        
+        .form-test {
+            background: #FFF3E0;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .form-test input, .form-test button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        
+        .form-test button {
+            background: #FF9800;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .loading {
+            display: none;
+            background: #FFEB3B;
+            color: #333;
+            padding: 10px;
+            text-align: center;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        
+        .log {
+            background: #f8f9fa;
+            padding: 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        
+        .log div {
+            margin: 2px 0;
+            padding: 2px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .instructions {
+            background: #E8F5E8;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .instructions h3 {
+            color: #2E7D32;
+            margin-bottom: 10px;
+        }
+        
+        .instructions ol {
+            margin-right: 20px;
+        }
+        
+        .instructions li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📱 اختبار الزوم والتنقل - الجوال</h1>
+            <p>كود بسيط ونظيف للاختبار</p>
+        </div>
+        
+        <div class="zoom-info">
+            <strong>مستوى الزوم:</strong> <span id="zoomLevel">100%</span> | 
+            <strong>الحالة:</strong> <span id="zoomStatus">طبيعي</span>
+        </div>
+        
+        <div class="content" id="content">
+            <h2>🏠 الصفحة الرئيسية</h2>
+            <p>مرحباً بك في اختبار الزوم والتنقل الديناميكي</p>
+            <p>استخدم الأزرار أدناه للتنقل أو اعمل زوم باللمس واختبر الوظائف</p>
+        </div>
+        
+        <div class="instructions">
+            <h3>📋 تعليمات الاختبار:</h3>
+            <ol>
+                <li>اعمل زوم باللمس (pinch to zoom) على الصفحة</li>
+                <li>اضغط على أي زر تنقل</li>
+                <li>راقب السجل لرؤية النتيجة</li>
+                <li>جرب إرسال النموذج أيضاً</li>
+            </ol>
+        </div>
+        
+        <div class="navigation">
+            <a href="#" class="nav-btn" data-page="page1">📄 الصفحة 1</a>
+            <a href="#" class="nav-btn" data-page="page2">📄 الصفحة 2</a>
+            <a href="#" class="nav-btn" data-page="page3">📄 الصفحة 3</a>
+        </div>
+        
+        <div class="form-test">
+            <h3>📝 نموذج اختبار</h3>
+            <form data-action="form-submit">
+                <input type="text" placeholder="اكتب شيئاً هنا..." required>
+                <button type="submit">إرسال النموذج</button>
+            </form>
+        </div>
+        
+        <div id="loading" class="loading">
+            ⏳ جاري التحميل...
+        </div>
+        
+        <div class="log" id="log">
+            <div>📝 سجل الأحداث:</div>
+        </div>
+    </div>
+    
+    <script src="https://salem-201.github.io/tcalc/java1.js"></script>
+    <script>
+        // كود احتياطي لإعادة تعيين الزوم
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                if (window.visualViewport && window.visualViewport.scale > 1.1) {
+                    console.log('تم كشف الزوم - إعادة تعيين احتياطية');
+                    // إعادة تعيين الزوم
+                    let viewport = document.querySelector("meta[name=viewport]");
+                    if (viewport) viewport.remove();
+                    
+                    viewport = document.createElement("meta");
+                    viewport.name = "viewport";
+                    viewport.content = "width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no";
+                    document.head.appendChild(viewport);
+                    
+                    document.documentElement.style.transform = "scale(1)";
+                    document.documentElement.style.transformOrigin = "top left";
+                    
+                    setTimeout(() => {
+                        viewport.content = "width=device-width, initial-scale=1, maximum-scale=5, minimum-scale=1, user-scalable=yes";
+                        document.head.appendChild(viewport);
+                        document.documentElement.style.transform = "";
+                    }, 200);
+                    
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
