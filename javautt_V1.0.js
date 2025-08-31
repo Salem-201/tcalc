@@ -779,6 +779,9 @@ $(document).ready(function(){
 
 
 function getZoomLevel() {
+    if (window.visualViewport && window.visualViewport.scale) {
+        return window.visualViewport.scale;
+    }
     const screenWidth = window.screen.width;
     const windowWidth = window.innerWidth;
     const zoom = screenWidth / windowWidth;
@@ -787,7 +790,7 @@ function getZoomLevel() {
 
 function isZoomedIn() {
     const zoom = getZoomLevel();
-    return zoom > 1.2;
+    return zoom > 1.1;
 }
 
 function smartNavigation(url) {
