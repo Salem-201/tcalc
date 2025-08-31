@@ -246,6 +246,66 @@
         let mreq = true;
         let selectedPackageId = null;
 
+        // متغيرات ترافيان المفقودة
+        let _mp = {
+            mtx: [
+                [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+                [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+                [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+                [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+                [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]
+            ],
+            x: 100,
+            y: 100,
+            n1: 1,
+            n2: 2,
+            n3: 3,
+            n4: 4,
+            n1p7: 1,
+            n2p7: 2,
+            n3p7: 3,
+            n4p7: 4
+        };
+
+        let textb = {
+            t1: "اختر موقع",
+            t2: "واحة",
+            t3: "قرية",
+            t4: "واحة فارغة",
+            f: ["رومان", "توتون", "غال"]
+        };
+
+        let GetMap = {};
+
+        function TBI(id) {
+            return Math.floor(Math.random() * 20) + 1;
+        }
+
+        function SOS(id) {
+            return Math.floor(Math.random() * 10) + 1;
+        }
+
+        let MapSize = 100;
+        let x = 100;
+        let y = 100;
+        let c13 = false;
+        let rad = 3;
+        let _OId = [];
+        let Trans = false;
+        let Freaze = false;
+        let active = false;
+        let activeItem = null;
+        let Show = { style: { display: 'none' } };
+        let Crop = { style: { display: 'none' } };
+
+        function CIR(n) {
+            return Math.floor(n);
+        }
+
+        function Get_Map(ids, type) {
+            console.log('Get_Map called with:', ids, type);
+        }
+
         // محاكاة دوال ترافيان الأساسية
         function init(updateInterval = 1) {
             addLog('تم تشغيل init()');
@@ -379,5 +439,3 @@
     </script>
 </body>
 </html>
-
-
