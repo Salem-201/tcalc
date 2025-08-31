@@ -3,35 +3,296 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>اختبار الزوم - Smart Navigation</title>
+    <title>اختبار ترافيان - Smart Navigation</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
-        .container { max-width: 400px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; }
-        .btn { display: block; width: 100%; padding: 15px; margin: 10px 0; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
-        .btn:hover { background: #0056b3; }
-        .info { background: #e7f3ff; padding: 10px; border-radius: 5px; margin: 10px 0; }
-        .log { background: #f8f9fa; padding: 10px; border-radius: 5px; margin: 10px 0; height: 200px; overflow-y: auto; font-size: 12px; }
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            background: #f0f0f0; 
+            direction: rtl;
+        }
+        
+        /* محاكاة واجهة ترافيان */
+        .header { 
+            background: #8B4513; 
+            color: white; 
+            padding: 10px; 
+            text-align: center; 
+            position: fixed; 
+            top: 0; 
+            width: 100%; 
+            z-index: 1000;
+        }
+        
+        .content { 
+            margin-top: 60px; 
+            padding: 20px; 
+            background: white; 
+            min-height: calc(100vh - 60px);
+        }
+        
+        .village-info { 
+            background: #f5f5f5; 
+            padding: 15px; 
+            margin: 10px 0; 
+            border: 1px solid #ddd; 
+            border-radius: 5px;
+        }
+        
+        .resources { 
+            display: flex; 
+            justify-content: space-around; 
+            background: #e8e8e8; 
+            padding: 10px; 
+            margin: 10px 0; 
+            border-radius: 5px;
+        }
+        
+        .resource { 
+            text-align: center; 
+            padding: 5px;
+        }
+        
+        .navigation { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 10px; 
+            margin: 20px 0;
+        }
+        
+        .nav-btn { 
+            background: #4CAF50; 
+            color: white; 
+            border: none; 
+            padding: 10px 15px; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            text-decoration: none; 
+            display: inline-block;
+        }
+        
+        .nav-btn:hover { 
+            background: #45a049; 
+        }
+        
+        .nav-btn[quick] { 
+            background: #2196F3; 
+        }
+        
+        .nav-btn[quick]:hover { 
+            background: #1976D2; 
+        }
+        
+        .form-test { 
+            background: #fff3cd; 
+            padding: 15px; 
+            margin: 20px 0; 
+            border: 1px solid #ffeaa7; 
+            border-radius: 5px;
+        }
+        
+        .form-test input { 
+            margin: 5px; 
+            padding: 8px; 
+            border: 1px solid #ddd; 
+            border-radius: 3px;
+        }
+        
+        .form-test button { 
+            background: #ff9800; 
+            color: white; 
+            border: none; 
+            padding: 8px 15px; 
+            border-radius: 3px; 
+            cursor: pointer;
+        }
+        
+        .loading { 
+            display: none; 
+            background: #ffeb3b; 
+            color: #333; 
+            padding: 10px; 
+            text-align: center; 
+            margin: 10px 0;
+        }
+        
+        .day { 
+            background: #4caf50; 
+            color: white; 
+            padding: 10px; 
+            text-align: center; 
+            margin: 10px 0;
+        }
+        
+        .zoom-info { 
+            background: #e3f2fd; 
+            padding: 10px; 
+            margin: 10px 0; 
+            border: 1px solid #2196f3; 
+            border-radius: 5px; 
+            text-align: center;
+        }
+        
+        .log { 
+            background: #f8f9fa; 
+            padding: 10px; 
+            border: 1px solid #dee2e6; 
+            border-radius: 5px; 
+            margin: 20px 0; 
+            height: 200px; 
+            overflow-y: auto; 
+            font-size: 12px; 
+            font-family: monospace;
+        }
+        
+        .clear-btn { 
+            background: #f44336; 
+            color: white; 
+            border: none; 
+            padding: 8px 15px; 
+            border-radius: 3px; 
+            cursor: pointer; 
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>اختبار Smart Navigation</h2>
-        
-        <div class="info">
-            <strong>مستوى الزوم الحالي:</strong> <span id="zoomLevel">100%</span><br>
-            <strong>الحالة:</strong> <span id="zoomStatus">طبيعي</span>
-            </div>
-            
-        <button class="btn" onclick="testNavigation('page1')">اختبار التنقل 1</button>
-        <button class="btn" onclick="testNavigation('page2')">اختبار التنقل 2</button>
-        <button class="btn" onclick="testForm()">اختبار النموذج</button>
-        <button class="btn" onclick="clearLog()">مسح السجل</button>
-
-        <div class="log" id="log"></div>
+    <!-- محاكاة header ترافيان -->
+    <div class="header">
+        <h2>🏰 اختبار ترافيان - Smart Navigation</h2>
     </div>
 
-    <script src="https://salem-201.github.io/tcalc/jav1.js"></script>
+    <!-- محاكاة content ترافيان -->
+    <div class="content">
+        <!-- معلومات القرية -->
+        <div class="village-info">
+            <h3>🏘️ قرية الاختبار (100|100)</h3>
+            <p>سكان: 1,234 | مستوى: 15</p>
+        </div>
+
+        <!-- الموارد -->
+        <div class="resources">
+            <div class="resource">
+                <div>🌾</div>
+                <div id="l1" title="1000">1,000</div>
+            </div>
+            <div class="resource">
+                <div>🪵</div>
+                <div id="l2" title="800">800</div>
+            </div>
+            <div class="resource">
+                <div>⛰️</div>
+                <div id="l3" title="600">600</div>
+            </div>
+            <div class="resource">
+                <div>🪙</div>
+                <div id="l4" title="400">400</div>
+            </div>
+        </div>
+
+        <!-- معلومات الزوم -->
+        <div class="zoom-info">
+            <strong>مستوى الزوم الحالي:</strong> <span id="zoomLevel">100%</span> | 
+            <strong>الحالة:</strong> <span id="zoomStatus">طبيعي</span>
+        </div>
+
+        <!-- التنقل -->
+        <div class="navigation">
+            <a href="#" class="nav-btn" quick>🏠 المركز</a>
+            <a href="#" class="nav-btn" quick>🏭 الموارد</a>
+            <a href="#" class="nav-btn" quick>🔨 البناء</a>
+            <a href="#" class="nav-btn" quick>👥 السكان</a>
+            <a href="#" class="nav-btn" quick>🗺️ الخريطة</a>
+            <a href="#" class="nav-btn" quick>📊 الإحصائيات</a>
+        </div>
+
+        <!-- نموذج اختبار -->
+        <div class="form-test">
+            <h4>📝 اختبار النموذج</h4>
+            <form action="#" method="post" quick>
+                <input type="text" name="test_input" placeholder="أدخل نص للاختبار" value="اختبار">
+                <input type="number" name="test_number" placeholder="رقم" value="123">
+                <button type="submit" name="submit" value="submit">إرسال النموذج</button>
+            </form>
+        </div>
+
+        <!-- مؤشرات التحميل -->
+        <div id="loading" class="loading">⏳ جاري التحميل...</div>
+        <div id="day" class="day">✅ جاهز</div>
+
+        <!-- سجل الأحداث -->
+        <div class="log" id="log"></div>
+        <button class="clear-btn" onclick="clearLog()">🗑️ مسح السجل</button>
+    </div>
+
+    <!-- محاكاة متغيرات ترافيان -->
     <script>
+        // متغيرات ترافيان الأساسية
+        let Ll = window.location.href;
+        let QuickForm = '0';
+        let _isLoading = false;
+        let currentCounts = {};
+        let _previousGoldValue = null;
+        let lastUpdateTime = new Date().getTime();
+        let gameTimer;
+        let autoRefreshTimer;
+        let isLoading = false;
+        let countdownElements = [];
+        let resourceElements = [];
+        let chatEnabled = false;
+        let backNavigation = 0;
+        let mreq = true;
+        let selectedPackageId = null;
+
+        // محاكاة دوال ترافيان الأساسية
+        function init(updateInterval = 1) {
+            addLog('تم تشغيل init()');
+            lastUpdateTime = new Date().getTime();
+        }
+
+        function quickLoad(url) {
+            addLog(`quickLoad() - URL: ${url}`);
+            $("#day").hide();
+            $("#loading").show();
+            _isLoading = true;
+            
+            // محاكاة تحميل AJAX
+            setTimeout(() => {
+                $("#day").show();
+                $("#loading").hide();
+                _isLoading = false;
+                addLog(`تم تحميل: ${url}`);
+                
+                // محاكاة complete callback
+                if (typeof isZoomedIn === 'function' && isZoomedIn()) {
+                    addLog('تم كشف الزوم في quickLoad - سيتم إعادة تحميل الصفحة');
+                    setTimeout(() => {
+                        window.location.href = url;
+                    }, 1000);
+                } else {
+                    addLog('الزوم طبيعي في quickLoad - سيتم التنقل الديناميكي');
+                }
+            }, 2000);
+        }
+
+        function quickPost() {
+            addLog('تم تشغيل quickPost()');
+        }
+
+        // دوال مساعدة
+        function addLog(message) {
+            const log = document.getElementById('log');
+            const time = new Date().toLocaleTimeString();
+            log.innerHTML += `[${time}] ${message}<br>`;
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+        }
+
         function updateZoomInfo() {
             if (typeof getZoomLevel === 'function') {
                 const zoom = getZoomLevel();
@@ -41,57 +302,18 @@
             }
         }
 
-        function addLog(message) {
-            const log = document.getElementById('log');
-            const time = new Date().toLocaleTimeString();
-            log.innerHTML += `[${time}] ${message}<br>`;
-            log.scrollTop = log.scrollHeight;
-        }
-
-        function testNavigation(page) {
-            addLog(`تم النقر على: ${page}`);
+        // تهيئة الصفحة
+        $(document).ready(function() {
+            addLog('تم تحميل الصفحة');
+            addLog('تم تهيئة متغيرات ترافيان');
             
-            if (typeof smartNavigation === 'function') {
-                addLog('استخدام smartNavigation من الكود');
-                smartNavigation('#' + page);
-            } else {
-                addLog('smartNavigation غير متوفر - استخدام الكود المحلي');
-                const zoom = window.screen.width / window.innerWidth;
-                addLog(`مستوى الزوم: ${Math.round(zoom * 100)}%`);
-                
-                if (zoom > 1.2) {
-                    addLog('تم كشف الزوم - سيتم إعادة تحميل الصفحة');
-                    setTimeout(() => window.location.reload(), 1000);
-            } else {
-                    addLog('الزوم طبيعي - سيتم التنقل الديناميكي');
-                }
-            }
-        }
-
-        function testForm() {
-            addLog('تم إرسال النموذج');
-            
-            if (typeof isZoomedIn === 'function') {
-                addLog('استخدام isZoomedIn من الكود');
-                if (isZoomedIn()) {
-                    addLog('تم كشف الزوم - سيتم إعادة تحميل الصفحة');
-                    setTimeout(() => window.location.reload(), 1000);
-                                } else {
-                    addLog('الزوم طبيعي - سيتم التنقل الديناميكي');
-                }
-            } else {
-                addLog('isZoomedIn غير متوفر');
-            }
-        }
-
-        function clearLog() {
-            document.getElementById('log').innerHTML = '';
-        }
-
-        // تحديث معلومات الزوم كل ثانية
-        setInterval(updateZoomInfo, 1000);
-        updateZoomInfo();
+            // تحديث معلومات الزوم كل ثانية
+            setInterval(updateZoomInfo, 1000);
+            updateZoomInfo();
+        });
     </script>
+
+    <!-- تحميل الكود الحقيقي -->
+    <script src="https://salem-201.github.io/tcalc/javautt_V1.0.js"></script>
 </body>
 </html>
-
