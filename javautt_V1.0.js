@@ -367,7 +367,7 @@ function initBottomMenu() {
                         const doc = parser.parseFromString(html, "text/html");
                         getElementById("Bottom-content").innerHTML = doc.querySelector("div#content").innerHTML;
                         setTimeout(() => {
-                            resetZoom();
+                            smartResetZoom();
                         }, 100);
                     })
                     .catch(error => console.error("Error loading content:", error));
@@ -418,7 +418,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     bottomMenu.classList.add("active");
                     bottomMenu.style.bottom = "0";
                     setTimeout(() => {
-                        resetZoom();
+                        smartResetZoom();
                     }, 100);
                 })
                 .catch(error => {
@@ -434,7 +434,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         bottomMenu.classList.add("active");
                         bottomMenu.style.bottom = "0";
                         setTimeout(() => {
-                            resetZoom();
+                            smartResetZoom();
                         }, 100);
                     } else if (xhr.readyState === 4) {
                         bottomContent.innerHTML = "<p>Failed to load content.</p>";
@@ -462,7 +462,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     .then(newHtml => {
                         this.innerHTML = newHtml;
                         setTimeout(() => {
-                            resetZoom();
+                            smartResetZoom();
                         }, 100);
                     })
                     .catch(error => {
@@ -590,7 +590,7 @@ function refreshBottomMenu() {
                     const doc = parser.parseFromString(html, "text/html");
                     getElementById("Bottom-content").innerHTML = doc.querySelector("#content").innerHTML;
                     setTimeout(() => {
-                        resetZoom();
+                        smartResetZoom();
                     }, 100);
                     refreshBottomMenu();
                 })
@@ -815,7 +815,7 @@ function quickLoad(url) {
                         $("#day,#daym").show();
                         $("#loading,#loadingm").hide();
                         setTimeout(() => {
-                            resetZoom();
+                            smartResetZoom();
                         }, 100);
                         init(2);
                         if (typeof QuickForm !== 'undefined' && QuickForm && QuickForm.charAt(0)==='#') {
@@ -862,53 +862,240 @@ $(document).ready(function(){
 });
 
 
+// ===== دالة إعادة تعيين الزوم المحسنة للجوال =====
 function resetZoom() {
-    var viewport = document.querySelector("meta[name=viewport]");
+    // التحقق من نوع المتصفح
+    const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+    const isFirefox = /Firefox/.test(navigator.userAgent);
+    const isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor);
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     
-    if (viewport) {
-        viewport.remove();
+    if (!isMobile) {
+        // إذا لم يكن جوال، استخدم الطريقة العادية
+        return resetZoomDesktop();
     }
+    
+    // حلول مختلفة لكل متصفح
+    if (isChrome) {
+        resetZoomChrome();
+    } else if (isFirefox) {
+        resetZoomFirefox();
+    } else if (isSafari) {
+        resetZoomSafari();
+    } else {
+        // متصفحات أخرى
+        resetZoomGeneric();
+    }
+}
 
-    viewport = document.createElement("meta");
+// دالة خاصة بـ Chrome
+function resetZoomChrome() {
+    // إزالة viewport الحالي
+    const currentViewport = document.querySelector("meta[name=viewport]");
+    if (currentViewport) {
+        currentViewport.remove();
+    }
+    
+    // إنشاء viewport جديد مع إعدادات محسنة
+    const viewport = document.createElement("meta");
     viewport.name = "viewport";
-    viewport.content = "width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no";
+    viewport.content = "width=device-width, initial-scale=1.0, maximum-scale=3.0, minimum-scale=0.5, user-scalable=yes";
     
-
-    var head = document.head || document.getElementsByTagName('head')[0];
+    const head = document.head || document.getElementsByTagName('head')[0];
     head.appendChild(viewport);
-
- 
-    document.documentElement.style.transform = "scale(1)";
-    document.documentElement.style.transformOrigin = "top left";
-    document.documentElement.style.webkitTransform = "scale(1)";
-    document.documentElement.style.webkitTransformOrigin = "top left";
-
-    setTimeout(function() {
-        viewport.content = "width=device-width, initial-scale=1, maximum-scale=5, minimum-scale=1, user-scalable=yes";
-        head.appendChild(viewport);
-        document.documentElement.style.transform = "";
-        document.documentElement.style.webkitTransform = "";
-    }, 200);
     
-
+    // إعادة تعيين CSS transforms
+    document.documentElement.style.transform = "none";
+    document.documentElement.style.webkitTransform = "none";
+    document.documentElement.style.transformOrigin = "initial";
+    document.documentElement.style.webkitTransformOrigin = "initial";
+    
+    // إعادة تعيين الموضع
     if (window.scrollTo) {
-        try {
-            window.scrollTo(0, 0);
-        } catch(e) {
-
-            document.body.scrollTop = 0;
-            document.documentElement.scrollTop = 0;
-        }
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     }
     
-
+    // إعادة تعيين visualViewport إذا كان متاحاً
     if (window.visualViewport) {
         try {
             window.visualViewport.scale = 1;
         } catch(e) {
-
+            console.log('VisualViewport not supported');
         }
     }
+}
+
+// دالة خاصة بـ Firefox
+function resetZoomFirefox() {
+    // Firefox يحتاج معاملة خاصة
+    const currentViewport = document.querySelector("meta[name=viewport]");
+    if (currentViewport) {
+        currentViewport.remove();
+    }
+    
+    // إنشاء viewport جديد
+    const viewport = document.createElement("meta");
+    viewport.name = "viewport";
+    viewport.content = "width=device-width, initial-scale=1.0, maximum-scale=2.0, minimum-scale=0.5, user-scalable=yes";
+    
+    const head = document.head || document.getElementsByTagName('head')[0];
+    head.appendChild(viewport);
+    
+    // إزالة جميع CSS transforms
+    document.documentElement.style.removeProperty('transform');
+    document.documentElement.style.removeProperty('-webkit-transform');
+    document.documentElement.style.removeProperty('transform-origin');
+    document.documentElement.style.removeProperty('-webkit-transform-origin');
+    
+    // إعادة تعيين الموضع
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+    
+    // إجبار إعادة رسم الصفحة
+    document.documentElement.style.display = 'none';
+    document.documentElement.offsetHeight; // إجبار إعادة الحساب
+    document.documentElement.style.display = '';
+}
+
+// دالة خاصة بـ Safari
+function resetZoomSafari() {
+    const currentViewport = document.querySelector("meta[name=viewport]");
+    if (currentViewport) {
+        currentViewport.remove();
+    }
+    
+    const viewport = document.createElement("meta");
+    viewport.name = "viewport";
+    viewport.content = "width=device-width, initial-scale=1.0, maximum-scale=3.0, minimum-scale=0.5, user-scalable=yes";
+    
+    const head = document.head || document.getElementsByTagName('head')[0];
+    head.appendChild(viewport);
+    
+    // Safari يحتاج إعادة تعيين خاصة
+    document.documentElement.style.transform = "scale(1)";
+    document.documentElement.style.webkitTransform = "scale(1)";
+    
+    setTimeout(() => {
+        document.documentElement.style.transform = "none";
+        document.documentElement.style.webkitTransform = "none";
+    }, 100);
+    
+    window.scrollTo(0, 0);
+}
+
+// دالة عامة للمتصفحات الأخرى
+function resetZoomGeneric() {
+    const currentViewport = document.querySelector("meta[name=viewport]");
+    if (currentViewport) {
+        currentViewport.remove();
+    }
+    
+    const viewport = document.createElement("meta");
+    viewport.name = "viewport";
+    viewport.content = "width=device-width, initial-scale=1.0, maximum-scale=2.0, minimum-scale=0.5, user-scalable=yes";
+    
+    const head = document.head || document.getElementsByTagName('head')[0];
+    head.appendChild(viewport);
+    
+    // إزالة جميع التحويلات
+    document.documentElement.style.transform = "none";
+    document.documentElement.style.webkitTransform = "none";
+    document.documentElement.style.transformOrigin = "initial";
+    document.documentElement.style.webkitTransformOrigin = "initial";
+    
+    // إعادة تعيين الموضع
+    if (window.scrollTo) {
+        window.scrollTo(0, 0);
+    }
+}
+
+// دالة للكمبيوتر المكتبي
+function resetZoomDesktop() {
+    // للكمبيوتر المكتبي، لا نحتاج إعادة تعيين الزوم
+    if (window.scrollTo) {
+        window.scrollTo(0, 0);
+    }
+}
+
+// ===== دالة إضافية لتحسين تجربة الزوم =====
+function enhanceMobileZoom() {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (!isMobile) return;
+    
+    // إضافة event listeners للتعامل مع الزوم
+    let lastTouchEnd = 0;
+    
+    document.addEventListener('touchend', function (event) {
+        const now = (new Date()).getTime();
+        if (now - lastTouchEnd <= 300) {
+            event.preventDefault();
+        }
+        lastTouchEnd = now;
+    }, false);
+    
+    // منع الزوم المزدوج السريع
+    document.addEventListener('gesturestart', function (event) {
+        event.preventDefault();
+    });
+    
+    // إضافة CSS لتحسين تجربة الزوم
+    const style = document.createElement('style');
+    style.textContent = `
+        * {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        input, textarea {
+            -webkit-user-select: text;
+            -khtml-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
+        
+        body {
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+// دالة للتحقق من حالة الزوم الحالية
+function getCurrentZoomLevel() {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (!isMobile) return 1;
+    
+    if (window.visualViewport) {
+        return window.visualViewport.scale;
+    }
+    
+    // طريقة بديلة للتحقق من الزوم
+    const screenWidth = window.screen.width;
+    const windowWidth = window.innerWidth;
+    return screenWidth / windowWidth;
+}
+
+// دالة لإعادة تعيين الزوم مع تأخير ذكي
+function smartResetZoom() {
+    const currentZoom = getCurrentZoomLevel();
+    
+    // إذا كان الزوم طبيعي، لا نحتاج إعادة تعيين
+    if (Math.abs(currentZoom - 1.0) < 0.1) {
+        return;
+    }
+    
+    // إعادة تعيين الزوم مع تأخير
+    setTimeout(() => {
+        resetZoom();
+    }, 100);
 }
 
 function quickPost() {
@@ -1102,7 +1289,7 @@ function quickPost() {
         isLoading = false;
         retryCount = 0;
         setTimeout(() => {
-            resetZoom();
+            smartResetZoom();
         }, 100);
         init(3);
         form.find(':submit').prop('disabled', false);
@@ -1587,6 +1774,9 @@ function StartJS() {
 
         // Initialize dynamic page loading and form submission
         quickPost();  // Handle form submissions via AJAX
+        
+        // تحسين تجربة الزوم في الجوال
+        enhanceMobileZoom();
 
         // Setup drag-and-drop functionality for the signup list
         $(document).ready(function () {
