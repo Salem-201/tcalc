@@ -731,7 +731,10 @@ function quickLoad(url) {
                         $("#day,#daym").show();
                         $("#loading,#loadingm").hide();
                         if (isZoomedIn()) {
-                            window.location.href = href;
+                            resetZoom();
+                            setTimeout(() => {
+                                window.location.href = href;
+                            }, 100);
                         }
                         init(2);
                         if (typeof QuickForm !== 'undefined' && QuickForm && QuickForm.charAt(0)==='#') {
@@ -793,9 +796,19 @@ function isZoomedIn() {
     return zoom > 1.1;
 }
 
+function resetZoom() {
+    document.body.style.zoom = '1';
+    document.documentElement.style.zoom = '1';
+    document.body.style.transform = 'scale(1)';
+    document.documentElement.style.transform = 'scale(1)';
+}
+
 function smartNavigation(url) {
     if (isZoomedIn()) {
-        window.location.href = url;
+        resetZoom();
+        setTimeout(() => {
+            window.location.href = url;
+        }, 100);
     } else {
         quickLoad(url);
     }
@@ -992,7 +1005,10 @@ function quickPost() {
         isLoading = false;
         retryCount = 0;
         if (isZoomedIn()) {
-            window.location.reload();
+            resetZoom();
+            setTimeout(() => {
+                window.location.reload();
+            }, 100);
         } else {
             init(3);
         }
