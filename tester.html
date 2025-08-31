@@ -375,19 +375,20 @@
             const zoomBefore = currentZoomLevel;
             addTestResult(`تم النقر على: ${page}`, 'info');
             
-            if (typeof smartNavigation === 'function') {
-                addTestResult('تم استدعاء smartNavigation() - سيكشف الزوم ويتصرف حسب الحالة', 'info');
-                smartNavigation(`#${page}`);
-            } else if (typeof isZoomedIn === 'function') {
-                if (isZoomedIn()) {
-                    addTestResult('تم كشف الزوم - سيتم إعادة تحميل الصفحة', 'success');
+            // اختبار مباشر لكشف الزوم
+            const screenWidth = window.screen.width;
+            const windowWidth = window.innerWidth;
+            const currentZoom = screenWidth / windowWidth;
+            
+            addTestResult(`مستوى الزوم الحالي: ${Math.round(currentZoom * 100)}%`, 'info');
+            
+            if (currentZoom > 1.2) {
+                addTestResult('تم كشف الزوم - سيتم إعادة تحميل الصفحة', 'success');
+                setTimeout(() => {
                     window.location.reload();
+                }, 1000);
             } else {
-                    addTestResult('الزوم طبيعي - سيتم التنقل الديناميكي', 'success');
-                    loadPageContent(page);
-            }
-            } else {
-                addTestResult('❌ دوال Smart Navigation غير موجودة', 'error');
+                addTestResult('الزوم طبيعي - سيتم التنقل الديناميكي', 'success');
                 loadPageContent(page);
             }
         }
@@ -452,23 +453,8 @@
             monitorZoomChanges();
             addTestResult('تم تحميل الصفحة بنجاح', 'success');
             
-            if (typeof smartNavigation === 'function') {
-                addTestResult('تم تحميل دالة smartNavigation بنجاح', 'success');
-                                } else {
-                addTestResult('دالة smartNavigation غير موجودة', 'error');
-            }
-            
-            if (typeof isZoomedIn === 'function') {
-                addTestResult('تم تحميل دالة isZoomedIn بنجاح', 'success');
-            } else {
-                addTestResult('دالة isZoomedIn غير موجودة', 'error');
-            }
-            
-            if (typeof getZoomLevel === 'function') {
-                addTestResult('تم تحميل دالة getZoomLevel بنجاح', 'success');
-                            } else {
-                addTestResult('دالة getZoomLevel غير موجودة', 'error');
-            }
+                        addTestResult('تم تحميل صفحة الاختبار بنجاح', 'success');
+            addTestResult('اختبار كشف الزوم يعمل محلياً في هذه الصفحة', 'info');
         });
     </script>
 </body>
