@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار توافق المتصفحات</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .pass {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .fail {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .summary {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: right;
+        }
+        th {
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🌐 اختبار توافق المتصفحات</h1>
+        <p>هذا الاختبار يتحقق من توافق الكود مع مختلف المتصفحات</p>
+        
+        <button onclick="runAllTests()">🚀 تشغيل جميع الاختبارات</button>
+        <button onclick="runBasicTests()">✅ اختبارات أساسية</button>
+        <button onclick="runAdvancedTests()">🔧 اختبارات متقدمة</button>
+        <button onclick="testZoomFunctionality()">📱 اختبار الزوم على الجوال</button>
+        <button onclick="selectFile()">📁 اختيار ملف JavaScript</button>
+        <button onclick="clearResults()">🗑️ مسح النتائج</button>
+        
+        <input type="file" id="fileInput" accept=".js,.txt" style="display: none;" onchange="loadSelectedFile(this)">
+        
+        <div id="results"></div>
+        <div id="summary" class="summary" style="display: none;"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // تحميل الكود مباشرة
+        var scriptContent = '';
+        
+        // محاولة تحميل الملف
+        function loadScript() {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', 'https://salem-201.github.io/tcalc/javauttv1.js', true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    scriptContent = xhr.responseText;
+                    try {
+                        // إنشاء script element بدلاً من eval
+                        var script = document.createElement('script');
+                        script.textContent = scriptContent;
+                        document.head.appendChild(script);
+                        document.head.removeChild(script);
+                        addInfo('✅ تم تحميل الكود بنجاح من GitHub');
+                    } catch(e) {
+                        addWarning('⚠️ تم تحميل الملف ولكن هناك خطأ في الكود: ' + e.message);
+                    }
+                } else if (xhr.readyState === 4) {
+                    addWarning('❌ فشل في تحميل الملف من GitHub. جاري المحاولة بطرق أخرى...');
+                    
+                    // محاولة تحميل الملف بطرق مختلفة
+                    tryAlternativeLoad();
+                }
+            };
+            xhr.send();
+        }
+        
+        // محاولة تحميل الملف بطرق بديلة
+        function tryAlternativeLoad() {
+            var alternatives = [
+                'https://salem-201.github.io/tcalc/javauttv1.js',
+                'javauttv1.js',
+                './javauttv1.js'
+            ];
+            
+            var currentIndex = 0;
+            
+            function tryNext() {
+                if (currentIndex >= alternatives.length) {
+                    addWarning('❌ فشل في تحميل الملف بجميع الطرق المحاولة.');
+                    addInfo('💡 تأكد من أن الملف موجود وأن اسمه صحيح');
+                    return;
+                }
+                
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', alternatives[currentIndex], true);
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        scriptContent = xhr.responseText;
+                        try {
+                            eval(scriptContent);
+                            addInfo('✅ تم تحميل الكود بنجاح من: ' + alternatives[currentIndex]);
+                        } catch(e) {
+                            addWarning('⚠️ تم تحميل الملف ولكن هناك خطأ في الكود: ' + e.message);
+                        }
+                    } else if (xhr.readyState === 4) {
+                        currentIndex++;
+                        tryNext();
+                    }
+                };
+                xhr.send();
+            }
+            
+            tryNext();
+        }
+        
+        // محاولة تحميل الكود عند تحميل الصفحة
+        window.addEventListener('load', function() {
+            setTimeout(loadScript, 500);
+        });
+        
+        // طريقة بديلة لتحميل الملف عبر script tag
+        function loadScriptDirectly() {
+            var script = document.createElement('script');
+            script.src = 'https://salem-201.github.io/tcalc/javauttv1.js';
+            script.onload = function() {
+                addInfo('✅ تم تحميل الكود بنجاح عبر script tag من GitHub');
+            };
+            script.onerror = function() {
+                addWarning('❌ فشل في تحميل الملف عبر script tag من GitHub');
+            };
+            document.head.appendChild(script);
+        }
+        
+        // إضافة زر لتحميل الملف مباشرة
+        function addLoadButton() {
+            var button = document.createElement('button');
+            button.innerHTML = '🔄 تحميل الملف مباشرة';
+            button.onclick = loadScriptDirectly;
+            button.style.margin = '5px';
+            button.style.background = '#28a745';
+            document.querySelector('.test-container').appendChild(button);
+        }
+        
+        // إضافة الزر عند تحميل الصفحة
+        window.addEventListener('load', function() {
+            setTimeout(addLoadButton, 1000);
+        });
+    </script>
+    <script>
+        var testResults = {
+            basic: {},
+            advanced: {},
+            performance: {},
+            mobile: {},
+            errors: {}
+        };
+
+        function addResult(category, test, result, message) {
+            if (!testResults[category]) testResults[category] = {};
+            testResults[category][test] = { result: result, message: message };
+            
+            var resultsDiv = document.getElementById('results');
+            var resultDiv = document.createElement('div');
+            resultDiv.className = 'test-result ' + (result ? 'pass' : 'fail');
+            resultDiv.innerHTML = '<strong>' + test + ':</strong> ' + (result ? '✅ نجح' : '❌ فشل') + ' - ' + message;
+            resultsDiv.appendChild(resultDiv);
+        }
+
+        function addInfo(message) {
+            var resultsDiv = document.getElementById('results');
+            var infoDiv = document.createElement('div');
+            infoDiv.className = 'test-result info';
+            infoDiv.innerHTML = 'ℹ️ ' + message;
+            resultsDiv.appendChild(infoDiv);
+        }
+
+        function addWarning(message) {
+            var resultsDiv = document.getElementById('results');
+            var warningDiv = document.createElement('div');
+            warningDiv.className = 'test-result warning';
+            warningDiv.innerHTML = '⚠️ ' + message;
+            resultsDiv.appendChild(warningDiv);
+        }
+
+        function runBasicTests() {
+            clearResults();
+            addInfo('بدء الاختبارات الأساسية...');
+            
+            // اختبار المتصفح
+            var userAgent = navigator.userAgent;
+            var browserInfo = getBrowserInfo();
+            addInfo('المتصفح: ' + browserInfo.name + ' ' + browserInfo.version);
+            
+            // التحقق من تحميل الكود
+            if (typeof getElementById === 'undefined') {
+                addWarning('⚠️ الكود لم يتم تحميله بعد. انتظر قليلاً أو اضغط "تشغيل جميع الاختبارات" مرة أخرى.');
+                return;
+            }
+            
+            // اختبار getElementById
+            try {
+                var testDiv = document.createElement('div');
+                testDiv.id = 'test-element';
+                document.body.appendChild(testDiv);
+                
+                var element = getElementById('test-element');
+                addResult('basic', 'getElementById', element !== null, 'الدالة تعمل بشكل صحيح');
+                
+                document.body.removeChild(testDiv);
+            } catch(e) {
+                addResult('basic', 'getElementById', false, 'خطأ: ' + e.message);
+            }
+            
+            // اختبار createRequestObject
+            try {
+                var xhr = createRequestObject();
+                addResult('basic', 'XMLHttpRequest', xhr !== null, xhr ? 'XMLHttpRequest متوفر' : 'XMLHttpRequest غير متوفر');
+            } catch(e) {
+                addResult('basic', 'XMLHttpRequest', false, 'خطأ: ' + e.message);
+            }
+            
+            // اختبار Fetch API
+            var hasFetch = typeof fetch !== 'undefined';
+            addResult('basic', 'Fetch API', hasFetch, hasFetch ? 'Fetch API متوفر' : 'Fetch API غير متوفر - سيتم استخدام XMLHttpRequest');
+            
+            // اختبار jQuery
+            var hasJQuery = typeof $ !== 'undefined' && typeof jQuery !== 'undefined';
+            addResult('basic', 'jQuery', hasJQuery, hasJQuery ? 'jQuery متوفر' : 'jQuery غير متوفر - بعض الوظائف قد لا تعمل');
+            
+            // اختبار DOMParser
+            try {
+                var parser = new DOMParser();
+                addResult('basic', 'DOMParser', parser !== null, 'DOMParser متوفر');
+            } catch(e) {
+                addResult('basic', 'DOMParser', false, 'DOMParser غير متوفر');
+            }
+            
+            // اختبار ES6 Features
+            var es6Support = testES6Features();
+            addResult('basic', 'ES6 Features', es6Support.supported, es6Support.message);
+            
+            // اختبار Touch Events
+            var hasTouch = 'ontouchstart' in window;
+            addResult('basic', 'Touch Events', hasTouch, hasTouch ? 'Touch Events متوفر' : 'Touch Events غير متوفر');
+            
+            showSummary();
+        }
+
+        function runAdvancedTests() {
+            addInfo('بدء الاختبارات المتقدمة...');
+            
+            // التحقق من تحميل الكود
+            if (typeof init === 'undefined') {
+                addWarning('⚠️ الكود لم يتم تحميله بعد. انتظر قليلاً أو اضغط "تشغيل جميع الاختبارات" مرة أخرى.');
+                return;
+            }
+            
+            // اختبار init function
+            try {
+                if (typeof $ !== 'undefined') {
+                    init(1);
+                    addResult('advanced', 'init() Function', true, 'دالة init تعمل بشكل صحيح');
+                } else {
+                    addResult('advanced', 'init() Function', false, 'jQuery غير متوفر - دالة init تحتاج jQuery');
+                }
+            } catch(e) {
+                addResult('advanced', 'init() Function', false, 'خطأ: ' + e.message);
+            }
+            
+            // اختبار render function
+            try {
+                render(1);
+                addResult('advanced', 'render() Function', true, 'دالة render تعمل بشكل صحيح');
+            } catch(e) {
+                addResult('advanced', 'render() Function', false, 'خطأ: ' + e.message);
+            }
+            
+            // اختبار quickLoad function
+            try {
+                if (typeof quickLoad === 'function') {
+                    addResult('advanced', 'quickLoad() Function', true, 'دالة quickLoad متوفرة');
+                } else {
+                    addResult('advanced', 'quickLoad() Function', false, 'دالة quickLoad غير متوفرة');
+                }
+            } catch(e) {
+                addResult('advanced', 'quickLoad() Function', false, 'خطأ: ' + e.message);
+            }
+            
+            // اختبار quickPost function
+            try {
+                if (typeof quickPost === 'function') {
+                    addResult('advanced', 'quickPost() Function', true, 'دالة quickPost متوفرة');
+                } else {
+                    addResult('advanced', 'quickPost() Function', false, 'دالة quickPost غير متوفرة');
+                }
+            } catch(e) {
+                addResult('advanced', 'quickPost() Function', false, 'خطأ: ' + e.message);
+            }
+            
+            // اختبار Memory Usage
+            if (performance.memory) {
+                var memory = performance.memory;
+                var usedMB = Math.round(memory.usedJSHeapSize / 1024 / 1024);
+                var totalMB = Math.round(memory.totalJSHeapSize / 1024 / 1024);
+                
+                if (usedMB < 50) {
+                    addResult('advanced', 'Memory Usage', true, 'استخدام الذاكرة جيد: ' + usedMB + 'MB / ' + totalMB + 'MB');
+                } else {
+                    addWarning('استخدام الذاكرة عالي: ' + usedMB + 'MB / ' + totalMB + 'MB');
+                }
+            } else {
+                addInfo('معلومات الذاكرة غير متوفرة في هذا المتصفح');
+            }
+            
+            // اختبار Performance
+            testPerformance();
+            
+            showSummary();
+        }
+
+        function testES6Features() {
+            var features = {
+                arrowFunctions: false,
+                templateLiterals: false,
+                destructuring: false,
+                defaultParams: false,
+                constLet: false
+            };
+            
+            try {
+                // اختبار Arrow Functions
+                var arrowTest = () => true;
+                features.arrowFunctions = arrowTest() === true;
+            } catch(e) {}
+            
+            try {
+                // اختبار Template Literals
+                var templateTest = `test ${1 + 1}`;
+                features.templateLiterals = templateTest === 'test 2';
+            } catch(e) {}
+            
+            try {
+                // اختبار Destructuring
+                var [a, b] = [1, 2];
+                features.destructuring = a === 1 && b === 2;
+            } catch(e) {}
+            
+            try {
+                // اختبار Default Parameters
+                function testDefault(x = 5) { return x; }
+                features.defaultParams = testDefault() === 5;
+            } catch(e) {}
+            
+            try {
+                // اختبار const/let
+                const testConst = 1;
+                let testLet = 2;
+                features.constLet = testConst === 1 && testLet === 2;
+            } catch(e) {}
+            
+            var supportedCount = Object.values(features).filter(Boolean).length;
+            var totalCount = Object.keys(features).length;
+            
+            return {
+                supported: supportedCount > 0,
+                message: supportedCount + '/' + totalCount + ' من ميزات ES6 مدعومة'
+            };
+        }
+
+        function testPerformance() {
+            addInfo('اختبار الأداء...');
+            
+            // اختبار سرعة getElementById
+            var start = performance.now();
+            for(var i = 0; i < 1000; i++) {
+                getElementById('non-existent');
+            }
+            var end = performance.now();
+            var time = end - start;
+            
+            if (time < 10) {
+                addResult('performance', 'getElementById Speed', true, 'سريع: ' + time.toFixed(2) + 'ms لـ 1000 استدعاء');
+            } else {
+                addWarning('getElementById بطيء: ' + time.toFixed(2) + 'ms لـ 1000 استدعاء');
+            }
+            
+            // اختبار سرعة init
+            start = performance.now();
+            try {
+                if (typeof $ !== 'undefined') {
+                    init(1);
+                    end = performance.now();
+                    time = end - start;
+                    
+                    if (time < 100) {
+                        addResult('performance', 'init() Speed', true, 'سريع: ' + time.toFixed(2) + 'ms');
+                    } else {
+                        addWarning('init() بطيء: ' + time.toFixed(2) + 'ms');
+                    }
+                } else {
+                    addResult('performance', 'init() Speed', false, 'jQuery غير متوفر - لا يمكن اختبار init()');
+                }
+            } catch(e) {
+                addResult('performance', 'init() Speed', false, 'خطأ في التنفيذ: ' + e.message);
+            }
+        }
+
+        function getBrowserInfo() {
+            var ua = navigator.userAgent;
+            var browsers = [
+                { name: 'Chrome', regex: /Chrome\/(\d+)/ },
+                { name: 'Firefox', regex: /Firefox\/(\d+)/ },
+                { name: 'Safari', regex: /Version\/(\d+).*Safari/ },
+                { name: 'Edge', regex: /Edg\/(\d+)/ },
+                { name: 'IE', regex: /MSIE (\d+)/ }
+            ];
+            
+            for(var i = 0; i < browsers.length; i++) {
+                var match = ua.match(browsers[i].regex);
+                if (match) {
+                    return { name: browsers[i].name, version: match[1] };
+                }
+            }
+            
+            return { name: 'Unknown', version: 'Unknown' };
+        }
+
+        function runAllTests() {
+            clearResults();
+            addInfo('🚀 بدء جميع الاختبارات...');
+            runBasicTests();
+            runAdvancedTests();
+            addInfo('✅ تم الانتهاء من جميع الاختبارات');
+        }
+
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+            document.getElementById('summary').style.display = 'none';
+            testResults = { basic: {}, advanced: {}, performance: {}, mobile: {}, errors: {} };
+        }
+
+        function showSummary() {
+            var summaryDiv = document.getElementById('summary');
+            var totalTests = 0;
+            var passedTests = 0;
+            
+            for(var category in testResults) {
+                for(var test in testResults[category]) {
+                    totalTests++;
+                    if (testResults[category][test].result) {
+                        passedTests++;
+                    }
+                }
+            }
+            
+            var passRate = totalTests > 0 ? Math.round((passedTests / totalTests) * 100) : 0;
+            var status = passRate >= 80 ? 'ممتاز' : passRate >= 60 ? 'جيد' : 'يحتاج تحسين';
+            
+            summaryDiv.innerHTML = `
+                <h3>📊 ملخص النتائج</h3>
+                <p><strong>إجمالي الاختبارات:</strong> ${totalTests}</p>
+                <p><strong>الاختبارات الناجحة:</strong> ${passedTests}</p>
+                <p><strong>معدل النجاح:</strong> ${passRate}%</p>
+                <p><strong>الحالة:</strong> ${status}</p>
+            `;
+            
+            summaryDiv.style.display = 'block';
+        }
+
+        // اختبار وظيفة الزوم على الجوال
+        function testZoomFunctionality() {
+            addInfo('بدء اختبار وظيفة الزوم على الجوال...');
+            
+            // فحص الدوال المتوفرة
+            var availableFunctions = [];
+            var functionsToCheck = ['resetZoom', 'quickLoad', 'quickPost', 'init', 'render'];
+            
+            for (var i = 0; i < functionsToCheck.length; i++) {
+                if (typeof window[functionsToCheck[i]] === 'function') {
+                    availableFunctions.push(functionsToCheck[i]);
+                }
+            }
+            
+            addInfo('الدوال المتوفرة: ' + (availableFunctions.length > 0 ? availableFunctions.join(', ') : 'لا توجد دوال'));
+            
+            // التحقق من وجود دالة resetZoom
+            if (typeof resetZoom === 'undefined') {
+                // محاولة العثور على الدالة في النطاق العام
+                try {
+                    if (typeof window.resetZoom === 'function') {
+                        addResult('mobile', 'resetZoom Function', true, 'دالة resetZoom متوفرة في window');
+                    } else {
+                        // محاولة تنفيذ الدالة مباشرة
+                        try {
+                            eval('resetZoom()');
+                            addResult('mobile', 'resetZoom Function', true, 'دالة resetZoom تعمل عند التنفيذ المباشر');
+                        } catch(e) {
+                            addResult('mobile', 'resetZoom Function', false, 'دالة resetZoom غير متوفرة');
+                            addWarning('💡 تأكد من أن الملف يحتوي على دالة resetZoom في السطر 865');
+                            return;
+                        }
+                    }
+                } catch(e) {
+                    addResult('mobile', 'resetZoom Function', false, 'دالة resetZoom غير متوفرة');
+                    addWarning('💡 تأكد من أن الملف يحتوي على دالة resetZoom في السطر 865');
+                    return;
+                }
+            } else {
+                addResult('mobile', 'resetZoom Function', true, 'دالة resetZoom متوفرة');
+            }
+            
+            // اختبار viewport meta tag
+            var viewport = document.querySelector('meta[name=viewport]');
+            if (viewport) {
+                addResult('mobile', 'Viewport Meta Tag', true, 'Viewport meta tag موجود');
+            } else {
+                addResult('mobile', 'Viewport Meta Tag', false, 'Viewport meta tag غير موجود');
+            }
+            
+            // اختبار visual viewport support
+            if (window.visualViewport) {
+                addResult('mobile', 'Visual Viewport Support', true, 'Visual Viewport مدعوم');
+            } else {
+                addResult('mobile', 'Visual Viewport Support', false, 'Visual Viewport غير مدعوم');
+            }
+            
+            // اختبار touch events
+            var hasTouch = 'ontouchstart' in window;
+            addResult('mobile', 'Touch Events', hasTouch, hasTouch ? 'Touch Events مدعوم' : 'Touch Events غير مدعوم');
+            
+            // اختبار screen dimensions
+            var screenWidth = window.screen.width;
+            var screenHeight = window.screen.height;
+            var isMobile = screenWidth <= 768 || /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            addResult('mobile', 'Mobile Detection', isMobile, isMobile ? 'تم اكتشاف جهاز محمول' : 'جهاز سطح مكتب');
+            
+            // اختبار zoom simulation
+            if (isMobile) {
+                addInfo('محاكاة اختبار الزوم...');
+                
+                // إنشاء viewport مؤقت
+                var tempViewport = document.createElement('meta');
+                tempViewport.name = 'viewport';
+                tempViewport.content = 'width=device-width, initial-scale=2.0, maximum-scale=2.0, minimum-scale=2.0, user-scalable=no';
+                document.head.appendChild(tempViewport);
+                
+                setTimeout(() => {
+                    try {
+                        resetZoom();
+                        addResult('mobile', 'Zoom Reset Test', true, 'تم إعادة تعيين الزوم بنجاح');
+                    } catch(e) {
+                        addResult('mobile', 'Zoom Reset Test', false, 'خطأ في إعادة تعيين الزوم: ' + e.message);
+                    }
+                    
+                    // إزالة viewport المؤقت
+                    document.head.removeChild(tempViewport);
+                }, 100);
+            } else {
+                addInfo('هذا اختبار للجوال - يتم تخطي محاكاة الزوم');
+            }
+            
+            showSummary();
+        }
+
+        // اختيار ملف JavaScript
+        function selectFile() {
+            document.getElementById('fileInput').click();
+        }
+        
+        // تحميل الملف المختار
+        function loadSelectedFile(input) {
+            var file = input.files[0];
+            if (!file) return;
+            
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    scriptContent = e.target.result;
+                    
+                    // إنشاء script element بدلاً من eval
+                    var script = document.createElement('script');
+                    script.textContent = scriptContent;
+                    document.head.appendChild(script);
+                    document.head.removeChild(script);
+                    
+                    addInfo('✅ تم تحميل الكود بنجاح من الملف: ' + file.name);
+                    
+                    // فحص الدوال بعد التحميل
+                    setTimeout(function() {
+                        var functionsToCheck = ['resetZoom', 'quickLoad', 'quickPost', 'init', 'render'];
+                        var availableFunctions = [];
+                        
+                        for (var i = 0; i < functionsToCheck.length; i++) {
+                            if (typeof window[functionsToCheck[i]] === 'function') {
+                                availableFunctions.push(functionsToCheck[i]);
+                            }
+                        }
+                        
+                        if (availableFunctions.length > 0) {
+                            addInfo('الدوال المتوفرة: ' + availableFunctions.join(', '));
+                        } else {
+                            addWarning('لم يتم العثور على أي دوال - قد تكون في نطاق محلي');
+                        }
+                    }, 100);
+                    
+                } catch(error) {
+                    addWarning('⚠️ تم تحميل الملف ولكن هناك خطأ في الكود: ' + error.message);
+                }
+            };
+            reader.onerror = function() {
+                addWarning('❌ فشل في قراءة الملف');
+            };
+            reader.readAsText(file);
+        }
+
+        // تشغيل الاختبارات تلقائياً عند تحميل الصفحة
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                addInfo('صفحة الاختبار جاهزة. اضغط على "تشغيل جميع الاختبارات" للبدء أو "اختيار ملف JavaScript" لتحميل ملف يدوياً.');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
