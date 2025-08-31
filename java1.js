@@ -147,12 +147,30 @@ function init() {
     updateZoomInfo();
     
     // إعادة تعيين الزوم عند تحميل الصفحة
-    setTimeout(function() {
+    function checkAndResetZoom() {
         if (window.visualViewport && window.visualViewport.scale > 1.1) {
             logEvent('تم كشف الزوم عند التحميل - سيتم إعادة تعيينه');
             resetZoom();
         }
-    }, 100);
+    }
+    
+    // استخدام MutationObserver للكشف عن تغييرات DOM
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                checkAndResetZoom();
+            }
+        });
+    });
+    
+    // مراقبة تغييرات في document.body
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+    
+    // فحص فوري
+    checkAndResetZoom();
     
     // تحديث معلومات الزوم كل ثانية
     setInterval(updateZoomInfo, 1000);
