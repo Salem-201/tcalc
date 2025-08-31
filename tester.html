@@ -315,7 +315,67 @@
 
     <!-- تحميل الكود الحقيقي -->
     <script src="https://salem-201.github.io/tcalc/javautt_V1.0.js"></script>
+    
+    <!-- إضافة الكود المطلوب للاختبار -->
+    <script>
+        // إضافة دوال الزوم المطلوبة
+        function getZoomLevel() {
+            if (window.visualViewport && window.visualViewport.scale) {
+                return window.visualViewport.scale;
+            }
+            const screenWidth = window.screen.width;
+            const windowWidth = window.innerWidth;
+            const zoom = screenWidth / windowWidth;
+            return zoom;
+        }
+
+        function isZoomedIn() {
+            const zoom = getZoomLevel();
+            return zoom > 1.1;
+        }
+
+        function smartNavigation(url) {
+            if (isZoomedIn()) {
+                addLog('smartNavigation: تم كشف الزوم - سيتم إعادة تحميل الصفحة');
+                window.location.href = url;
+            } else {
+                addLog('smartNavigation: الزوم طبيعي - سيتم التنقل الديناميكي');
+                quickLoad(url);
+            }
+        }
+
+        // إضافة event listeners للاختبار
+        $(document).ready(function() {
+            // إضافة click handler للروابط
+            $(document).off("click","a[quick], area[quick]").on("click","a[quick], area[quick]",function(event){
+                if (event.ctrlKey || _isLoading || $(this).attr("href")===location.href.split('/').pop()) {
+                    return event.ctrlKey;
+                }
+                const href = $(this).attr("href");
+                if (!href || href.includes('#')) return false;
+                event.preventDefault();
+                $("#day").hide();
+                $("#loading").show();
+                _isLoading = true;
+                addLog(`تم النقر على رابط: ${href}`);
+                smartNavigation(href);
+                return false;
+            });
+
+            // إضافة submit handler للنماذج
+            $(document).off("submit", "form[quick]").on("submit", "form[quick]", function(event) {
+                event.preventDefault();
+                addLog('تم إرسال النموذج');
+                if (isZoomedIn()) {
+                    addLog('تم كشف الزوم في النموذج - سيتم إعادة تحميل الصفحة');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    addLog('الزوم طبيعي في النموذج - سيتم التنقل الديناميكي');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
-
-
