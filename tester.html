@@ -195,5 +195,38 @@
     </div>
     
     <script src="https://salem-201.github.io/tcalc/java1.js"></script>
+    <script>
+        // إعادة تعيين الزوم عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            // انتظار قليل للتأكد من تحميل الصفحة
+            setTimeout(function() {
+                if (window.visualViewport && window.visualViewport.scale > 1.1) {
+                    // إعادة تعيين الزوم
+                    let viewport = document.querySelector("meta[name=viewport]");
+                    if (viewport) {
+                        viewport.remove();
+                    }
+                    viewport = document.createElement("meta");
+                    viewport.name = "viewport";
+                    viewport.content = "width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no";
+                    document.head.appendChild(viewport);
+                    
+                    document.documentElement.style.transform = "scale(1)";
+                    document.documentElement.style.transformOrigin = "top left";
+                    
+                    setTimeout(() => {
+                        viewport.content = "width=device-width, initial-scale=1, maximum-scale=5, minimum-scale=1, user-scalable=yes";
+                        document.head.appendChild(viewport);
+                        document.documentElement.style.transform = "";
+                    }, 200);
+                    
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                }
+            }, 500);
+        });
+    </script>
 </body>
 </html>
