@@ -8,18 +8,18 @@
     <style>
         body { 
             font-family: Arial, sans-serif; 
-            margin: 0; 
-            padding: 0; 
+            margin: 0;
+            padding: 0;
             background: #f0f0f0; 
             direction: rtl;
         }
         
         /* محاكاة واجهة ترافيان */
-        .header { 
+        .header {
             background: #8B4513; 
             color: white; 
             padding: 10px; 
-            text-align: center; 
+            text-align: center;
             position: fixed; 
             top: 0; 
             width: 100%; 
@@ -51,29 +51,29 @@
         }
         
         .resource { 
-            text-align: center; 
+            text-align: center;
             padding: 5px;
         }
         
         .navigation { 
-            display: flex; 
-            flex-wrap: wrap; 
+            display: flex;
+            flex-wrap: wrap;
             gap: 10px; 
             margin: 20px 0;
         }
         
-        .nav-btn { 
+        .nav-btn {
             background: #4CAF50; 
-            color: white; 
-            border: none; 
+            color: white;
+            border: none;
             padding: 10px 15px; 
             border-radius: 5px; 
-            cursor: pointer; 
-            text-decoration: none; 
+            cursor: pointer;
+            text-decoration: none;
             display: inline-block;
         }
         
-        .nav-btn:hover { 
+        .nav-btn:hover {
             background: #45a049; 
         }
         
@@ -88,7 +88,7 @@
         .form-test { 
             background: #fff3cd; 
             padding: 15px; 
-            margin: 20px 0; 
+            margin: 20px 0;
             border: 1px solid #ffeaa7; 
             border-radius: 5px;
         }
@@ -109,12 +109,12 @@
             cursor: pointer;
         }
         
-        .loading { 
-            display: none; 
+        .loading {
+            display: none;
             background: #ffeb3b; 
             color: #333; 
             padding: 10px; 
-            text-align: center; 
+            text-align: center;
             margin: 10px 0;
         }
         
@@ -137,7 +137,7 @@
         
         .log { 
             background: #f8f9fa; 
-            padding: 10px; 
+                padding: 10px;
             border: 1px solid #dee2e6; 
             border-radius: 5px; 
             margin: 20px 0; 
@@ -160,9 +160,9 @@
 </head>
 <body>
     <!-- محاكاة header ترافيان -->
-    <div class="header">
+        <div class="header">
         <h2>🏰 اختبار ترافيان - Smart Navigation</h2>
-    </div>
+        </div>
 
     <!-- محاكاة content ترافيان -->
     <div class="content">
@@ -170,8 +170,8 @@
         <div class="village-info">
             <h3>🏘️ قرية الاختبار (100|100)</h3>
             <p>سكان: 1,234 | مستوى: 15</p>
-        </div>
-
+            </div>
+            
         <!-- الموارد -->
         <div class="resources">
             <div class="resource">
@@ -185,7 +185,7 @@
             <div class="resource">
                 <div>⛰️</div>
                 <div id="l3" title="600">600</div>
-            </div>
+        </div>
             <div class="resource">
                 <div>🪙</div>
                 <div id="l4" title="400">400</div>
@@ -216,7 +216,7 @@
                 <input type="number" name="test_number" placeholder="رقم" value="123">
                 <button type="submit" name="submit" value="submit">إرسال النموذج</button>
             </form>
-        </div>
+    </div>
 
         <!-- مؤشرات التحميل -->
         <div id="loading" class="loading">⏳ جاري التحميل...</div>
@@ -331,10 +331,37 @@
                     setTimeout(() => {
                         window.location.href = url;
                     }, 1000);
-                } else {
+            } else {
                     addLog('الزوم طبيعي في quickLoad - سيتم التنقل الديناميكي');
                 }
             }, 2000);
+        }
+
+        function resetZoom() {
+            let viewport = document.querySelector("meta[name=viewport]");
+            
+            if (viewport) {
+                viewport.remove();
+            }
+
+            viewport = document.createElement("meta");
+            viewport.name = "viewport";
+            viewport.content = "width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no";
+            document.head.appendChild(viewport);
+
+            document.documentElement.style.transform = "scale(1)";
+            document.documentElement.style.transformOrigin = "top left";
+                
+                setTimeout(() => {
+                viewport.content = "width=device-width, initial-scale=1, maximum-scale=5, minimum-scale=1, user-scalable=yes";
+                document.head.appendChild(viewport);
+                document.documentElement.style.transform = "";
+            }, 200);
+            
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
         }
 
         function quickPost() {
@@ -374,7 +401,7 @@
     </script>
 
     <!-- تحميل الكود الحقيقي -->
-    <script src="https://salem-201.github.io/tcalc/jav1.js"></script>
+    <script src="https://salem-201.github.io/tcalc/javautt_V1.0.js"></script>
     
     <!-- إضافة الكود المطلوب للاختبار -->
     <script>
@@ -398,7 +425,7 @@
             if (isZoomedIn()) {
                 addLog('smartNavigation: تم كشف الزوم - سيتم إعادة تحميل الصفحة');
                 window.location.href = url;
-            } else {
+                                } else {
                 addLog('smartNavigation: الزوم طبيعي - سيتم التنقل الديناميكي');
                 quickLoad(url);
             }
@@ -428,10 +455,10 @@
                 addLog('تم إرسال النموذج');
                 if (isZoomedIn()) {
                     addLog('تم كشف الزوم في النموذج - سيتم إعادة تحميل الصفحة');
-                    setTimeout(() => {
+                setTimeout(() => {
                         window.location.reload();
                     }, 1000);
-                } else {
+                            } else {
                     addLog('الزوم طبيعي في النموذج - سيتم التنقل الديناميكي');
                 }
             });
@@ -439,4 +466,3 @@
     </script>
 </body>
 </html>
-
