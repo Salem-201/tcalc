@@ -274,7 +274,7 @@
             <h1>🔍 اختبار مشكلة الزوم</h1>
             <p>اختبار التوافق مع متصفحات الجوال</p>
         </div>
-        
+
         <div class="test-section">
             <div class="browser-info">
                 <h4>📱 معلومات المتصفح</h4>
@@ -297,15 +297,15 @@
             <div class="zoom-controls">
                 <button class="zoom-btn" onclick="testZoomIn()">🔍 تكبير</button>
                 <button class="zoom-btn" onclick="testZoomOut()">🔍 تصغير</button>
-            </div>
-            
+        </div>
+
             <div class="navigation-buttons">
                 <a href="#" class="nav-btn" onclick="testNavigation('page1')">📄 صفحة 1</a>
                 <a href="#" class="nav-btn" onclick="testNavigation('page2')">📄 صفحة 2</a>
                 <a href="#" class="nav-btn" onclick="testNavigation('page3')">📄 صفحة 3</a>
                 <a href="#" class="nav-btn" onclick="testNavigation('page4')">📄 صفحة 4</a>
-            </div>
-            
+        </div>
+
             <div class="content-area" id="content-area">
                 <h3>🎯 منطقة المحتوى</h3>
                 <p>هذا هو المحتوى الافتراضي للصفحة.</p>
@@ -316,19 +316,19 @@
             <div class="status-indicator">
                 <h4>📊 حالة الزوم الحالية</h4>
                 <div class="status normal" id="zoom-status">طبيعي (100%)</div>
-            </div>
-            
+        </div>
+
             <div class="test-results" id="test-results">
                 <h4>📈 نتائج الاختبار</h4>
                 <div class="result info">جاهز للاختبار - اضغط على أزرار التنقل بعد عمل zoom in</div>
             </div>
         </div>
     </div>
-
+    
     <script>
         let currentZoomLevel = 1.0;
         let testResults = [];
-        
+
         // تحديث معلومات المتصفح
         function updateBrowserInfo() {
             const userAgent = navigator.userAgent;
@@ -392,16 +392,16 @@
             addTestResult('تم الضغط على زر التكبير', 'info');
             // في الواقع، لا يمكننا التحكم في الزوم برمجياً، لكن يمكننا تتبع التغييرات
             setTimeout(() => {
-                updateZoomLevel();
+            updateZoomLevel();
                 addTestResult('تم تحديث مستوى الزوم بعد التكبير', 'info');
             }, 500);
         }
-        
+
         // اختبار التصغير
         function testZoomOut() {
             addTestResult('تم الضغط على زر التصغير', 'info');
             setTimeout(() => {
-                updateZoomLevel();
+            updateZoomLevel();
                 addTestResult('تم تحديث مستوى الزوم بعد التصغير', 'info');
             }, 500);
         }
@@ -416,19 +416,13 @@
                 loadPageContent(page);
                 addTestResult(`تم تحميل المحتوى: ${page}`, 'success');
                 
-                // التحقق من مستوى الزوم بعد التحميل
-                setTimeout(() => {
-                    updateZoomLevel();
-                    const zoomAfter = currentZoomLevel;
-                    
-                    if (Math.abs(zoomAfter - 1.0) < 0.1) {
-                        addTestResult('✅ تم إعادة تعيين الزوم بنجاح', 'success');
-                        currentZoomLevel = 1.0;
-                        updateZoomLevel();
-                    } else {
-                        addTestResult(`❌ فشل إعادة تعيين الزوم. المستوى الحالي: ${Math.round(zoomAfter * 100)}%`, 'error');
-                    }
-                }, 100);
+                // اختبار smartResetZoom
+                if (typeof smartResetZoom === 'function') {
+                    addTestResult('تم استدعاء smartResetZoom()', 'info');
+                    smartResetZoom();
+                } else {
+                    addTestResult('❌ دالة smartResetZoom غير موجودة', 'error');
+                }
             }, 1000);
         }
         
@@ -495,7 +489,7 @@
             
             window.addEventListener('resize', updateZoomLevel);
         }
-        
+
         // تهيئة الاختبار
         document.addEventListener('DOMContentLoaded', function() {
             updateBrowserInfo();
@@ -505,11 +499,11 @@
             // تحديث معلومات الشاشة عند تغيير حجم النافذة
             window.addEventListener('resize', updateBrowserInfo);
             
-            // اختبار وظيفة resetZoom
-            if (typeof resetZoom === 'function') {
-                addTestResult('تم تحميل دالة resetZoom بنجاح', 'success');
+            // اختبار وظيفة smartResetZoom
+            if (typeof smartResetZoom === 'function') {
+                addTestResult('تم تحميل دالة smartResetZoom بنجاح', 'success');
             } else {
-                addTestResult('دالة resetZoom غير موجودة', 'error');
+                addTestResult('دالة smartResetZoom غير موجودة', 'error');
             }
             
             // اختبار وظيفة init
@@ -520,14 +514,14 @@
                 addTestResult('دالة init غير موجودة', 'error');
             }
         });
-        
+
         // محاكاة محتوى للقائمة السفلية
         const mockContent = {
             'content1.html': '<h3>محتوى 1</h3><p>هذا محتوى تجريبي للصفحة الأولى. تم تحميله ديناميكياً.</p><p>لاحظ مستوى الزوم بعد التحميل.</p>',
             'content2.html': '<h3>محتوى 2</h3><p>هذا محتوى تجريبي للصفحة الثانية. تم تحميله ديناميكياً.</p><p>لاحظ مستوى الزوم بعد التحميل.</p>',
             'content3.html': '<h3>محتوى 3</h3><p>هذا محتوى تجريبي للصفحة الثالثة. تم تحميله ديناميكياً.</p><p>لاحظ مستوى الزوم بعد التحميل.</p>'
         };
-        
+
         // اختبار التنقل الديناميكي
         document.addEventListener('click', function(e) {
             if (e.target.matches('a[quick]')) {
@@ -541,27 +535,27 @@
                     setTimeout(() => {
                         document.getElementById('content-area').innerHTML = content;
                         addTestResult(`تم تحميل المحتوى: ${href}`, 'success');
+                    
+                    // اختبار resetZoom
+                    if (typeof resetZoom === 'function') {
+                        resetZoom();
+                        addTestResult('تم استدعاء resetZoom() بعد التنقل', 'success');
                         
-                        // اختبار resetZoom
-                        if (typeof resetZoom === 'function') {
-                            resetZoom();
-                            addTestResult('تم استدعاء resetZoom() بعد التنقل', 'success');
-                            
-                            // التحقق من مستوى الزوم بعد resetZoom
-                            setTimeout(() => {
-                                const newZoomLevel = getCurrentZoomLevel();
-                                if (newZoomLevel === 1.0) {
-                                    addTestResult('✅ تم إعادة تعيين الزوم بنجاح', 'success');
-                                    currentZoomLevel = 1.0;
-                                    updateZoomLevel();
-                                } else {
-                                    addTestResult(`❌ فشل إعادة تعيين الزوم. المستوى الحالي: ${newZoomLevel}`, 'error');
-                                }
-                            }, 100);
-                        } else {
-                            addTestResult('❌ دالة resetZoom غير موجودة', 'error');
-                        }
-                    }, 1500);
+                        // التحقق من مستوى الزوم بعد resetZoom
+                        setTimeout(() => {
+                            const newZoomLevel = getCurrentZoomLevel();
+                            if (newZoomLevel === 1.0) {
+                                addTestResult('✅ تم إعادة تعيين الزوم بنجاح', 'success');
+                                currentZoomLevel = 1.0;
+                                updateZoomLevel();
+                            } else {
+                                addTestResult(`❌ فشل إعادة تعيين الزوم. المستوى الحالي: ${newZoomLevel}`, 'error');
+                            }
+                        }, 100);
+                    } else {
+                        addTestResult('❌ دالة resetZoom غير موجودة', 'error');
+                    }
+                }, 1500);
                 }
             }
             
@@ -598,13 +592,13 @@
                 }
             }
         });
-        
+
         function getCurrentZoomLevel() {
             const transform = document.documentElement.style.transform;
             const match = transform.match(/scale\(([^)]+)\)/);
             return match ? parseFloat(match[1]) : 1.0;
         }
-        
+
         // اختبار النماذج
         document.addEventListener('submit', function(e) {
             if (e.target.matches('form[quick]')) {
