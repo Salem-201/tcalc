@@ -864,28 +864,61 @@ $(document).ready(function(){
 
 // ===== دالة إعادة تعيين الزوم المحسنة للجوال =====
 function resetZoom() {
-    // التحقق من نوع المتصفح
-    const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
-    const isFirefox = /Firefox/.test(navigator.userAgent);
-    const isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor);
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     
     if (!isMobile) {
-        // إذا لم يكن جوال، استخدم الطريقة العادية
         return resetZoomDesktop();
     }
     
-    // حلول مختلفة لكل متصفح
-    if (isChrome) {
-        resetZoomChrome();
-    } else if (isFirefox) {
-        resetZoomFirefox();
-    } else if (isSafari) {
-        resetZoomSafari();
-    } else {
-        // متصفحات أخرى
-        resetZoomGeneric();
-    }
+    // حل جديد يعتمد على إجبار إعادة تحميل viewport
+    forceViewportReset();
+}
+
+// ===== دالة إجبار إعادة تعيين viewport =====
+function forceViewportReset() {
+    // حفظ المحتوى الحالي
+    const currentContent = document.body.innerHTML;
+    const currentTitle = document.title;
+    
+    // إزالة جميع viewport tags
+    const viewports = document.querySelectorAll('meta[name="viewport"]');
+    viewports.forEach(viewport => viewport.remove());
+    
+    // إنشاء viewport جديد مع إعدادات محسنة
+    const newViewport = document.createElement('meta');
+    newViewport.name = 'viewport';
+    newViewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no';
+    
+    // إضافة viewport إلى head
+    document.head.appendChild(newViewport);
+    
+    // إجبار إعادة رسم الصفحة
+    document.body.style.display = 'none';
+    document.body.offsetHeight; // إجبار إعادة الحساب
+    document.body.style.display = '';
+    
+    // إعادة تعيين جميع CSS transforms
+    document.documentElement.style.transform = 'none';
+    document.documentElement.style.webkitTransform = 'none';
+    document.documentElement.style.transformOrigin = 'initial';
+    document.documentElement.style.webkitTransformOrigin = 'initial';
+    
+    // إعادة تعيين الموضع
+    window.scrollTo(0, 0);
+    
+    // إعادة تفعيل الزوم بعد فترة قصيرة
+    setTimeout(() => {
+        // تحديث viewport للسماح بالزوم مرة أخرى
+        newViewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=3.0, minimum-scale=0.5, user-scalable=yes';
+        
+        // إجبار إعادة رسم مرة أخرى
+        document.body.style.display = 'none';
+        document.body.offsetHeight;
+        document.body.style.display = '';
+        
+        // إعادة تعيين الموضع مرة أخرى
+        window.scrollTo(0, 0);
+    }, 100);
 }
 
 // دالة خاصة بـ Chrome
@@ -940,7 +973,7 @@ function resetZoomFirefox() {
     
     const head = document.head || document.getElementsByTagName('head')[0];
     head.appendChild(viewport);
-    
+
     // إزالة جميع CSS transforms
     document.documentElement.style.removeProperty('transform');
     document.documentElement.style.removeProperty('-webkit-transform');
@@ -995,17 +1028,17 @@ function resetZoomGeneric() {
     viewport.content = "width=device-width, initial-scale=1.0, maximum-scale=2.0, minimum-scale=0.5, user-scalable=yes";
     
     const head = document.head || document.getElementsByTagName('head')[0];
-    head.appendChild(viewport);
+        head.appendChild(viewport);
     
     // إزالة جميع التحويلات
     document.documentElement.style.transform = "none";
     document.documentElement.style.webkitTransform = "none";
     document.documentElement.style.transformOrigin = "initial";
     document.documentElement.style.webkitTransformOrigin = "initial";
-    
+
     // إعادة تعيين الموضع
     if (window.scrollTo) {
-        window.scrollTo(0, 0);
+            window.scrollTo(0, 0);
     }
 }
 
@@ -1072,7 +1105,7 @@ function getCurrentZoomLevel() {
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     
     if (!isMobile) return 1;
-    
+
     if (window.visualViewport) {
         return window.visualViewport.scale;
     }
@@ -1085,17 +1118,158 @@ function getCurrentZoomLevel() {
 
 // دالة لإعادة تعيين الزوم مع تأخير ذكي
 function smartResetZoom() {
-    const currentZoom = getCurrentZoomLevel();
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     
-    // إذا كان الزوم طبيعي، لا نحتاج إعادة تعيين
-    if (Math.abs(currentZoom - 1.0) < 0.1) {
+    if (!isMobile) {
+        window.scrollTo(0, 0);
         return;
     }
     
-    // إعادة تعيين الزوم مع تأخير
+    // في الجوال، استخدم إعادة تحميل الصفحة فوراً
+    window.location.reload();
+}
+
+// ===== حل فوري: إعادة تحميل الصفحة فوراً عند اكتشاف الزوم =====
+function instantZoomReset() {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (!isMobile) {
+        window.scrollTo(0, 0);
+        return;
+    }
+    
+    // إعادة تحميل الصفحة فوراً
+    window.location.reload();
+}
+
+// ===== حل فوري: إعادة تحميل الصفحة فوراً =====
+function immediatePageReload() {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (!isMobile) {
+        window.scrollTo(0, 0);
+        return;
+    }
+    
+    // إعادة تحميل الصفحة فوراً
+    window.location.reload();
+}
+
+// ===== حل نهائي: إعادة تحميل الصفحة الكاملة =====
+function fullPageReload() {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (!isMobile) {
+        window.scrollTo(0, 0);
+        return;
+    }
+    
+    // إعادة تحميل الصفحة الكاملة
+    window.location.reload();
+}
+
+// ===== حل قوي لإعادة تعيين الزوم =====
+function forceZoomReset() {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (!isMobile) {
+        window.scrollTo(0, 0);
+        return;
+    }
+    
+    // طريقة 1: إعادة تحميل viewport مع إجبار إعادة الرسم
+    const viewport = document.querySelector('meta[name="viewport"]');
+    if (viewport) {
+        const originalContent = viewport.content;
+        
+        // تعطيل الزوم مؤقتاً
+        viewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no';
+        
+        // إجبار إعادة رسم الصفحة
+        document.body.style.display = 'none';
+        document.body.offsetHeight;
+        document.body.style.display = '';
+        
+        // إعادة تعيين الموضع
+        window.scrollTo(0, 0);
+        
+        // إعادة تفعيل الزوم بعد 200ms
+        setTimeout(() => {
+            viewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=3.0, minimum-scale=0.5, user-scalable=yes';
+            
+            // إجبار إعادة رسم مرة أخرى
+            document.body.style.display = 'none';
+            document.body.offsetHeight;
+            document.body.style.display = '';
+            
+            window.scrollTo(0, 0);
+        }, 200);
+    }
+    
+    // طريقة 2: استخدام CSS transform لإجبار إعادة التعيين
     setTimeout(() => {
-        resetZoom();
+        document.documentElement.style.transform = 'scale(1)';
+        document.documentElement.style.webkitTransform = 'scale(1)';
+        
+        setTimeout(() => {
+            document.documentElement.style.transform = 'none';
+            document.documentElement.style.webkitTransform = 'none';
+        }, 50);
     }, 100);
+    
+    // طريقة 3: إجبار إعادة تحميل الصفحة فوراً (إذا فشلت الطرق السابقة)
+    setTimeout(() => {
+        const currentZoom = getCurrentZoomLevel();
+        if (Math.abs(currentZoom - 1.0) > 0.1) {
+            // إعادة تحميل الصفحة فوراً
+            instantZoomReset();
+        }
+    }, 500);
+}
+
+// ===== حل بديل: إعادة تحميل الصفحة الجزئي =====
+function partialPageReload() {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (!isMobile) {
+        window.scrollTo(0, 0);
+        return;
+    }
+    
+    // حفظ المحتوى الحالي
+    const currentContent = document.body.innerHTML;
+    const currentTitle = document.title;
+    
+    // إعادة تحميل الصفحة الجزئي
+    const currentUrl = window.location.href;
+    const newUrl = currentUrl + (currentUrl.includes('?') ? '&' : '?') + 'reset=' + Date.now();
+    
+    // استخدام fetch لإعادة تحميل المحتوى
+    fetch(newUrl)
+        .then(response => response.text())
+        .then(html => {
+            // استبدال المحتوى
+            document.body.innerHTML = html;
+            
+            // إعادة تعيين viewport
+            const viewport = document.querySelector('meta[name="viewport"]');
+            if (viewport) {
+                viewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=3.0, minimum-scale=0.5, user-scalable=yes';
+            }
+            
+            // إعادة تعيين الموضع
+            window.scrollTo(0, 0);
+            
+            // إعادة تشغيل الدوال المطلوبة
+            if (typeof init === 'function') {
+                init(1);
+            }
+        })
+        .catch(error => {
+            console.error('Error reloading page:', error);
+            // في حالة الفشل، استخدم إعادة تحميل كاملة
+            window.location.reload();
+        });
 }
 
 function quickPost() {
