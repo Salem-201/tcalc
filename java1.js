@@ -163,6 +163,7 @@ function init() {
     
     // ربط النماذج
     document.addEventListener('submit', function(e) {
+        console.log('تم إرسال نموذج:', e.target);
         if (e.target.matches('form[data-action]')) {
             e.preventDefault();
             const action = e.target.getAttribute('data-action');
@@ -178,6 +179,8 @@ function init() {
                 logEvent('الزوم طبيعي في النموذج - سيتم التنقل الديناميكي');
                 dynamicLoad(action);
             }
+        } else {
+            console.log('النموذج لا يحتوي على data-action');
         }
     });
 }
