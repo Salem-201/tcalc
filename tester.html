@@ -2,460 +2,95 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, minimum-scale=0.5, user-scalable=yes">
-    <title>اختبار Smart Navigation - الحل الجديد</title>
-    <script src="https://salem-201.github.io/tcalc/javautt_V1.0.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار الزوم - Smart Navigation</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-            color: #333;
-        }
-        
-        .container {
-            max-width: 400px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            overflow: hidden;
-        }
-        
-        .header {
-            background: linear-gradient(45deg, #28a745, #20c997);
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-        
-        .header h1 {
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-        
-        .header p {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-        
-        .test-section {
-            padding: 20px;
-        }
-        
-        .browser-info {
-            background: #d1ecf1;
-            border: 1px solid #bee5eb;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .browser-info h4 {
-            color: #0c5460;
-            margin-bottom: 10px;
-        }
-        
-        .browser-info p {
-            font-size: 14px;
-            margin-bottom: 5px;
-        }
-        
-        .instructions {
-            background: #d4edda;
-            border: 1px solid #c3e6cb;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .instructions h4 {
-            color: #155724;
-            margin-bottom: 10px;
-        }
-        
-        .instructions ol {
-            padding-right: 20px;
-        }
-        
-        .instructions li {
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-        
-        .zoom-controls {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .zoom-btn {
-            background: #28a745;
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .zoom-btn:hover {
-            background: #218838;
-            transform: translateY(-2px);
-        }
-        
-        .navigation-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .nav-btn {
-            background: #007bff;
-            color: white;
-            border: none;
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: block;
-            text-align: center;
-        }
-        
-        .nav-btn:hover {
-            background: #0056b3;
-            transform: translateY(-2px);
-        }
-        
-        .content-area {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            min-height: 200px;
-            border: 2px dashed #dee2e6;
-        }
-        
-        .content-area h3 {
-            color: #495057;
-            margin-bottom: 15px;
-        }
-        
-        .content-area p {
-            line-height: 1.6;
-            margin-bottom: 10px;
-        }
-        
-        .status-indicator {
-            background: #e9ecef;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        
-        .status-indicator h4 {
-            color: #495057;
-            margin-bottom: 10px;
-        }
-        
-        .status-indicator .status {
-            font-size: 18px;
-            font-weight: bold;
-            padding: 8px 16px;
-            border-radius: 20px;
-            display: inline-block;
-        }
-        
-        .status.normal {
-            background: #d4edda;
-            color: #155724;
-        }
-        
-        .status.zoomed {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        
-        .test-results {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        
-        .test-results h4 {
-            color: #495057;
-            margin-bottom: 10px;
-        }
-        
-        .test-results .result {
-            padding: 8px 12px;
-            margin: 5px 0;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-        
-        .test-results .result.success {
-            background: #d4edda;
-            color: #155724;
-            border-left: 4px solid #28a745;
-        }
-        
-        .test-results .result.error {
-            background: #f8d7da;
-            color: #721c24;
-            border-left: 4px solid #dc3545;
-        }
-        
-        .test-results .result.info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border-left: 4px solid #17a2b8;
-        }
-        
-        @media (max-width: 480px) {
-            .container {
-                margin: 10px;
-                border-radius: 10px;
-            }
-            
-            .header h1 {
-                font-size: 20px;
-            }
-            
-            .zoom-controls,
-            .navigation-buttons {
-                grid-template-columns: 1fr;
-            }
-        }
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 400px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; }
+        .btn { display: block; width: 100%; padding: 15px; margin: 10px 0; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .btn:hover { background: #0056b3; }
+        .info { background: #e7f3ff; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        .log { background: #f8f9fa; padding: 10px; border-radius: 5px; margin: 10px 0; height: 200px; overflow-y: auto; font-size: 12px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>🚀 اختبار Smart Navigation</h1>
-            <p>الحل الذكي للزوم في متصفحات الجوال</p>
-        </div>
-
-        <div class="test-section">
-            <div class="browser-info">
-                <h4>📱 معلومات المتصفح</h4>
-                <p><strong>المتصفح:</strong> <span id="browser-name">جاري التحميل...</span></p>
-                <p><strong>نوع الجهاز:</strong> <span id="device-type">جاري التحميل...</span></p>
-                <p><strong>عرض الشاشة:</strong> <span id="screen-width">جاري التحميل...</span></p>
-                <p><strong>مستوى الزوم الحالي:</strong> <span id="current-zoom">جاري التحميل...</span></p>
+        <h2>اختبار Smart Navigation</h2>
+        
+        <div class="info">
+            <strong>مستوى الزوم الحالي:</strong> <span id="zoomLevel">100%</span><br>
+            <strong>الحالة:</strong> <span id="zoomStatus">طبيعي</span>
             </div>
             
-            <div class="instructions">
-                <h4>🎯 كيف يعمل الحل الجديد</h4>
-                <p><strong>Smart Navigation يتكيف مع حالة الزوم!</strong></p>
-                <ol>
-                    <li>كشف مستوى الزوم الحالي باللمس</li>
-                    <li>إذا كان الزوم > 120% → إعادة تحميل كاملة</li>
-                    <li>إذا كان الزوم طبيعي → تنقل ديناميكي سريع</li>
-                    <li>أفضل ما في العالمين!</li>
-                </ol>
-            </div>
-            
-            <div class="zoom-controls">
-                <button class="zoom-btn" onclick="testZoomIn()">🔍 تكبير</button>
-                <button class="zoom-btn" onclick="testZoomOut()">🔍 تصغير</button>
-        </div>
+        <button class="btn" onclick="testNavigation('page1')">اختبار التنقل 1</button>
+        <button class="btn" onclick="testNavigation('page2')">اختبار التنقل 2</button>
+        <button class="btn" onclick="testForm()">اختبار النموذج</button>
+        <button class="btn" onclick="clearLog()">مسح السجل</button>
 
-            <div class="navigation-buttons">
-                <button class="nav-btn" onclick="testNavigation('page1')">📄 صفحة 1</button>
-                <button class="nav-btn" onclick="testNavigation('page2')">📄 صفحة 2</button>
-                <button class="nav-btn" onclick="testNavigation('page3')">📄 صفحة 3</button>
-                <button class="nav-btn" onclick="testNavigation('page4')">📄 صفحة 4</button>
-        </div>
-
-            <div class="content-area" id="content-area">
-                <h3>🎯 منطقة المحتوى</h3>
-                <p>هذا هو المحتوى الافتراضي للصفحة.</p>
-                <p>بعد الضغط على أي زر تنقل، سيتم تحديث هذا المحتوى.</p>
-                <p>راقب مستوى الزوم بعد كل تحديث.</p>
-        </div>
-
-            <div class="status-indicator">
-                <h4>📊 حالة الزوم الحالية</h4>
-                <div class="status normal" id="zoom-status">طبيعي (100%)</div>
-        </div>
-
-            <div class="test-results" id="test-results">
-                <h4>📈 نتائج الاختبار</h4>
-                <div class="result info">🎯 جاهز للاختبار</div>
-            </div>
-        </div>
+        <div class="log" id="log"></div>
     </div>
-    
+
+    <script src="https://salem-201.github.io/tcalc/javautt_V1.0.js"></script>
     <script>
-        let currentZoomLevel = 1.0;
-        let testResults = [];
-
-        function updateBrowserInfo() {
-            const userAgent = navigator.userAgent;
-            let browserName = 'غير معروف';
-            let deviceType = 'غير معروف';
-            
-            if (userAgent.includes('Chrome')) {
-                browserName = 'Google Chrome';
-            } else if (userAgent.includes('Firefox')) {
-                browserName = 'Mozilla Firefox';
-            } else if (userAgent.includes('Safari')) {
-                browserName = 'Safari';
-            } else if (userAgent.includes('Edge')) {
-                browserName = 'Microsoft Edge';
-            }
-            
-            if (/Android/i.test(userAgent)) {
-                deviceType = 'Android';
-            } else if (/iPhone|iPad|iPod/i.test(userAgent)) {
-                deviceType = 'iOS';
-            } else if (/Windows/i.test(userAgent)) {
-                deviceType = 'Windows';
-            } else if (/Mac/i.test(userAgent)) {
-                deviceType = 'macOS';
-            }
-            
-            document.getElementById('browser-name').textContent = browserName;
-            document.getElementById('device-type').textContent = deviceType;
-            document.getElementById('screen-width').textContent = window.innerWidth + 'px';
-            updateZoomLevel();
-        }
-
-        function updateZoomLevel() {
-            const screenWidth = window.screen.width;
-            const windowWidth = window.innerWidth;
-            currentZoomLevel = screenWidth / windowWidth;
-            
-            const zoomPercentage = Math.round(currentZoomLevel * 100);
-            document.getElementById('current-zoom').textContent = zoomPercentage + '%';
-            
-            const statusElement = document.getElementById('zoom-status');
-            if (Math.abs(currentZoomLevel - 1.0) < 0.1) {
-                statusElement.textContent = 'طبيعي (' + zoomPercentage + '%)';
-                statusElement.className = 'status normal';
-            } else {
-                statusElement.textContent = 'مكبر (' + zoomPercentage + '%)';
-                statusElement.className = 'status zoomed';
+        function updateZoomInfo() {
+            if (typeof getZoomLevel === 'function') {
+                const zoom = getZoomLevel();
+                const percentage = Math.round(zoom * 100);
+                document.getElementById('zoomLevel').textContent = percentage + '%';
+                document.getElementById('zoomStatus').textContent = isZoomedIn() ? 'مكبر' : 'طبيعي';
             }
         }
-        
-        function testZoomIn() {
-            addTestResult('تم الضغط على زر التكبير', 'info');
-            setTimeout(() => {
-                updateZoomLevel();
-                addTestResult('تم تحديث مستوى الزوم بعد التكبير', 'info');
-            }, 500);
+
+        function addLog(message) {
+            const log = document.getElementById('log');
+            const time = new Date().toLocaleTimeString();
+            log.innerHTML += `[${time}] ${message}<br>`;
+            log.scrollTop = log.scrollHeight;
         }
 
-        function testZoomOut() {
-            addTestResult('تم الضغط على زر التصغير', 'info');
-            setTimeout(() => {
-                updateZoomLevel();
-                addTestResult('تم تحديث مستوى الزوم بعد التصغير', 'info');
-            }, 500);
-        }
-        
         function testNavigation(page) {
-            const zoomBefore = currentZoomLevel;
-            addTestResult(`تم النقر على: ${page}`, 'info');
+            addLog(`تم النقر على: ${page}`);
             
-            // اختبار مباشر لكشف الزوم
-            const screenWidth = window.screen.width;
-            const windowWidth = window.innerWidth;
-            const currentZoom = screenWidth / windowWidth;
-            
-            addTestResult(`مستوى الزوم الحالي: ${Math.round(currentZoom * 100)}%`, 'info');
-            
-            if (currentZoom > 1.2) {
-                addTestResult('تم كشف الزوم - سيتم إعادة تحميل الصفحة', 'success');
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1000);
+            if (typeof smartNavigation === 'function') {
+                addLog('استخدام smartNavigation من الكود');
+                smartNavigation('#' + page);
             } else {
-                addTestResult('الزوم طبيعي - سيتم التنقل الديناميكي', 'success');
-                loadPageContent(page);
+                addLog('smartNavigation غير متوفر - استخدام الكود المحلي');
+                const zoom = window.screen.width / window.innerWidth;
+                addLog(`مستوى الزوم: ${Math.round(zoom * 100)}%`);
+                
+                if (zoom > 1.2) {
+                    addLog('تم كشف الزوم - سيتم إعادة تحميل الصفحة');
+                    setTimeout(() => window.location.reload(), 1000);
+            } else {
+                    addLog('الزوم طبيعي - سيتم التنقل الديناميكي');
+                }
             }
-        }
-        
-        function loadPageContent(page) {
-            const contentArea = document.getElementById('content-area');
-            const contents = {
-                'page1': `
-                    <h3>📄 صفحة 1 - اختبار التنقل</h3>
-                    <p>هذا محتوى الصفحة الأولى.</p>
-                    <p>تم تحميله ديناميكياً عبر JavaScript.</p>
-                    <p>لاحظ مستوى الزوم بعد التحميل.</p>
-                    <p>إذا كان الزوم يعمل بشكل صحيح، يجب أن يعود إلى 100%.</p>
-                `,
-                'page2': `
-                    <h3>📄 صفحة 2 - اختبار التنقل</h3>
-                    <p>هذا محتوى الصفحة الثانية.</p>
-                    <p>تم تحميله ديناميكياً عبر JavaScript.</p>
-                    <p>لاحظ مستوى الزوم بعد التحميل.</p>
-                    <p>إذا كان الزوم يعمل بشكل صحيح، يجب أن يعود إلى 100%.</p>
-                `,
-                'page3': `
-                    <h3>📄 صفحة 3 - اختبار التنقل</h3>
-                    <p>هذا محتوى الصفحة الثالثة.</p>
-                    <p>تم تحميله ديناميكياً عبر JavaScript.</p>
-                    <p>لاحظ مستوى الزوم بعد التحميل.</p>
-                    <p>إذا كان الزوم يعمل بشكل صحيح، يجب أن يعود إلى 100%.</p>
-                `,
-                'page4': `
-                    <h3>📄 صفحة 4 - اختبار التنقل</h3>
-                    <p>هذا محتوى الصفحة الرابعة.</p>
-                    <p>تم تحميله ديناميكياً عبر JavaScript.</p>
-                    <p>لاحظ مستوى الزوم بعد التحميل.</p>
-                    <p>إذا كان الزوم يعمل بشكل صحيح، يجب أن يعود إلى 100%.</p>
-                `
-            };
-            
-            contentArea.innerHTML = contents[page] || contents['page1'];
-        }
-        
-        function addTestResult(message, type) {
-            const resultsContainer = document.getElementById('test-results');
-            const resultDiv = document.createElement('div');
-            resultDiv.className = `result ${type}`;
-            resultDiv.textContent = message;
-            resultsContainer.appendChild(resultDiv);
-            
-            const results = resultsContainer.querySelectorAll('.result');
-            if (results.length > 10) {
-                results[0].remove();
-            }
-            
-            resultDiv.scrollIntoView({ behavior: 'smooth' });
-        }
-        
-        function monitorZoomChanges() {
-            window.addEventListener('resize', updateZoomLevel);
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            updateBrowserInfo();
-            monitorZoomChanges();
-            addTestResult('تم تحميل الصفحة بنجاح', 'success');
+        function testForm() {
+            addLog('تم إرسال النموذج');
             
-                        addTestResult('تم تحميل صفحة الاختبار بنجاح', 'success');
-            addTestResult('اختبار كشف الزوم يعمل محلياً في هذه الصفحة', 'info');
-        });
+            if (typeof isZoomedIn === 'function') {
+                addLog('استخدام isZoomedIn من الكود');
+                if (isZoomedIn()) {
+                    addLog('تم كشف الزوم - سيتم إعادة تحميل الصفحة');
+                    setTimeout(() => window.location.reload(), 1000);
+                                } else {
+                    addLog('الزوم طبيعي - سيتم التنقل الديناميكي');
+                }
+            } else {
+                addLog('isZoomedIn غير متوفر');
+            }
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+        }
+
+        // تحديث معلومات الزوم كل ثانية
+        setInterval(updateZoomInfo, 1000);
+        updateZoomInfo();
     </script>
 </body>
 </html>
