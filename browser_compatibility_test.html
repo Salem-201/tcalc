@@ -102,7 +102,7 @@
         // محاولة تحميل الملف
         function loadScript() {
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', 'https://salem-201.github.io/tcalc/javauttv1.js', true);
+            xhr.open('GET', 'https://salem-201.github.io/tcalc/%E2%80%8F%E2%80%8Fjavauttv1.js', true);
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === 4 && xhr.status === 200) {
                     scriptContent = xhr.responseText;
@@ -129,6 +129,7 @@
         // محاولة تحميل الملف بطرق بديلة
         function tryAlternativeLoad() {
             var alternatives = [
+                'https://salem-201.github.io/tcalc/%E2%80%8F%E2%80%8Fjavauttv1.js',
                 'https://salem-201.github.io/tcalc/javauttv1.js',
                 'javauttv1.js',
                 './javauttv1.js'
@@ -173,7 +174,7 @@
         // طريقة بديلة لتحميل الملف عبر script tag
         function loadScriptDirectly() {
             var script = document.createElement('script');
-            script.src = 'https://salem-201.github.io/tcalc/javauttv1.js';
+            script.src = 'https://salem-201.github.io/tcalc/%E2%80%8F%E2%80%8Fjavauttv1.js';
             script.onload = function() {
                 addInfo('✅ تم تحميل الكود بنجاح عبر script tag من GitHub');
             };
