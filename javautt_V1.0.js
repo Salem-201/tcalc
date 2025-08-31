@@ -1125,8 +1125,108 @@ function smartResetZoom() {
         return;
     }
     
-    // في الجوال، استخدم إعادة تحميل الصفحة فوراً
-    window.location.reload();
+    // في الجوال، استخدم الحل الجديد القوي
+    forcePageReloadWithParams();
+}
+
+// ===== حل متقدم لإعادة تعيين الزوم =====
+function forceZoomResetAdvanced() {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (!isMobile) {
+        window.scrollTo(0, 0);
+        return;
+    }
+    
+    // طريقة 1: إجبار إعادة تعيين viewport مع CSS transform
+    const viewport = document.querySelector('meta[name="viewport"]');
+    if (viewport) {
+        // حفظ المحتوى الحالي
+        const currentContent = document.body.innerHTML;
+        
+        // تعطيل الزوم مؤقتاً
+        viewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no';
+        
+        // إجبار إعادة رسم الصفحة
+        document.body.style.display = 'none';
+        document.body.offsetHeight; // إجبار إعادة الحساب
+        document.body.style.display = '';
+        
+        // إعادة تعيين CSS transforms
+        document.documentElement.style.transform = 'scale(1)';
+        document.documentElement.style.webkitTransform = 'scale(1)';
+        document.documentElement.style.transformOrigin = 'top left';
+        document.documentElement.style.webkitTransformOrigin = 'top left';
+        
+        // إعادة تعيين الموضع
+        window.scrollTo(0, 0);
+        
+        // إعادة تفعيل الزوم بعد 300ms
+        setTimeout(() => {
+            viewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=3.0, minimum-scale=0.5, user-scalable=yes';
+            
+            // إجبار إعادة رسم مرة أخرى
+            document.body.style.display = 'none';
+            document.body.offsetHeight;
+            document.body.style.display = '';
+            
+            // إزالة CSS transforms
+            document.documentElement.style.transform = 'none';
+            document.documentElement.style.webkitTransform = 'none';
+            document.documentElement.style.transformOrigin = 'initial';
+            document.documentElement.style.webkitTransformOrigin = 'initial';
+            
+            window.scrollTo(0, 0);
+        }, 300);
+    }
+    
+    // طريقة 2: استخدام CSS animation لإجبار إعادة التعيين
+    setTimeout(() => {
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes zoomReset {
+                0% { transform: scale(1); }
+                50% { transform: scale(0.99); }
+                100% { transform: scale(1); }
+            }
+            body {
+                animation: zoomReset 0.3s ease-in-out;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        setTimeout(() => {
+            document.head.removeChild(style);
+        }, 300);
+    }, 100);
+    
+    // طريقة 3: إجبار إعادة تحميل الصفحة الجزئي
+    setTimeout(() => {
+        const currentZoom = getCurrentZoomLevel();
+        if (Math.abs(currentZoom - 1.0) > 0.1) {
+            // إعادة تحميل الصفحة الجزئي
+            const currentUrl = window.location.href;
+            window.location.href = currentUrl + (currentUrl.includes('?') ? '&' : '?') + 'reset=' + Date.now();
+        }
+    }, 1000);
+}
+
+// ===== حل نهائي: إجبار إعادة تحميل الصفحة مع معاملات خاصة =====
+function forcePageReloadWithParams() {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (!isMobile) {
+        window.scrollTo(0, 0);
+        return;
+    }
+    
+    // إعادة تحميل الصفحة مع معاملات خاصة لإجبار إعادة تعيين الزوم
+    const currentUrl = window.location.href;
+    const separator = currentUrl.includes('?') ? '&' : '?';
+    const newUrl = currentUrl + separator + 'zoom_reset=' + Date.now() + '&force_reload=1';
+    
+    // إجبار إعادة تحميل الصفحة
+    window.location.href = newUrl;
 }
 
 // ===== حل فوري: إعادة تحميل الصفحة فوراً عند اكتشاف الزوم =====
