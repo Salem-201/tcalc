@@ -195,40 +195,5 @@
     </div>
     
     <script src="https://salem-201.github.io/tcalc/java1.js"></script>
-    <script>
-        // كود احتياطي لإعادة تعيين الزوم
-        window.addEventListener('load', function() {
-            function checkAndResetZoom() {
-                if (window.visualViewport && window.visualViewport.scale > 1.1) {
-                    console.log('تم كشف الزوم - إعادة تعيين احتياطية');
-                    // إعادة تعيين الزوم
-                    let viewport = document.querySelector("meta[name=viewport]");
-                    if (viewport) viewport.remove();
-                    
-                    viewport = document.createElement("meta");
-                    viewport.name = "viewport";
-                    viewport.content = "width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no";
-                    document.head.appendChild(viewport);
-                    
-                    document.documentElement.style.transform = "scale(1)";
-                    document.documentElement.style.transformOrigin = "top left";
-                    
-                    setTimeout(() => {
-                        viewport.content = "width=device-width, initial-scale=1, maximum-scale=5, minimum-scale=1, user-scalable=yes";
-                        document.head.appendChild(viewport);
-                        document.documentElement.style.transform = "";
-                    }, 50);
-                    
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
-            }
-            
-            // فحص فوري
-            checkAndResetZoom();
-            
-            // فحص دوري كل 100ms
-            setInterval(checkAndResetZoom, 100);
-        });
-    </script>
 </body>
 </html>
