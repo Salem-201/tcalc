@@ -198,7 +198,7 @@
     <script>
         // كود احتياطي لإعادة تعيين الزوم
         window.addEventListener('load', function() {
-            requestAnimationFrame(function() {
+            setTimeout(function() {
                 if (window.visualViewport && window.visualViewport.scale > 1.1) {
                     console.log('تم كشف الزوم - إعادة تعيين احتياطية');
                     // إعادة تعيين الزوم
@@ -213,15 +213,15 @@
                     document.documentElement.style.transform = "scale(1)";
                     document.documentElement.style.transformOrigin = "top left";
                     
-                    requestAnimationFrame(() => {
+                    setTimeout(() => {
                         viewport.content = "width=device-width, initial-scale=1, maximum-scale=5, minimum-scale=1, user-scalable=yes";
                         document.head.appendChild(viewport);
                         document.documentElement.style.transform = "";
-                    });
+                    }, 100);
                     
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
-            });
+            }, 100);
         });
     </script>
 </body>
