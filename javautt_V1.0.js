@@ -32,8 +32,7 @@ function formatNumberWithCommas(number) {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
-function init(updateInterval) {
-    updateInterval = updateInterval || 1;
+function init(updateInterval = 1) {
     lastUpdateTime = new Date().getTime();
 
     document.addEventListener("mouseover", (e) => {
@@ -144,35 +143,29 @@ let lastFrameTime = null;
 let rafId = null;
 let _isLoading = false;
 
-function render(updateInterval) {
-    updateInterval = updateInterval || 1;
+function render(updateInterval = 1) {
     function update(timestamp) {
         if (_isLoading) return;
         if (!lastFrameTime || (timestamp - lastFrameTime) >= 1000) {
-            var elapsedSeconds = Math.floor((Date.now() - lastUpdateTime) / 1000);
-            for (var i = 0; i < resourceElements.length; i++) {
-                var res = resourceElements[i];
-                var val = Math.floor(res.initialValue + elapsedSeconds/3600 * res.rate);
+            const elapsedSeconds = Math.floor((Date.now() - lastUpdateTime) / 1000);
+            resourceElements.forEach(res => {
+                const val = Math.floor(res.initialValue + elapsedSeconds/3600 * res.rate);
                 res.currentValue = Math.min(val, res.max);
                 res.element.innerHTML = res.currentValue;
-            }
-            var shouldReload = false;
-            for (var j = 0; j < countdownElements.length; j++) {
-                var timer = countdownElements[j];
-                if (shouldReload) continue;
-                var timeLeft = timer.seconds + elapsedSeconds * timer.factor;
-                if (timeLeft < 0) {
-                    shouldReload = true;
-                } else {
-                    var d = Math.max(timeLeft, 0);
-                    var h = Math.floor(d/3600);
-                    var m = Math.floor((d%3600)/60);
-                    var s = Math.floor(d%60);
-                    var mStr = m < 10 ? '0' + m : m.toString();
-                    var sStr = s < 10 ? '0' + s : s.toString();
-                    timer.element.innerHTML = (h > 0 ? h + ':' : '') + mStr + ':' + sStr;
+            });
+            let shouldReload = false;
+            countdownElements.forEach(timer => {
+                if (shouldReload) return;
+                const timeLeft = timer.seconds + elapsedSeconds * timer.factor;
+                if (timeLeft < 0) shouldReload = true;
+                else {
+                    const d = Math.max(timeLeft, 0);
+                    const h = Math.floor(d/3600);
+                    const m = String(Math.floor((d%3600)/60)).padStart(2,'0');
+                    const s = String(Math.floor(d%60)).padStart(2,'0');
+                    timer.element.innerHTML = `${h>0? h+':':''}${m}:${s}`;
                 }
-            }
+            });
             if (shouldReload) {
                 _isLoading = true;
                 clearInterval(gameTimer);
@@ -280,41 +273,29 @@ return false;
 }
 
 function createRequestObject() {
-    if (typeof XMLHttpRequest !== 'undefined') {
-        return new XMLHttpRequest();
-    } else if (typeof ActiveXObject !== 'undefined') {
+    let xhr = null;
+    try {
+        xhr = new XMLHttpRequest();
+    } catch (e) {
         try {
-            return new ActiveXObject('Msxml2.XMLHTTP');
+            xhr = new ActiveXObject("Msxml2.XMLHTTP");
         } catch (e) {
-            try {
-                return new ActiveXObject('Microsoft.XMLHTTP');
-            } catch (e2) {
-                return null;
-            }
+            xhr = new ActiveXObject("Microsoft.XMLHTTP");
         }
     }
-    return null;
+    return xhr;
 }
 
 function renderMap(a, b) {
-    if (!mreq) return false;
+    if (!mreq) return !1;
     var c = createRequestObject(),
         d = "karte?id=" + a.getAttribute("vid") + (b ? "&l" : "");
-    if (c == null) return window.location = d, mreq = true, false;
-    mreq = false;
+    if (c == null) return window.location = d, mreq = !0, !1;
+    mreq = !1;
     d += "&_a1_";
     c.onreadystatechange = function () {
-        if (c.readyState == 4 || c.readyState == "complete") if (mreq = true, c.responseText.length > 0) {
-           
-            try {
-                const script = document.createElement('script');
-                script.textContent = c.responseText;
-                document.head.appendChild(script);
-                document.head.removeChild(script);
-            } catch (error) {
-                console.error('Error executing response:', error);
-            }
-            
+        if (c.readyState == 4 || c.readyState == "complete") if (mreq = !0, c.responseText.length > 0) {
+            eval(c.responseText);
             _("x").innerHTML = _mp.x;
             _("y").innerHTML = _mp.y;
             _("mcx").setAttribute("value", _mp.x);
@@ -338,9 +319,9 @@ function renderMap(a, b) {
             }
         }
     };
-    c.open("GET", d, true);
+    c.open("GET", d, !0);
     c.send(null);
-    return false
+    return !1
 }
 
 function switchLanguageMode() {
@@ -358,34 +339,15 @@ function initBottomMenu() {
         const isActive = $("#bottom-menu").hasClass("active");
         menu.classList.toggle("active");
         if (!isActive) {
-            const url = $(this).attr("to");
-            if (window.fetch) {
-                fetch(url)
-                    .then(response => response.text())
-                    .then(html => {
-                        const parser = new DOMParser();
-                        const doc = parser.parseFromString(html, "text/html");
-                        getElementById("Bottom-content").innerHTML = doc.querySelector("div#content").innerHTML;
-                        setTimeout(() => {
-                            smartResetZoom();
-                        }, 100);
-                    })
-                    .catch(error => console.error("Error loading content:", error));
-            } else {
-                const xhr = createRequestObject();
-                if (xhr) {
-                    xhr.open('GET', url, true);
-                    xhr.onreadystatechange = function() {
-                        if (xhr.readyState === 4 && xhr.status === 200) {
-                            getElementById("Bottom-content").innerHTML = xhr.responseText;
-                            setTimeout(() => {
-                                resetZoom();
-                            }, 100);
-                        }
-                    };
-                    xhr.send();
-                }
-            }
+            fetch($(this).attr("to"))
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, "text/html");
+                    getElementById("Bottom-content").innerHTML = doc.querySelector("div#content").innerHTML;
+                    //refreshBottomMenu();
+                })
+                .catch(error => console.error("Error loading content:", error));
         }
     });
     getElementById("close-menu").addEventListener("click", () => menu.classList.remove("active"));
@@ -410,39 +372,17 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        if (window.fetch) {
-            fetch(href)
-                .then(response => response.text())
-                .then(html => {
-                    bottomContent.innerHTML = html;
-                    bottomMenu.classList.add("active");
-                    bottomMenu.style.bottom = "0";
-                    setTimeout(() => {
-                        smartResetZoom();
-                    }, 100);
-                })
-                .catch(error => {
-                    bottomContent.innerHTML = "<p>Failed to load content.</p>";
-                });
-        } else {
-            const xhr = createRequestObject();
-            if (xhr) {
-                xhr.open('GET', href, true);
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState === 4 && xhr.status === 200) {
-                        bottomContent.innerHTML = xhr.responseText;
-                        bottomMenu.classList.add("active");
-                        bottomMenu.style.bottom = "0";
-                        setTimeout(() => {
-                            smartResetZoom();
-                        }, 100);
-                    } else if (xhr.readyState === 4) {
-                        bottomContent.innerHTML = "<p>Failed to load content.</p>";
-                    }
-                };
-                xhr.send();
-            }
-        }
+        fetch(href)
+            .then(response => response.text())
+            .then(html => {
+                bottomContent.innerHTML = html;
+                bottomMenu.classList.add("active");
+                bottomMenu.style.bottom = "0";
+            })
+            .catch(error => {
+                //console.error("Error loading content:", error);
+                bottomContent.innerHTML = "<p>Failed to load content.</p>";
+            });
     });
 
     // Handle clicks inside dynamically loaded #Bottom-content
@@ -456,36 +396,15 @@ document.addEventListener("DOMContentLoaded", function () {
             let newHref = innerLink.getAttribute("href");
             if (!newHref) return;
 
-            if (window.fetch) {
-                fetch(newHref)
-                    .then(response => response.text())
-                    .then(newHtml => {
-                        this.innerHTML = newHtml;
-                        setTimeout(() => {
-                            smartResetZoom();
-                        }, 100);
-                    })
-                    .catch(error => {
-                        console.error("Error loading new content:", error);
-                        this.innerHTML = "<p>Failed to load new content.</p>";
-                    });
-            } else {
-                const xhr = createRequestObject();
-                if (xhr) {
-                    xhr.open('GET', newHref, true);
-                    xhr.onreadystatechange = function() {
-                        if (xhr.readyState === 4 && xhr.status === 200) {
-                            this.innerHTML = xhr.responseText;
-                            setTimeout(() => {
-                                resetZoom();
-                            }, 100);
-                        } else if (xhr.readyState === 4) {
-                            this.innerHTML = "<p>Failed to load new content.</p>";
-                        }
-                    }.bind(this);
-                    xhr.send();
-                }
-            }
+            fetch(newHref)
+                .then(response => response.text())
+                .then(newHtml => {
+                    this.innerHTML = newHtml; // Update only #Bottom-content
+                })
+                .catch(error => {
+                    console.error("Error loading new content:", error);
+                    this.innerHTML = "<p>Failed to load new content.</p>";
+                });
         });
     }
 
@@ -589,9 +508,6 @@ function refreshBottomMenu() {
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(html, "text/html");
                     getElementById("Bottom-content").innerHTML = doc.querySelector("#content").innerHTML;
-                    setTimeout(() => {
-                        smartResetZoom();
-                    }, 100);
                     refreshBottomMenu();
                 })
                 .catch(error => console.error("Error loading content:", error));
@@ -814,9 +730,9 @@ function quickLoad(url) {
                         currentCounts = {};
                         $("#day,#daym").show();
                         $("#loading,#loadingm").hide();
-                        setTimeout(() => {
-                            smartResetZoom();
-                        }, 100);
+                        if (isZoomedIn()) {
+                            window.location.href = href;
+                        }
                         init(2);
                         if (typeof QuickForm !== 'undefined' && QuickForm && QuickForm.charAt(0)==='#') {
                             const target = document.querySelector(QuickForm);
@@ -853,7 +769,7 @@ $(document).ready(function(){
         $("#day,#daym").hide();
         $("#loading,#loadingm").show();
         _isLoading = true;
-        quickLoad(href);
+        smartNavigation(href);
         return false;
     });
     window.addEventListener("popstate", function(){
@@ -862,514 +778,23 @@ $(document).ready(function(){
 });
 
 
-// ===== دالة إعادة تعيين الزوم المحسنة للجوال =====
-function resetZoom() {
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
-    if (!isMobile) {
-        return resetZoomDesktop();
-    }
-    
-    // حل جديد يعتمد على إجبار إعادة تحميل viewport
-    forceViewportReset();
-}
-
-// ===== دالة إجبار إعادة تعيين viewport =====
-function forceViewportReset() {
-    // حفظ المحتوى الحالي
-    const currentContent = document.body.innerHTML;
-    const currentTitle = document.title;
-    
-    // إزالة جميع viewport tags
-    const viewports = document.querySelectorAll('meta[name="viewport"]');
-    viewports.forEach(viewport => viewport.remove());
-    
-    // إنشاء viewport جديد مع إعدادات محسنة
-    const newViewport = document.createElement('meta');
-    newViewport.name = 'viewport';
-    newViewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no';
-    
-    // إضافة viewport إلى head
-    document.head.appendChild(newViewport);
-    
-    // إجبار إعادة رسم الصفحة
-    document.body.style.display = 'none';
-    document.body.offsetHeight; // إجبار إعادة الحساب
-    document.body.style.display = '';
-    
-    // إعادة تعيين جميع CSS transforms
-    document.documentElement.style.transform = 'none';
-    document.documentElement.style.webkitTransform = 'none';
-    document.documentElement.style.transformOrigin = 'initial';
-    document.documentElement.style.webkitTransformOrigin = 'initial';
-    
-    // إعادة تعيين الموضع
-    window.scrollTo(0, 0);
-    
-    // إعادة تفعيل الزوم بعد فترة قصيرة
-    setTimeout(() => {
-        // تحديث viewport للسماح بالزوم مرة أخرى
-        newViewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=3.0, minimum-scale=0.5, user-scalable=yes';
-        
-        // إجبار إعادة رسم مرة أخرى
-        document.body.style.display = 'none';
-        document.body.offsetHeight;
-        document.body.style.display = '';
-        
-        // إعادة تعيين الموضع مرة أخرى
-        window.scrollTo(0, 0);
-    }, 100);
-}
-
-// دالة خاصة بـ Chrome
-function resetZoomChrome() {
-    // إزالة viewport الحالي
-    const currentViewport = document.querySelector("meta[name=viewport]");
-    if (currentViewport) {
-        currentViewport.remove();
-    }
-    
-    // إنشاء viewport جديد مع إعدادات محسنة
-    const viewport = document.createElement("meta");
-    viewport.name = "viewport";
-    viewport.content = "width=device-width, initial-scale=1.0, maximum-scale=3.0, minimum-scale=0.5, user-scalable=yes";
-    
-    const head = document.head || document.getElementsByTagName('head')[0];
-    head.appendChild(viewport);
-    
-    // إعادة تعيين CSS transforms
-    document.documentElement.style.transform = "none";
-    document.documentElement.style.webkitTransform = "none";
-    document.documentElement.style.transformOrigin = "initial";
-    document.documentElement.style.webkitTransformOrigin = "initial";
-    
-    // إعادة تعيين الموضع
-    if (window.scrollTo) {
-        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-    }
-    
-    // إعادة تعيين visualViewport إذا كان متاحاً
-    if (window.visualViewport) {
-        try {
-            window.visualViewport.scale = 1;
-        } catch(e) {
-            console.log('VisualViewport not supported');
-        }
-    }
-}
-
-// دالة خاصة بـ Firefox
-function resetZoomFirefox() {
-    // Firefox يحتاج معاملة خاصة
-    const currentViewport = document.querySelector("meta[name=viewport]");
-    if (currentViewport) {
-        currentViewport.remove();
-    }
-    
-    // إنشاء viewport جديد
-    const viewport = document.createElement("meta");
-    viewport.name = "viewport";
-    viewport.content = "width=device-width, initial-scale=1.0, maximum-scale=2.0, minimum-scale=0.5, user-scalable=yes";
-    
-    const head = document.head || document.getElementsByTagName('head')[0];
-    head.appendChild(viewport);
-
-    // إزالة جميع CSS transforms
-    document.documentElement.style.removeProperty('transform');
-    document.documentElement.style.removeProperty('-webkit-transform');
-    document.documentElement.style.removeProperty('transform-origin');
-    document.documentElement.style.removeProperty('-webkit-transform-origin');
-    
-    // إعادة تعيين الموضع
-    document.body.scrollTop = 0;
-    document.documentElement.scrollTop = 0;
-    
-    // إجبار إعادة رسم الصفحة
-    document.documentElement.style.display = 'none';
-    document.documentElement.offsetHeight; // إجبار إعادة الحساب
-    document.documentElement.style.display = '';
-}
-
-// دالة خاصة بـ Safari
-function resetZoomSafari() {
-    const currentViewport = document.querySelector("meta[name=viewport]");
-    if (currentViewport) {
-        currentViewport.remove();
-    }
-    
-    const viewport = document.createElement("meta");
-    viewport.name = "viewport";
-    viewport.content = "width=device-width, initial-scale=1.0, maximum-scale=3.0, minimum-scale=0.5, user-scalable=yes";
-    
-    const head = document.head || document.getElementsByTagName('head')[0];
-    head.appendChild(viewport);
-    
-    // Safari يحتاج إعادة تعيين خاصة
-    document.documentElement.style.transform = "scale(1)";
-    document.documentElement.style.webkitTransform = "scale(1)";
-    
-    setTimeout(() => {
-        document.documentElement.style.transform = "none";
-        document.documentElement.style.webkitTransform = "none";
-    }, 100);
-    
-    window.scrollTo(0, 0);
-}
-
-// دالة عامة للمتصفحات الأخرى
-function resetZoomGeneric() {
-    const currentViewport = document.querySelector("meta[name=viewport]");
-    if (currentViewport) {
-        currentViewport.remove();
-    }
-    
-    const viewport = document.createElement("meta");
-    viewport.name = "viewport";
-    viewport.content = "width=device-width, initial-scale=1.0, maximum-scale=2.0, minimum-scale=0.5, user-scalable=yes";
-    
-    const head = document.head || document.getElementsByTagName('head')[0];
-        head.appendChild(viewport);
-    
-    // إزالة جميع التحويلات
-    document.documentElement.style.transform = "none";
-    document.documentElement.style.webkitTransform = "none";
-    document.documentElement.style.transformOrigin = "initial";
-    document.documentElement.style.webkitTransformOrigin = "initial";
-
-    // إعادة تعيين الموضع
-    if (window.scrollTo) {
-            window.scrollTo(0, 0);
-    }
-}
-
-// دالة للكمبيوتر المكتبي
-function resetZoomDesktop() {
-    // للكمبيوتر المكتبي، لا نحتاج إعادة تعيين الزوم
-    if (window.scrollTo) {
-        window.scrollTo(0, 0);
-    }
-}
-
-// ===== دالة إضافية لتحسين تجربة الزوم =====
-function enhanceMobileZoom() {
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
-    if (!isMobile) return;
-    
-    // إضافة event listeners للتعامل مع الزوم
-    let lastTouchEnd = 0;
-    
-    document.addEventListener('touchend', function (event) {
-        const now = (new Date()).getTime();
-        if (now - lastTouchEnd <= 300) {
-            event.preventDefault();
-        }
-        lastTouchEnd = now;
-    }, false);
-    
-    // منع الزوم المزدوج السريع
-    document.addEventListener('gesturestart', function (event) {
-        event.preventDefault();
-    });
-    
-    // إضافة CSS لتحسين تجربة الزوم
-    const style = document.createElement('style');
-    style.textContent = `
-        * {
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            -khtml-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-        
-        input, textarea {
-            -webkit-user-select: text;
-            -khtml-user-select: text;
-            -moz-user-select: text;
-            -ms-user-select: text;
-            user-select: text;
-        }
-        
-        body {
-            -webkit-text-size-adjust: 100%;
-            -ms-text-size-adjust: 100%;
-        }
-    `;
-    document.head.appendChild(style);
-}
-
-// دالة للتحقق من حالة الزوم الحالية
-function getCurrentZoomLevel() {
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
-    if (!isMobile) return 1;
-
+function getZoomLevel() {
     if (window.visualViewport) {
         return window.visualViewport.scale;
     }
-    
-    // طريقة بديلة للتحقق من الزوم
-    const screenWidth = window.screen.width;
-    const windowWidth = window.innerWidth;
-    return screenWidth / windowWidth;
+    return window.devicePixelRatio || 1;
 }
 
-// دالة لإعادة تعيين الزوم مع تأخير ذكي
-function smartResetZoom() {
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
-    if (!isMobile) {
-        window.scrollTo(0, 0);
-        return;
-    }
-    
-    // في الجوال، استخدم الحل الجديد القوي
-    forcePageReloadWithParams();
+function isZoomedIn() {
+    return getZoomLevel() > 1.2;
 }
 
-// ===== حل متقدم لإعادة تعيين الزوم =====
-function forceZoomResetAdvanced() {
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
-    if (!isMobile) {
-        window.scrollTo(0, 0);
-        return;
+function smartNavigation(url) {
+    if (isZoomedIn()) {
+        window.location.href = url;
+    } else {
+        quickLoad(url);
     }
-    
-    // طريقة 1: إجبار إعادة تعيين viewport مع CSS transform
-    const viewport = document.querySelector('meta[name="viewport"]');
-    if (viewport) {
-        // حفظ المحتوى الحالي
-        const currentContent = document.body.innerHTML;
-        
-        // تعطيل الزوم مؤقتاً
-        viewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no';
-        
-        // إجبار إعادة رسم الصفحة
-        document.body.style.display = 'none';
-        document.body.offsetHeight; // إجبار إعادة الحساب
-        document.body.style.display = '';
-        
-        // إعادة تعيين CSS transforms
-        document.documentElement.style.transform = 'scale(1)';
-        document.documentElement.style.webkitTransform = 'scale(1)';
-        document.documentElement.style.transformOrigin = 'top left';
-        document.documentElement.style.webkitTransformOrigin = 'top left';
-        
-        // إعادة تعيين الموضع
-        window.scrollTo(0, 0);
-        
-        // إعادة تفعيل الزوم بعد 300ms
-        setTimeout(() => {
-            viewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=3.0, minimum-scale=0.5, user-scalable=yes';
-            
-            // إجبار إعادة رسم مرة أخرى
-            document.body.style.display = 'none';
-            document.body.offsetHeight;
-            document.body.style.display = '';
-            
-            // إزالة CSS transforms
-            document.documentElement.style.transform = 'none';
-            document.documentElement.style.webkitTransform = 'none';
-            document.documentElement.style.transformOrigin = 'initial';
-            document.documentElement.style.webkitTransformOrigin = 'initial';
-            
-            window.scrollTo(0, 0);
-        }, 300);
-    }
-    
-    // طريقة 2: استخدام CSS animation لإجبار إعادة التعيين
-    setTimeout(() => {
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes zoomReset {
-                0% { transform: scale(1); }
-                50% { transform: scale(0.99); }
-                100% { transform: scale(1); }
-            }
-            body {
-                animation: zoomReset 0.3s ease-in-out;
-            }
-        `;
-        document.head.appendChild(style);
-        
-        setTimeout(() => {
-            document.head.removeChild(style);
-        }, 300);
-    }, 100);
-    
-    // طريقة 3: إجبار إعادة تحميل الصفحة الجزئي
-    setTimeout(() => {
-        const currentZoom = getCurrentZoomLevel();
-        if (Math.abs(currentZoom - 1.0) > 0.1) {
-            // إعادة تحميل الصفحة الجزئي
-            const currentUrl = window.location.href;
-            window.location.href = currentUrl + (currentUrl.includes('?') ? '&' : '?') + 'reset=' + Date.now();
-        }
-    }, 1000);
-}
-
-// ===== حل نهائي: إجبار إعادة تحميل الصفحة مع معاملات خاصة =====
-function forcePageReloadWithParams() {
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
-    if (!isMobile) {
-        window.scrollTo(0, 0);
-        return;
-    }
-    
-    // إعادة تحميل الصفحة مع معاملات خاصة لإجبار إعادة تعيين الزوم
-    const currentUrl = window.location.href;
-    const separator = currentUrl.includes('?') ? '&' : '?';
-    const newUrl = currentUrl + separator + 'zoom_reset=' + Date.now() + '&force_reload=1';
-    
-    // إجبار إعادة تحميل الصفحة
-    window.location.href = newUrl;
-}
-
-// ===== حل فوري: إعادة تحميل الصفحة فوراً عند اكتشاف الزوم =====
-function instantZoomReset() {
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
-    if (!isMobile) {
-        window.scrollTo(0, 0);
-        return;
-    }
-    
-    // إعادة تحميل الصفحة فوراً
-    window.location.reload();
-}
-
-// ===== حل فوري: إعادة تحميل الصفحة فوراً =====
-function immediatePageReload() {
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
-    if (!isMobile) {
-        window.scrollTo(0, 0);
-        return;
-    }
-    
-    // إعادة تحميل الصفحة فوراً
-    window.location.reload();
-}
-
-// ===== حل نهائي: إعادة تحميل الصفحة الكاملة =====
-function fullPageReload() {
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
-    if (!isMobile) {
-        window.scrollTo(0, 0);
-        return;
-    }
-    
-    // إعادة تحميل الصفحة الكاملة
-    window.location.reload();
-}
-
-// ===== حل قوي لإعادة تعيين الزوم =====
-function forceZoomReset() {
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
-    if (!isMobile) {
-        window.scrollTo(0, 0);
-        return;
-    }
-    
-    // طريقة 1: إعادة تحميل viewport مع إجبار إعادة الرسم
-    const viewport = document.querySelector('meta[name="viewport"]');
-    if (viewport) {
-        const originalContent = viewport.content;
-        
-        // تعطيل الزوم مؤقتاً
-        viewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no';
-        
-        // إجبار إعادة رسم الصفحة
-        document.body.style.display = 'none';
-        document.body.offsetHeight;
-        document.body.style.display = '';
-        
-        // إعادة تعيين الموضع
-        window.scrollTo(0, 0);
-        
-        // إعادة تفعيل الزوم بعد 200ms
-        setTimeout(() => {
-            viewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=3.0, minimum-scale=0.5, user-scalable=yes';
-            
-            // إجبار إعادة رسم مرة أخرى
-            document.body.style.display = 'none';
-            document.body.offsetHeight;
-            document.body.style.display = '';
-            
-            window.scrollTo(0, 0);
-        }, 200);
-    }
-    
-    // طريقة 2: استخدام CSS transform لإجبار إعادة التعيين
-    setTimeout(() => {
-        document.documentElement.style.transform = 'scale(1)';
-        document.documentElement.style.webkitTransform = 'scale(1)';
-        
-        setTimeout(() => {
-            document.documentElement.style.transform = 'none';
-            document.documentElement.style.webkitTransform = 'none';
-        }, 50);
-    }, 100);
-    
-    // طريقة 3: إجبار إعادة تحميل الصفحة فوراً (إذا فشلت الطرق السابقة)
-    setTimeout(() => {
-        const currentZoom = getCurrentZoomLevel();
-        if (Math.abs(currentZoom - 1.0) > 0.1) {
-            // إعادة تحميل الصفحة فوراً
-            instantZoomReset();
-        }
-    }, 500);
-}
-
-// ===== حل بديل: إعادة تحميل الصفحة الجزئي =====
-function partialPageReload() {
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
-    if (!isMobile) {
-        window.scrollTo(0, 0);
-        return;
-    }
-    
-    // حفظ المحتوى الحالي
-    const currentContent = document.body.innerHTML;
-    const currentTitle = document.title;
-    
-    // إعادة تحميل الصفحة الجزئي
-    const currentUrl = window.location.href;
-    const newUrl = currentUrl + (currentUrl.includes('?') ? '&' : '?') + 'reset=' + Date.now();
-    
-    // استخدام fetch لإعادة تحميل المحتوى
-    fetch(newUrl)
-        .then(response => response.text())
-        .then(html => {
-            // استبدال المحتوى
-            document.body.innerHTML = html;
-            
-            // إعادة تعيين viewport
-            const viewport = document.querySelector('meta[name="viewport"]');
-            if (viewport) {
-                viewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=3.0, minimum-scale=0.5, user-scalable=yes';
-            }
-            
-            // إعادة تعيين الموضع
-            window.scrollTo(0, 0);
-            
-            // إعادة تشغيل الدوال المطلوبة
-            if (typeof init === 'function') {
-                init(1);
-            }
-        })
-        .catch(error => {
-            console.error('Error reloading page:', error);
-            // في حالة الفشل، استخدم إعادة تحميل كاملة
-            window.location.reload();
-        });
 }
 
 function quickPost() {
@@ -1562,10 +987,11 @@ function quickPost() {
         $("#loading, #loadingm").hide();
         isLoading = false;
         retryCount = 0;
-        setTimeout(() => {
-            smartResetZoom();
-        }, 100);
-        init(3);
+        if (isZoomedIn()) {
+            window.location.reload();
+        } else {
+            init(3);
+        }
         form.find(':submit').prop('disabled', false);
     }
 }
@@ -1887,7 +1313,7 @@ function showTooltip(event, description, imageUrl) {
 
     const tooltipWidth = tooltip.offsetWidth || 222;
     const tooltipHeight = tooltip.offsetHeight || 60;
-    const scale = (window.visualViewport && window.visualViewport.scale) || (typeof Zoom !== "undefined" ? Zoom : 1);
+    const scale = window.visualViewport?.scale || (typeof Zoom !== "undefined" ? Zoom : 1);
     const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;
 
@@ -2048,9 +1474,6 @@ function StartJS() {
 
         // Initialize dynamic page loading and form submission
         quickPost();  // Handle form submissions via AJAX
-        
-        // تحسين تجربة الزوم في الجوال
-        enhanceMobileZoom();
 
         // Setup drag-and-drop functionality for the signup list
         $(document).ready(function () {
@@ -2116,98 +1539,28 @@ function NumbersKeypad() {
     });
 }
 
-function Run_Speed_attr(H, Com) {
-    H = H || 'b';
-    Com = Com || ',';
-    
-    var NF = function(x) {
-        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, Com);
-    };
-    
-    var Now = function() {
-        return new Date().getTime() / 1000;
-    };
-    
-    var SecStr = function(T) {
-        var H, M, S;
-        H = parseInt(T / 3600);
-        M = parseInt(T / 60) - H * 60;
-        S = T - H * 3600 - M * 60;
-        return (H < 10 ? '0' + H : H) + ':' + (M < 10 ? '0' + M : M) + ':' + (S < 10 ? '0' + S : S);
-    };
-    
-    var Sec = function(H, S, Inc, Re) {
-        Re = Re || 1;
-        var Stop;
-        var Fu = function() {
-            if (S == 0) {
-                clearInterval(Stop);
-                if (Re) {
-                    location.reload(true);
-                }
-            }
-            S += Inc;
-            H.html(SecStr(S));
-        };
-        Fu();
-        Stop = setInterval(Fu, 1000);
-    };
-    
-    var Counter = function(H, S, L, Sp, l, HFun, At0) {
-        l = l || false;
-        HFun = HFun || function(X) { return X; };
-        At0 = At0 || function(X) { return X; };
-        
-        var Stop, X, T = Now();
-        if (typeof H == 'string') {
-            H = $(H);
-        }
-        
-        var Fu = function() {
-            X = S + Math.round((Now() - T) * Sp);
-            if (Sp > 0) {
-                X = X > L ? L : X;
-                if (X >= L) {
-                    clearInterval(Stop);
-                }
-            } else {
-                if (l !== false) {
-                    X = X < l ? l : X;
-                    if (X <= l) {
-                        clearInterval(Stop);
-                    }
-                }
-                if (X == 0) {
-                    At0();
-                }
-            }
-            H.html(NF(HFun(X)));
-        };
-        Stop = setInterval(Fu, 1000 / (Sp > 50 ? 50 : Sp));
-    };
-    
-    var E = $(H + '[Speed]');
-    for (var i = 0; i < E.length; i++) {
-        var e = E.eq(i);
-        var S = e.attr('Speed');
-        var parts = e.attr('Speed').split(',');
-        var Sp = parts[0], L = parts[1], l = parts[2];
-        S = e.html();
-        S = S.split(Com).join("");
-        Counter(e, +S, +L, +Sp, +l);
-    }
-    
-    var E2 = $(H + '[Time]');
-    for (var i = 0; i < E2.length; i++) {
-        var e = E2.eq(i);
-        var S = e.attr('Time');
-        if (e.attr('Speed')) {
-            continue;
-        }
-        var parts = e.attr('Time').split(',');
-        var Inc = parts[0], Re = +parts[1], S = parts[2];
-        Counter(e, +S, 1e15, +Inc, 0, SecStr, Re ? function() { location.reload(true); } : function(X) { return X; });
-    }
+function Run_Speed_attr(H=null,Com=null){
+	var NF=function(x){return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, Com);}
+	if(H===null){H='b';}
+	if(Com===null){Com=',';}
+	var Now=()=>new Date().getTime()/1000;
+	var SecStr=(T)=>{var H,M,S;H=parseInt(T/3600);M=parseInt(T/60)-H*60;S=T-H*3600-M*60;return (H<10?'0'+H:H)+':'+(M<10?'0'+M:M)+':'+(S<10?'0'+S:S);}	
+	var Sec=(H,S,Inc,Re=1)=>{var Stop;var Fu=()=>{if(S==0){clearInterval(Stop);if(Re){location.reload(true);}}S+=Inc;H.html(SecStr(S));};Fu();Stop=setInterval(Fu,1000);}
+	var Counter=(H,S,L,Sp,l=false,HFun=X=>X,At0=X=>X)=>{var Stop,X,T=Now();if(typeof H=='string'){H=$(H);}var Fu=()=>{X=S+Math.round((Now()-T)*Sp);if(Sp>0){X=X>L?L:X;if(X>=L){clearInterval(Stop);}}else{if(l!==false){X=X<l?l:X;if(X<=l){clearInterval(Stop);}}if(X==0){At0();}}H.html(NF(HFun(X)));};Stop=setInterval(Fu,1000/(Sp>50?50:Sp));}
+	var E=$(H+'[Speed]');
+	for(var i=0;i<E.length;i++){
+		var e=E.eq(i);var S=e.attr('Speed');
+		var [Sp,L,l]=e.attr('Speed').split(',');
+		S=e.html();
+		S=S.split(Com).join("");
+		Counter(e,+S,+L,+Sp,+l);
+	}
+	var E=$(H+'[Time]');
+	for(var i=0;i<E.length;i++){
+		var e=E.eq(i);var S=e.attr('Time');if(e.attr('Speed')){continue;}
+		var [Inc,Re,S]=e.attr('Time').split(',');Re=+Re;
+		Counter(e,+S,1e15,+Inc,0,SecStr,Re?()=>{location.reload(true);}:X=>X);	
+	}
 }
 
 function Run_Speed_bares() {
@@ -2221,25 +1574,22 @@ function Atrdf() {
 }
 
 function F(n, c1, c2, c3, c4) {
-    var aP = +$('.rem').html() || 0;
-    var P = n > 0 ? 1 : -1;
-    var T = Math.abs(n);
-    var No = [0, c1, c2, c3, c4];
-    var Y = [0, 0.12, 0.12, 0.15, 0.3][T];
-    var oP = +$('.val' + T).html();
-    
+    let aP = +$('.rem').html() || 0;
+    let P = n > 0 ? 1 : -1;
+    let T = Math.abs(n);
+    let No = [0, c1, c2, c3, c4];
+    let Y = [0, 0.12, 0.12, 0.15, 0.3][T];
+    let oP = +$('.val' + T).html();
     if ((aP - P) < 0 && P > 0) {
         P = 0;
     }
-    
-    var aPP = aP - P;
-    for (var i = 1; i <= 4; i++) {
-        var p = +$('.val' + i).html() + (T === i ? P : 0);
+    let aPP = aP - P;
+    for (let i = 1; i <= 4; i++) {
+        let p = +$('.val' + i).html() + (T === i ? P : 0);
         $('.n' + i).css('color', p > No[i] ? 'green' : 'black');
         $('.q' + i).css('color', (aPP) > 0 && p < 100 ? 'green' : 'black');
     }
-    
-    var nP = oP + P;
+    let nP = oP + P;
     if (nP < No[T] && P < 0) {
         nP = No[T];
         P = 0;
@@ -2252,16 +1602,13 @@ function F(n, c1, c2, c3, c4) {
         nP = 1000;
         P = 0;
     }
-    
     $('.val' + T).html(nP);
-    var Fix = function(X) { return Math.round(X * 100) / 100; };
+    let Fix = X => Math.round(X * 100) / 100
     $('.v' + T).html(Fix(nP * Y) + ('%'));
-    
-    var width = (nP / 10);
+    let width = (nP / 10);
     if (width > 100) {
         width = 100;
     }
-    
     $('.ProgBar.x' + T).css('width', (width) + '%');
     $('.rem').html(aP - P);
     $('#f' + T).val(nP);
@@ -2427,31 +1774,10 @@ function n(v, x) {
     $('.overlay').show()
     $('.wrapper,#res,#ltimeWrap,div#dynamic_header').css('filter', 'blur(3px)')
     $('#caption').html(x)
-    
-    if (window.fetch) {
-        fetch(v)
-            .then(response => response.text())
-            .then(html => {
-                $('.Screen-content').html(html)
-                setTimeout(() => {
-                    resetZoom();
-                }, 100);
-            })
-            .catch(error => {
-                console.error("Error loading content:", error);
-                $('.Screen-content').html("<p>Failed to load content.</p>");
-            });
-    } else {
-        $.get(v, (html) => {
-            $('.Screen-content').html(html)
-            setTimeout(() => {
-                resetZoom();
-            }, 100);
-        }).fail(function() {
-            $('.Screen-content').html("<p>Failed to load content.</p>");
-        });
-    }
-}
+    $.get(v, (x) => {
+      $('.Screen-content').html(x)
+    })
+  }
 //   p = document.getElementById("ce");
 // 				 $('div#content,#res,#ltimeWrap,div#dynamic_header,div#header').css('filter','blur(3px)'); 
 
