@@ -147,12 +147,12 @@ function init() {
     updateZoomInfo();
     
     // إعادة تعيين الزوم عند تحميل الصفحة
-    requestAnimationFrame(function() {
+    setTimeout(function() {
         if (window.visualViewport && window.visualViewport.scale > 1.1) {
             logEvent('تم كشف الزوم عند التحميل - سيتم إعادة تعيينه');
             resetZoom();
         }
-    });
+    }, 100);
     
     // تحديث معلومات الزوم كل ثانية
     setInterval(updateZoomInfo, 1000);
