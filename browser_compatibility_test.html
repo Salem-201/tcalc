@@ -90,6 +90,26 @@
         
         <input type="file" id="fileInput" accept=".js,.txt" style="display: none;" onchange="loadSelectedFile(this)">
         
+        <!-- أزرار اختبار التنقل والزوم -->
+        <div style="margin: 20px 0; padding: 15px; background: #f0f8ff; border-radius: 8px;">
+            <h3>🧪 اختبارات تفاعلية للجوال</h3>
+            <button onclick="simulatePageNavigation()" style="margin: 5px; padding: 10px; background: #4CAF50; color: white; border: none; border-radius: 5px;">🔄 محاكاة التنقل بين الصفحات</button>
+            <button onclick="testZoomIn()" style="margin: 5px; padding: 10px; background: #2196F3; color: white; border: none; border-radius: 5px;">🔍 محاكاة Zoom In</button>
+            <button onclick="testZoomOut()" style="margin: 5px; padding: 10px; background: #FF9800; color: white; border: none; border-radius: 5px;">🔍 محاكاة Zoom Out</button>
+            <button onclick="resetViewport()" style="margin: 5px; padding: 10px; background: #9C27B0; color: white; border: none; border-radius: 5px;">🎯 إعادة تعيين العرض</button>
+        </div>
+        
+        <!-- محاكاة محتوى ديناميكي -->
+        <div id="dynamicContent" style="margin: 20px 0; padding: 15px; background: #fff3cd; border-radius: 8px; border: 1px solid #ffeaa7;">
+            <h3>📄 محتوى ديناميكي للاختبار</h3>
+            <p>هذا المحتوى سيتم تحديثه ديناميكياً لاختبار وظيفة الزوم</p>
+            <div id="contentArea" style="padding: 10px; background: white; border-radius: 5px; margin: 10px 0;">
+                <p>المحتوى الحالي: <span id="contentCounter">1</span></p>
+                <p>وقت آخر تحديث: <span id="lastUpdate">لم يتم التحديث بعد</span></p>
+            </div>
+            <button onclick="updateDynamicContent()" style="padding: 8px 15px; background: #17a2b8; color: white; border: none; border-radius: 5px;">🔄 تحديث المحتوى</button>
+        </div>
+        
         <div id="results"></div>
         <div id="summary" class="summary" style="display: none;"></div>
     </div>
@@ -192,6 +212,114 @@
             button.style.margin = '5px';
             button.style.background = '#28a745';
             document.querySelector('.test-container').appendChild(button);
+        }
+        
+        // دوال الاختبارات التفاعلية للجوال
+        var contentCounter = 1;
+        
+        function simulatePageNavigation() {
+            addInfo('🔄 محاكاة التنقل بين الصفحات...');
+            
+            // محاكاة تحميل محتوى جديد
+            setTimeout(() => {
+                updateDynamicContent();
+                addInfo('✅ تم محاكاة التنقل - تم استدعاء resetZoom()');
+                
+                // محاولة استدعاء resetZoom إذا كانت متوفرة
+                if (typeof resetZoom === 'function') {
+                    resetZoom();
+                    addInfo('✅ تم استدعاء resetZoom() بنجاح');
+                } else {
+                    addWarning('⚠️ دالة resetZoom غير متوفرة');
+                }
+            }, 500);
+        }
+        
+        function testZoomIn() {
+            addInfo('🔍 محاكاة Zoom In...');
+            
+            // محاكاة تغيير viewport
+            var viewport = document.querySelector('meta[name=viewport]');
+            if (viewport) {
+                var currentContent = viewport.getAttribute('content');
+                var newContent = currentContent.replace(/initial-scale=[0-9.]+/, 'initial-scale=1.5');
+                viewport.setAttribute('content', newContent);
+                addInfo('✅ تم تطبيق Zoom In على viewport');
+            }
+            
+            // محاولة استخدام Visual Viewport API
+            if (window.visualViewport) {
+                addInfo('📱 Visual Viewport متوفر - scale: ' + window.visualViewport.scale);
+            }
+        }
+        
+        function testZoomOut() {
+            addInfo('🔍 محاكاة Zoom Out...');
+            
+            // محاكاة إعادة تعيين viewport
+            var viewport = document.querySelector('meta[name=viewport]');
+            if (viewport) {
+                var newContent = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+                viewport.setAttribute('content', newContent);
+                addInfo('✅ تم تطبيق Zoom Out على viewport');
+            }
+            
+            // محاولة استخدام Visual Viewport API
+            if (window.visualViewport) {
+                addInfo('📱 Visual Viewport متوفر - scale: ' + window.visualViewport.scale);
+            }
+        }
+        
+        function resetViewport() {
+            addInfo('🎯 إعادة تعيين العرض...');
+            
+            // إعادة تعيين viewport
+            var viewport = document.querySelector('meta[name=viewport]');
+            if (viewport) {
+                viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+                addInfo('✅ تم إعادة تعيين viewport');
+            }
+            
+            // محاولة استدعاء resetZoom
+            if (typeof resetZoom === 'function') {
+                resetZoom();
+                addInfo('✅ تم استدعاء resetZoom()');
+            } else {
+                addWarning('⚠️ دالة resetZoom غير متوفرة');
+            }
+            
+            // إعادة تعيين عداد المحتوى
+            contentCounter = 1;
+            document.getElementById('contentCounter').textContent = contentCounter;
+            document.getElementById('lastUpdate').textContent = 'تم إعادة التعيين';
+        }
+        
+        function updateDynamicContent() {
+            contentCounter++;
+            var now = new Date().toLocaleTimeString();
+            
+            document.getElementById('contentCounter').textContent = contentCounter;
+            document.getElementById('lastUpdate').textContent = now;
+            
+            // إضافة محتوى جديد
+            var contentArea = document.getElementById('contentArea');
+            var newElement = document.createElement('p');
+            newElement.textContent = 'عنصر جديد #' + contentCounter + ' - ' + now;
+            newElement.style.background = '#e8f5e8';
+            newElement.style.padding = '5px';
+            newElement.style.margin = '2px 0';
+            newElement.style.borderRadius = '3px';
+            contentArea.appendChild(newElement);
+            
+            addInfo('🔄 تم تحديث المحتوى الديناميكي #' + contentCounter);
+            
+            // محاولة استدعاء resetZoom بعد التحديث
+            if (typeof resetZoom === 'function') {
+                setTimeout(() => {
+                    resetZoom();
+                    addInfo('✅ تم استدعاء resetZoom() بعد تحديث المحتوى');
+                }, 100);
+            }
         }
         
         // إضافة الزر عند تحميل الصفحة
