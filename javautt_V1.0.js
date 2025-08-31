@@ -1540,24 +1540,7 @@ function formatLargeNumber(number) {
 
 
 // Initialize the JavaScript functionality for the game interface
-function StartJS() {
-    /*
-    const expectedDomainsBase64 = [
-        'dXRhdGFyLmNvbQ==', 'd2FyeHRhdGFyLmNvbQ=='];
-    
-    function decodeBase64(encoded) {
-        return atob(encoded);
-    }
-    
-    const currentDomain = window.location.hostname;
-    const redirectUrl = 'https://wa.me/96181598905?text=Unauthorized%20Access%21%21';
-    
-    const decodedDomains = expectedDomainsBase64.map(decodeBase64);
-    
-    if (!decodedDomains.includes(currentDomain)) {
-        window.location.href = redirectUrl;
-    }
-    */
+
     // Check if specific game functions are defined and execute them
     if (typeof Chref_Attr === "function") {
         Chref_Attr();               // Initialize chat-related attributes
@@ -1999,3 +1982,4 @@ function n(v, x) {
 // 	$('#overlay').css('display','block');
 
 		
+
