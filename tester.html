@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, minimum-scale=1, user-scalable=yes">
+    <title>اختبار وظائف JavaScript - مشكلة الزوم</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            direction: rtl;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .header h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .header p {
+            color: #666;
+            text-align: center;
+            font-size: 1.1em;
+        }
+        
+        .test-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .test-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .navigation-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .nav-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .nav-btn.quick {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+        }
+        
+        .nav-btn.bottom {
+            background: linear-gradient(45deg, #2ecc71, #27ae60);
+        }
+        
+        .resource-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .resource-item {
+            background: linear-gradient(45deg, #f39c12, #e67e22);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .resource-item span {
+            display: block;
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+        
+        .timer-display {
+            background: linear-gradient(45deg, #9b59b6, #8e44ad);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .timer-display span {
+            font-size: 2em;
+            font-weight: bold;
+            display: block;
+            margin: 10px 0;
+        }
+        
+        .form-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .form-section input, .form-section select {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+        
+        .form-section button {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 5px;
+        }
+        
+        .tooltip {
+            position: absolute;
+            background: #fffca8;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s;
+            max-width: 300px;
+        }
+        
+        .tooltip.visible {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            z-index: 1000;
+        }
+        
+        .overlay-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
+        }
+        
+        .blackShadow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 999;
+        }
+        
+        .side-panel {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100%;
+            background: white;
+            transition: right 0.3s ease;
+            z-index: 1001;
+            padding: 20px;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .side-panel.active {
+            right: 0;
+        }
+        
+        .bottom-menu {
+            position: fixed;
+            bottom: -100%;
+            left: 0;
+            width: 100%;
+            height: 60%;
+            background: white;
+            transition: bottom 0.3s ease;
+            z-index: 1001;
+            border-top: 3px solid #667eea;
+        }
+        
+        .bottom-menu.active {
+            bottom: 0;
+        }
+        
+        .bottom-content {
+            padding: 20px;
+            height: calc(100% - 60px);
+            overflow-y: auto;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2em;
+        }
+        
+        .zoom-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .zoom-btn {
+            background: #34495e;
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin: 5px;
+            cursor: pointer;
+            font-size: 1.5em;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .status-display {
+            background: #2c3e50;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-family: monospace;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .loading.show {
+            display: block;
+        }
+        
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .test-results {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #3498db;
+        }
+        
+        .test-results h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .test-results ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        .test-results li {
+            padding: 5px 0;
+            border-bottom: 1px solid #bdc3c7;
+        }
+        
+        .test-results li:last-child {
+            border-bottom: none;
+        }
+        
+        .success { color: #27ae60; }
+        .error { color: #e74c3c; }
+        .warning { color: #f39c12; }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .navigation-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .resource-display {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .side-panel {
+                width: 100%;
+                right: -100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 اختبار وظائف JavaScript</h1>
+            <p>اختبار مشكلة الزوم والتنقل الديناميكي</p>
+        </div>
+
+        <!-- اختبار التنقل -->
+        <div class="test-section">
+            <h2>🔗 اختبار التنقل الديناميكي</h2>
+            <div class="navigation-buttons">
+                <a href="page1.html" class="nav-btn quick" quick>صفحة 1 (Quick Load)</a>
+                <a href="page2.html" class="nav-btn quick" quick>صفحة 2 (Quick Load)</a>
+                <a href="page3.html" class="nav-btn quick" quick>صفحة 3 (Quick Load)</a>
+                <a href="#" class="nav-btn bottom" bottom to="content1.html">محتوى 1 (Bottom Menu)</a>
+                <a href="#" class="nav-btn bottom" bottom to="content2.html">محتوى 2 (Bottom Menu)</a>
+                <a href="#" class="nav-btn bottom" bottom to="content3.html">محتوى 3 (Bottom Menu)</a>
+            </div>
+            
+            <div class="test-results">
+                <h4>نتائج اختبار التنقل:</h4>
+                <ul id="navigation-results">
+                    <li>✅ تم تحميل الكود بنجاح</li>
+                    <li>⏳ في انتظار اختبار التنقل...</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- اختبار الموارد والتايمر -->
+        <div class="test-section">
+            <h2>📊 اختبار الموارد والتايمر</h2>
+            <div class="resource-display">
+                <div class="resource-item">
+                    <span>الخشب</span>
+                    <div id="l1" title="100">5000</div>
+                </div>
+                <div class="resource-item">
+                    <span>الطين</span>
+                    <div id="l2" title="80">4000</div>
+                </div>
+                <div class="resource-item">
+                    <span>الحديد</span>
+                    <div id="l3" title="60">3000</div>
+                </div>
+                <div class="resource-item">
+                    <span>الحبوب</span>
+                    <div id="l4" title="40">2000</div>
+                </div>
+            </div>
+            
+            <div class="timer-display">
+                <span>تايمر 1 (عد تنازلي):</span>
+                <span id="timer1">00:05:00</span>
+                <span>تايمر 2 (عد تصاعدي):</span>
+                <span id="timer2">00:02:30</span>
+            </div>
+            
+            <div class="test-results">
+                <h4>نتائج اختبار الموارد:</h4>
+                <ul id="resource-results">
+                    <li>✅ تم تهيئة الموارد</li>
+                    <li>⏳ في انتظار تحديث الموارد...</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- اختبار النماذج -->
+        <div class="test-section">
+            <h2>�� اختبار النماذج</h2>
+            <div class="form-section">
+                <form quick action="test-form.html" method="post">
+                    <input type="text" name="username" placeholder="اسم المستخدم" required>
+                    <input type="email" name="email" placeholder="البريد الإلكتروني" required>
+                    <select name="category">
+                        <option value="">اختر فئة</option>
+                        <option value="test1">اختبار 1</option>
+                        <option value="test2">اختبار 2</option>
+                    </select>
+                    <button type="submit">إرسال النموذج</button>
+                </form>
+            </div>
+            
+            <div class="test-results">
+                <h4>نتائج اختبار النماذج:</h4>
+                <ul id="form-results">
+                    <li>✅ تم تحميل النموذج</li>
+                    <li>⏳ في انتظار إرسال النموذج...</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- اختبار الزوم -->
+        <div class="test-section">
+            <h2>�� اختبار الزوم</h2>
+            <p>استخدم أزرار الزوم أدناه لاختبار وظيفة resetZoom()</p>
+            <div class="zoom-controls">
+                <button class="zoom-btn" onclick="testZoomIn()">+</button>
+                <button class="zoom-btn" onclick="testZoomOut()">-</button>
+                <button class="zoom-btn" onclick="resetZoom()">⌂</button>
+            </div>
+            
+            <div class="test-results">
+                <h4>نتائج اختبار الزوم:</h4>
+                <ul id="zoom-results">
+                    <li>✅ تم تحميل وظائف الزوم</li>
+                    <li>⏳ في انتظار اختبار الزوم...</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- اختبار التولتيب -->
+        <div class="test-section">
+            <h2>�� اختبار التولتيب</h2>
+            <p>مرر الماوس فوق العناصر أدناه لاختبار التولتيب:</p>
+            <div style="display: flex; gap: 20px; flex-wrap: wrap; margin: 20px 0;">
+                <button TDa="هذا تولتيب للزر الأول" IDa="assets/x.gif" style="padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">زر 1</button>
+                <button TDa="هذا تولتيب للزر الثاني" IDa="assets/x.gif" style="padding: 10px 20px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">زر 2</button>
+                <button TDa="هذا تولتيب للزر الثالث" IDa="assets/x.gif" style="padding: 10px 20px; background: #2ecc71; color: white; border: none; border-radius: 5px; cursor: pointer;">زر 3</button>
+            </div>
+            
+            <div class="test-results">
+                <h4>نتائج اختبار التولتيب:</h4>
+                <ul id="tooltip-results">
+                    <li>✅ تم تحميل وظائف التولتيب</li>
+                    <li>⏳ في انتظار اختبار التولتيب...</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- حالة النظام -->
+        <div class="test-section">
+            <h2>📈 حالة النظام</h2>
+            <div class="status-display" id="system-status">
+                <div>حالة التحميل: <span id="loading-status">جاهز</span></div>
+                <div>آخر تحديث: <span id="last-update">-</span></div>
+                <div>مستوى الزوم: <span id="zoom-level">1.0</span></div>
+                <div>حجم الشاشة: <span id="screen-size">-</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- العناصر المخفية -->
+    <div id="granary" style="display: none;">10000</div>
+    <div id="warehouse" style="display: none;">15000</div>
+    <div id="TDa" class="tooltip"></div>
+    <div class="blackShadow"></div>
+    <div id="side_info" class="side-panel">
+        <button class="close-btn" onclick="XblackShadow()">×</button>
+        <h3>لوحة جانبية</h3>
+        <p>هذا محتوى اللوحة الجانبية للاختبار</p>
+    </div>
+    <div id="bottom-menu" class="bottom-menu">
+        <button id="close-menu" class="close-btn">×</button>
+        <div id="Bottom-content" class="bottom-content">
+            <h3>قائمة سفلية</h3>
+            <p>هذا محتوى القائمة السفلية للاختبار</p>
+        </div>
+    </div>
+    <div class="overlay">
+        <div class="overlay-content">
+            <h3>نافذة منبثقة</h3>
+            <p>هذا محتوى النافذة المنبثقة للاختبار</p>
+            <button class="close-btn" onclick="$('.overlay').hide()">×</button>
+        </div>
+    </div>
+    <div class="loading" id="loading">
+        <span>جاري التحميل...</span>
+    </div>
+    <div class="loading" id="loadingm">
+        <span>جاري التحميل...</span>
+    </div>
+    <div id="day" style="display: none;">☀️</div>
+    <div id="daym" style="display: none;">☀️</div>
+
+    <!-- تحميل الكود JavaScript من GitHub -->
+    <script src="https://salem-201.github.io/tcalc/javautt_V1.0.js"></script>
+    
+    <script>
+        // وظائف اختبار إضافية
+        let testResults = {
+            navigation: [],
+            resources: [],
+            forms: [],
+            zoom: [],
+            tooltips: []
+        };
+
+        function updateTestResults(category, message, type = 'info') {
+            const resultsList = document.getElementById(category + '-results');
+            if (resultsList) {
+                const li = document.createElement('li');
+                const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : '⏳';
+                li.innerHTML = `${icon} ${message}`;
+                li.className = type;
+                resultsList.appendChild(li);
+            }
+            testResults[category].push({ message, type, timestamp: new Date() });
+        }
+
+        function testZoomIn() {
+            document.documentElement.style.transform = 'scale(1.5)';
+            document.documentElement.style.transformOrigin = 'top left';
+            updateTestResults('zoom', 'تم تكبير الصفحة إلى 150%', 'success');
+            updateZoomLevel();
+        }
+
+        function testZoomOut() {
+            document.documentElement.style.transform = 'scale(0.8)';
+            document.documentElement.style.transformOrigin = 'top left';
+            updateTestResults('zoom', 'تم تصغير الصفحة إلى 80%', 'success');
+            updateZoomLevel();
+        }
+
+        function updateZoomLevel() {
+            const transform = document.documentElement.style.transform;
+            const match = transform.match(/scale\(([^)]+)\)/);
+            const level = match ? match[1] : '1.0';
+            document.getElementById('zoom-level').textContent = level;
+        }
+
+        function updateScreenSize() {
+            const size = `${window.innerWidth} × ${window.innerHeight}`;
+            document.getElementById('screen-size').textContent = size;
+        }
+
+        function updateLastUpdate() {
+            document.getElementById('last-update').textContent = new Date().toLocaleTimeString('ar-SA');
+        }
+
+        // تهيئة الاختبارات
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTestResults('navigation', 'تم تحميل الصفحة بنجاح', 'success');
+            updateTestResults('resources', 'تم تهيئة الموارد', 'success');
+            updateTestResults('forms', 'تم تحميل النماذج', 'success');
+            updateTestResults('zoom', 'تم تحميل وظائف الزوم', 'success');
+            updateTestResults('tooltips', 'تم تحميل وظائف التولتيب', 'success');
+            
+            updateScreenSize();
+            updateLastUpdate();
+            
+            // تحديث حجم الشاشة عند تغيير حجم النافذة
+            window.addEventListener('resize', updateScreenSize);
+            
+            // تحديث الوقت كل ثانية
+            setInterval(updateLastUpdate, 1000);
+            
+            // اختبار وظيفة init
+            if (typeof init === 'function') {
+                init(1);
+                updateTestResults('resources', 'تم تشغيل وظيفة init بنجاح', 'success');
+            } else {
+                updateTestResults('resources', 'وظيفة init غير موجودة', 'error');
+            }
+            
+            // اختبار وظيفة setupTooltips
+            if (typeof setupTooltips === 'function') {
+                setupTooltips("[TDa]", true);
+                updateTestResults('tooltips', 'تم تشغيل وظيفة setupTooltips بنجاح', 'success');
+            } else {
+                updateTestResults('tooltips', 'وظيفة setupTooltips غير موجودة', 'error');
+            }
+            
+            // اختبار وظيفة StartJS
+            if (typeof StartJS === 'function') {
+                StartJS();
+                updateTestResults('navigation', 'تم تشغيل وظيفة StartJS بنجاح', 'success');
+            } else {
+                updateTestResults('navigation', 'وظيفة StartJS غير موجودة', 'error');
+            }
+        });
+
+        // محاكاة محتوى للقائمة السفلية
+        const mockContent = {
+            'content1.html': '<h3>محتوى 1</h3><p>هذا محتوى تجريبي للصفحة الأولى</p><button onclick="alert(\'تم النقر!\')">زر تجريبي</button>',
+            'content2.html': '<h3>محتوى 2</h3><p>هذا محتوى تجريبي للصفحة الثانية</p><form><input type="text" placeholder="نص تجريبي"><button type="submit">إرسال</button></form>',
+            'content3.html': '<h3>محتوى 3</h3><p>هذا محتوى تجريبي للصفحة الثالثة</p><div style="background: #f0f0f0; padding: 20px; border-radius: 10px;">محتوى مع تنسيق</div>'
+        };
+
+        // محاكاة تحميل المحتوى للقائمة السفلية
+        document.addEventListener('click', function(e) {
+            if (e.target.matches('a[bottom]')) {
+                e.preventDefault();
+                const href = e.target.getAttribute('to');
+                const content = mockContent[href];
+                
+                if (content) {
+                    document.getElementById('Bottom-content').innerHTML = content;
+                    document.getElementById('bottom-menu').classList.add('active');
+                    updateTestResults('navigation', `تم تحميل المحتوى: ${href}`, 'success');
+                    
+                    // اختبار resetZoom بعد تحميل المحتوى
+                    setTimeout(() => {
+                        if (typeof resetZoom === 'function') {
+                            resetZoom();
+                            updateTestResults('zoom', 'تم استدعاء resetZoom بعد تحميل المحتوى', 'success');
+                        }
+                    }, 100);
+                } else {
+                    updateTestResults('navigation', `المحتوى غير موجود: ${href}`, 'error');
+                }
+            }
+        });
+
+        // اختبار النماذج
+        document.addEventListener('submit', function(e) {
+            if (e.target.matches('form[quick]')) {
+                e.preventDefault();
+                updateTestResults('forms', 'تم إرسال النموذج بنجاح', 'success');
+                
+                // محاكاة استجابة النموذج
+                setTimeout(() => {
+                    updateTestResults('forms', 'تم معالجة النموذج', 'success');
+                    if (typeof resetZoom === 'function') {
+                        resetZoom();
+                        updateTestResults('zoom', 'تم استدعاء resetZoom بعد إرسال النموذج', 'success');
+                    }
+                }, 1000);
+            }
+        });
+
+        // اختبار التنقل السريع
+        document.addEventListener('click', function(e) {
+            if (e.target.matches('a[quick]')) {
+                e.preventDefault();
+                updateTestResults('navigation', `تم النقر على: ${e.target.textContent}`, 'success');
+                
+                // محاكاة تحميل الصفحة
+                document.getElementById('loading').classList.add('show');
+                document.getElementById('day').style.display = 'none';
+                
+                setTimeout(() => {
+                    document.getElementById('loading').classList.remove('show');
+                    document.getElementById('day').style.display = 'block';
+                    updateTestResults('navigation', 'تم تحميل الصفحة الجديدة', 'success');
+                    
+                    if (typeof resetZoom === 'function') {
+                        resetZoom();
+                        updateTestResults('zoom', 'تم استدعاء resetZoom بعد التنقل', 'success');
+                    }
+                }, 2000);
+            }
+        });
+
+        // اختبار التولتيب
+        document.addEventListener('mouseover', function(e) {
+            if (e.target.matches('[TDa]')) {
+                updateTestResults('tooltips', `تم عرض التولتيب: ${e.target.getAttribute('TDa')}`, 'success');
+            }
+        });
+
+        // اختبار إغلاق القوائم
+        document.getElementById('close-menu').addEventListener('click', function() {
+            document.getElementById('bottom-menu').classList.remove('active');
+            updateTestResults('navigation', 'تم إغلاق القائمة السفلية', 'success');
+        });
+
+        // اختبار إغلاق اللوحة الجانبية
+        function XblackShadow() {
+            document.getElementById('side_info').classList.remove('active');
+            document.querySelector('.blackShadow').style.display = 'none';
+            updateTestResults('navigation', 'تم إغلاق اللوحة الجانبية', 'success');
+        }
+
+        // جعل الوظيفة متاحة عالمياً
+        window.XblackShadow = XblackShadow;
+    </script>
+</body>
+</html>
