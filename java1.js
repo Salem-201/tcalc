@@ -62,20 +62,17 @@ function dynamicLoad(url) {
         updateContent(url);
         showLoading(false);
         isLoading = false;
-        logEvent('تم التنقل الديناميكي إلى: ' + url);
     }, 1000);
 }
 
 // دالة التنقل الذكي
 function smartNavigation(url) {
     if (isZoomedIn()) {
-        logEvent('تم كشف الزوم - سيتم إعادة تحميل الصفحة');
         resetZoom();
         setTimeout(() => {
             window.location.href = url;
         }, 100);
     } else {
-        logEvent('الزوم طبيعي - سيتم التنقل الديناميكي');
         dynamicLoad(url);
     }
 }
@@ -113,18 +110,6 @@ function showLoading(show) {
     }
 }
 
-// دالة تسجيل الأحداث
-function logEvent(message) {
-    const log = document.getElementById('log');
-    if (!log) return;
-    
-    const time = new Date().toLocaleTimeString();
-    const logEntry = document.createElement('div');
-    logEntry.innerHTML = `[${time}] ${message}`;
-    log.appendChild(logEntry);
-    log.scrollTop = log.scrollHeight;
-}
-
 // دالة تحديث معلومات الزوم
 function updateZoomInfo() {
     const zoomLevel = document.getElementById('zoomLevel');
@@ -143,10 +128,7 @@ function updateZoomInfo() {
 
 // تهيئة الصفحة
 function init() {
-    logEvent('تم تحميل الصفحة');
     updateZoomInfo();
-    
-
     
     // تحديث معلومات الزوم كل ثانية
     setInterval(updateZoomInfo, 1000);
@@ -156,7 +138,6 @@ function init() {
         if (e.target.matches('a[data-page]')) {
             e.preventDefault();
             const page = e.target.getAttribute('data-page');
-            logEvent('تم النقر على: ' + page);
             smartNavigation(page);
         }
     });
@@ -167,16 +148,13 @@ function init() {
         if (e.target.matches('form[data-action]')) {
             e.preventDefault();
             const action = e.target.getAttribute('data-action');
-            logEvent('تم إرسال النموذج: ' + action);
             
             if (isZoomedIn()) {
-                logEvent('تم كشف الزوم في النموذج - سيتم إعادة تحميل الصفحة');
                 resetZoom();
                 setTimeout(() => {
                     window.location.reload();
                 }, 100);
             } else {
-                logEvent('الزوم طبيعي في النموذج - سيتم التنقل الديناميكي');
                 dynamicLoad(action);
             }
         } else {
@@ -187,4 +165,3 @@ function init() {
 
 // تشغيل التهيئة عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', init);
-
