@@ -13,6 +13,31 @@
         <strong>الحالة:</strong> <span id="zoomStatus">طبيعي</span>
     </div>
     
+    <div style="background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 5px;">
+        <h3>معلومات المتصفح والجهاز:</h3>
+        <div><strong>نوع المتصفح:</strong> <span id="browserType">-</span></div>
+        <div><strong>نوع الجهاز:</strong> <span id="deviceType">-</span></div>
+        <div><strong>نظام التشغيل:</strong> <span id="osType">-</span></div>
+        <div><strong>عرض الشاشة:</strong> <span id="screenWidth">-</span></div>
+        <div><strong>دعم Visual Viewport:</strong> <span id="visualViewportSupport">-</span></div>
+        <div><strong>دعم Touch Events:</strong> <span id="touchSupport">-</span></div>
+    </div>
+    
+    <div style="background: #e8f5e8; padding: 10px; margin: 10px 0; border-radius: 5px;">
+        <h3>اختبار دالة الزوم:</h3>
+        <button onclick="testZoomFunction()" style="padding: 8px 15px; margin: 5px; background: #4CAF50; color: white; border: none; border-radius: 3px; cursor: pointer;">اختبار دالة resetZoom()</button>
+        <button onclick="simulateZoomIn()" style="padding: 8px 15px; margin: 5px; background: #FF9800; color: white; border: none; border-radius: 3px; cursor: pointer;">محاكاة Zoom In</button>
+        <button onclick="simulateZoomOut()" style="padding: 8px 15px; margin: 5px; background: #2196F3; color: white; border: none; border-radius: 3px; cursor: pointer;">محاكاة Zoom Out</button>
+        <div id="zoomTestResult" style="margin-top: 10px; padding: 5px; background: white; border-radius: 3px;"></div>
+    </div>
+    
+    <div style="background: #fff3e0; padding: 10px; margin: 10px 0; border-radius: 5px;">
+        <h3>اختبار دوال الجوال:</h3>
+        <button onclick="testTouchEvents()" style="padding: 8px 15px; margin: 5px; background: #9C27B0; color: white; border: none; border-radius: 3px; cursor: pointer;">اختبار Touch Events</button>
+        <button onclick="testResponsiveDesign()" style="padding: 8px 15px; margin: 5px; background: #607D8B; color: white; border: none; border-radius: 3px; cursor: pointer;">اختبار Responsive</button>
+        <div id="mobileTestResult" style="margin-top: 10px; padding: 5px; background: white; border-radius: 3px;"></div>
+    </div>
+    
     <div id="content">
         <h2>الصفحة الرئيسية</h2>
         <p>مرحباً بك في اختبار الزوم والتنقل الديناميكي</p>
@@ -48,5 +73,144 @@
     </div>
     
     <script src="https://salem-201.github.io/tcalc/java1.js"></script>
+    
+    <script>
+        // Browser Detection
+        function detectBrowser() {
+            const userAgent = navigator.userAgent;
+            let browserType = 'غير معروف';
+            let deviceType = 'سطح المكتب';
+            let osType = 'غير معروف';
+            
+            // Browser Detection
+            if (userAgent.includes('Chrome') && !userAgent.includes('Edg')) {
+                browserType = 'Chrome';
+            } else if (userAgent.includes('Firefox')) {
+                browserType = 'Firefox';
+            } else if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) {
+                browserType = 'Safari';
+            } else if (userAgent.includes('Edg')) {
+                browserType = 'Edge';
+            } else if (userAgent.includes('Opera')) {
+                browserType = 'Opera';
+            }
+            
+            // Device Detection
+            if (userAgent.includes('Mobile')) {
+                deviceType = 'جوال';
+            } else if (userAgent.includes('Tablet') || userAgent.includes('iPad')) {
+                deviceType = 'جهاز لوحي';
+            }
+            
+            // OS Detection
+            if (userAgent.includes('Windows')) {
+                osType = 'Windows';
+            } else if (userAgent.includes('Mac')) {
+                osType = 'macOS';
+            } else if (userAgent.includes('Linux')) {
+                osType = 'Linux';
+            } else if (userAgent.includes('Android')) {
+                osType = 'Android';
+            } else if (userAgent.includes('iOS') || userAgent.includes('iPhone') || userAgent.includes('iPad')) {
+                osType = 'iOS';
+            }
+            
+            return { browserType, deviceType, osType };
+        }
+        
+        // Test Functions
+        function testZoomFunction() {
+            const result = document.getElementById('zoomTestResult');
+            try {
+                if (typeof resetZoom === 'function') {
+                    resetZoom();
+                    result.innerHTML = '<span style="color: green;">✓ دالة resetZoom() تعمل بنجاح</span>';
+                } else {
+                    result.innerHTML = '<span style="color: red;">✗ دالة resetZoom() غير موجودة</span>';
+                }
+            } catch (error) {
+                result.innerHTML = '<span style="color: red;">✗ خطأ في دالة resetZoom(): ' + error.message + '</span>';
+            }
+        }
+        
+        function simulateZoomIn() {
+            const result = document.getElementById('zoomTestResult');
+            try {
+                document.documentElement.style.transform = 'scale(1.5)';
+                document.documentElement.style.transformOrigin = 'top left';
+                result.innerHTML = '<span style="color: orange;">تم محاكاة Zoom In - جرب دالة resetZoom() الآن</span>';
+            } catch (error) {
+                result.innerHTML = '<span style="color: red;">✗ خطأ في محاكاة Zoom In: ' + error.message + '</span>';
+            }
+        }
+        
+        function simulateZoomOut() {
+            const result = document.getElementById('zoomTestResult');
+            try {
+                document.documentElement.style.transform = 'scale(0.8)';
+                document.documentElement.style.transformOrigin = 'top left';
+                result.innerHTML = '<span style="color: blue;">تم محاكاة Zoom Out - جرب دالة resetZoom() الآن</span>';
+            } catch (error) {
+                result.innerHTML = '<span style="color: red;">✗ خطأ في محاكاة Zoom Out: ' + error.message + '</span>';
+            }
+        }
+        
+        function testTouchEvents() {
+            const result = document.getElementById('mobileTestResult');
+            let touchSupport = 'غير مدعوم';
+            let touchEvents = [];
+            
+            if ('ontouchstart' in window) {
+                touchSupport = 'مدعوم';
+                touchEvents.push('touchstart');
+            }
+            if ('ontouchmove' in window) {
+                touchEvents.push('touchmove');
+            }
+            if ('ontouchend' in window) {
+                touchEvents.push('touchend');
+            }
+            
+            result.innerHTML = `
+                <div><strong>دعم Touch Events:</strong> ${touchSupport}</div>
+                <div><strong>الأحداث المدعومة:</strong> ${touchEvents.join(', ')}</div>
+                <div><strong>عدد نقاط اللمس:</strong> ${navigator.maxTouchPoints || 'غير محدد'}</div>
+            `;
+        }
+        
+        function testResponsiveDesign() {
+            const result = document.getElementById('mobileTestResult');
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            let deviceCategory = 'سطح المكتب';
+            
+            if (width <= 768) {
+                deviceCategory = 'جوال';
+            } else if (width <= 1024) {
+                deviceCategory = 'جهاز لوحي';
+            }
+            
+            result.innerHTML = `
+                <div><strong>عرض النافذة:</strong> ${width}px</div>
+                <div><strong>ارتفاع النافذة:</strong> ${height}px</div>
+                <div><strong>تصنيف الجهاز:</strong> ${deviceCategory}</div>
+                <div><strong>نسبة العرض للارتفاع:</strong> ${(width/height).toFixed(2)}</div>
+            `;
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const detection = detectBrowser();
+            
+            document.getElementById('browserType').textContent = detection.browserType;
+            document.getElementById('deviceType').textContent = detection.deviceType;
+            document.getElementById('osType').textContent = detection.osType;
+            document.getElementById('screenWidth').textContent = window.innerWidth + 'px';
+            document.getElementById('visualViewportSupport').textContent = 
+                window.visualViewport ? 'مدعوم' : 'غير مدعوم';
+            document.getElementById('touchSupport').textContent = 
+                'ontouchstart' in window ? 'مدعوم' : 'غير مدعوم';
+        });
+    </script>
 </body>
 </html>
