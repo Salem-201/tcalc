@@ -782,6 +782,7 @@ function resetZoom() {
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
         const isChrome = /Chrome/.test(navigator.userAgent);
         const isFirefox = /Firefox/.test(navigator.userAgent);
+        const isAndroid = /Android/.test(navigator.userAgent);
         
         document.querySelectorAll('meta[name="viewport"]').forEach(meta => meta.remove());
         
@@ -798,10 +799,23 @@ function resetZoom() {
             document.body.style.display = '';
         }
         
+        if (isFirefox && isAndroid) {
+            document.documentElement.style.zoom = '1';
+            document.body.style.zoom = '1';
+            document.documentElement.style.transform = 'scale(1)';
+            document.documentElement.style.transformOrigin = 'top left';
+            document.documentElement.style.willChange = 'transform';
+            requestAnimationFrame(() => {
+                document.documentElement.style.willChange = 'auto';
+            });
+        }
+        
         document.documentElement.style.transform = "scale(1)";
         document.documentElement.style.transformOrigin = "top left";
         
-        const timeout = (isSafari || isIOS) ? 500 : 200;
+        let timeout = 200;
+        if (isSafari || isIOS) timeout = 500;
+        else if (isFirefox && isAndroid) timeout = 300;
         
         setTimeout(() => {
             viewport.content = "width=device-width, initial-scale=1, maximum-scale=5, minimum-scale=1, user-scalable=yes";
