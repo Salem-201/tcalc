@@ -89,16 +89,16 @@ function updateContent(url) {
     
     switch(url) {
         case 'page1':
-            newContent = '<h2>الصفحة الأولى</h2><p>هذا محتوى الصفحة الأولى</p>';
+            newContent = 'PAGE 1 TEST';
             break;
         case 'page2':
-            newContent = '<h2>الصفحة الثانية</h2><p>هذا محتوى الصفحة الثانية</p>';
+            newContent = 'PAGE 2 TEST';
             break;
         case 'page3':
-            newContent = '<h2>الصفحة الثالثة</h2><p>هذا محتوى الصفحة الثالثة</p>';
+            newContent = 'PAGE 3 TEST';
             break;
         default:
-            newContent = '<h2>الصفحة الرئيسية</h2><p>مرحباً بك في الصفحة الرئيسية</p>';
+            newContent ='HOME PAGE 💡 TEST';
     }
     
     content.innerHTML = newContent;
@@ -187,3 +187,4 @@ function init() {
 
 // تشغيل التهيئة عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', init);
+
