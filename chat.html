@@ -154,13 +154,7 @@
                                 console.log('تم النزول للأسفل');
                             } else {
                                 console.log('المستخدم في الأعلى - لم يتم النزول للأسفل');
-                                // نعرض إشعار للرسالة التي أرسلها المستخدم نفسه
-                                newMessageCount++;
-                                if (!firstNewMessageId) {
-                                    firstNewMessageId = message.timestamp + '_' + message.userId;
-                                }
-                                console.log('إظهار إشعار للرسالة المرسلة - عدد الرسائل:', newMessageCount);
-                                updateNotification();
+                                // لا نعرض إشعار للرسائل التي أرسلها المستخدم نفسه
                             }
                         } else {
                             // رسالة قديمة، عرضها فقط
@@ -274,6 +268,7 @@
                 newMessageCount = 0;
                 firstNewMessageId = null;
                 notification.hide();
+                console.log('تم إخفاء الإشعار وإعادة تعيين العداد');
             }
 
             // الانتقال للرسالة الجديدة
@@ -404,6 +399,7 @@
             // أحداث الإشعار والتمرير
             notification.on('click', function() {
                 scrollToNewMessage();
+                console.log('تم النقر على الإشعار');
             });
 
             chatbox.on('scroll', function() {
@@ -433,6 +429,8 @@
             // تعيين المستخدم في الأسفل عند بدء التطبيق
             setTimeout(function() {
                 console.log('تم تهيئة الشات - المستخدم في الأسفل');
+                // إخفاء أي إشعار موجود عند بدء التطبيق
+                hideNotification();
             }, 1000);
 
             // اختبار الإشعار
