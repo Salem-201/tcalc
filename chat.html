@@ -124,6 +124,12 @@
                     textDiv.append($('<div></div>').text(message.text));
                 }
                 
+                // إضافة الوقت
+                const timeDiv = $('<div class="message-time"></div>');
+                const messageTime = formatTime(message.timestamp);
+                timeDiv.text(messageTime);
+                textDiv.append(timeDiv);
+                
                 const userDiv = $('<div class="x1"></div>').text(message.username || 'مجهول');
                 
                 messageContent.append(textDiv).append(userDiv);
@@ -138,7 +144,15 @@
                 const messageElement = $('<div class="msgln"></div>');
                 const messageContent = $('<div class="y0"></div>');
                 
-                const textDiv = $('<div class="x0 chatext"></div>').text(text);
+                const textDiv = $('<div class="x0 chatext"></div>');
+                textDiv.append($('<div></div>').text(text));
+                
+                // إضافة الوقت الحالي
+                const timeDiv = $('<div class="message-time"></div>');
+                const currentTime = formatTime(Date.now());
+                timeDiv.text(currentTime);
+                textDiv.append(timeDiv);
+                
                 const userDiv = $('<div class="x1"></div>').text(username || 'مجهول');
                 
                 messageContent.append(textDiv).append(userDiv);
@@ -146,6 +160,14 @@
                 
                 chatbox.append(messageElement);
                 chatbox.scrollTop(chatbox[0].scrollHeight);
+            }
+            
+            // تنسيق الوقت
+            function formatTime(timestamp) {
+                const date = new Date(timestamp);
+                const hours = date.getHours().toString().padStart(2, '0');
+                const minutes = date.getMinutes().toString().padStart(2, '0');
+                return hours + ':' + minutes;
             }
 
             // إرسال الرسالة
