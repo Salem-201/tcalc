@@ -78,7 +78,7 @@ div.chat {
 .input-wrapper {
     position: relative;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     margin: 10px 0;
 }
 
@@ -107,6 +107,7 @@ div.chat {
 .send-btn {
     position: absolute;
     right: 5px;
+    bottom: 5px;
     width: 35px;
     height: 35px;
     border-radius: 50%;
@@ -129,6 +130,14 @@ div.chat {
 .send-btn:hover {
     transform: scale(1.1);
     box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.send-btn svg {
+    transition: transform 0.3s;
+}
+
+.send-btn:hover svg {
+    transform: translateY(-1px);
 }
 
 .send-btn.active:hover {
