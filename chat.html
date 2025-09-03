@@ -34,13 +34,18 @@
             measurementId: "G-9YQPYV8839"
         };
 
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-        const auth = firebase.auth();
-        const storage = firebase.storage();
-
-        let currentUser = null;
-        let messagesRef = database.ref('messages');
+        let app, database, auth, storage, currentUser, messagesRef;
+        
+        try {
+            app = firebase.initializeApp(firebaseConfig);
+            database = firebase.database();
+            auth = firebase.auth();
+            storage = firebase.storage();
+            messagesRef = database.ref('messages');
+            console.log('تم تهيئة Firebase بنجاح');
+        } catch (error) {
+            console.error('خطأ في تهيئة Firebase:', error);
+        }
 
         $(function () {
             const chatbox = $('#chatbox');
@@ -50,41 +55,53 @@
             const fileBtn = $('#fileBtn');
 
             // تسجيل الدخول التلقائي
-            auth.signInAnonymously().then(function(user) {
-                currentUser = user;
-                console.log('تم تسجيل الدخول:', user.uid);
+            if (auth) {
+                auth.signInAnonymously().then(function(user) {
+                    currentUser = user;
+                    console.log('تم تسجيل الدخول:', user.uid);
+                    loadMessages();
+                }).catch(function(error) {
+                    console.error('خطأ في تسجيل الدخول:', error);
+                    // حتى لو فشل تسجيل الدخول، الشات يعمل
+                    loadMessages();
+                });
+            } else {
+                console.log('Firebase غير متوفر، الشات يعمل بدون حفظ');
                 loadMessages();
-            }).catch(function(error) {
-                console.error('خطأ في تسجيل الدخول:', error);
-            });
+            }
 
             // تحميل الرسائل المحفوظة
             function loadMessages() {
                 console.log('بدء تحميل الرسائل...');
                 
-                messagesRef.once('value', function(snapshot) {
-                    console.log('تم تحميل البيانات:', snapshot.exists());
-                    if (snapshot.exists()) {
-                        console.log('عدد الرسائل:', snapshot.numChildren());
-                        snapshot.forEach(function(childSnapshot) {
-                            const message = childSnapshot.val();
-                            console.log('رسالة:', message);
-                            displayMessage(message);
-                        });
-                    } else {
-                        console.log('لا توجد رسائل محفوظة');
-                        addMessageToChat('مرحباً بك في الشات!', 'النظام');
-                    }
-                }).catch(function(error) {
-                    console.error('خطأ في تحميل الرسائل:', error);
-                });
+                if (messagesRef) {
+                    messagesRef.once('value', function(snapshot) {
+                        console.log('تم تحميل البيانات:', snapshot.exists());
+                        if (snapshot.exists()) {
+                            console.log('عدد الرسائل:', snapshot.numChildren());
+                            snapshot.forEach(function(childSnapshot) {
+                                const message = childSnapshot.val();
+                                console.log('رسالة:', message);
+                                displayMessage(message);
+                            });
+                        } else {
+                            console.log('لا توجد رسائل محفوظة');
+                            addMessageToChat('مرحباً بك في الشات!', 'النظام');
+                        }
+                    }).catch(function(error) {
+                        console.error('خطأ في تحميل الرسائل:', error);
+                    });
 
-                // الاستماع للرسائل الجديدة
-                messagesRef.on('child_added', function(snapshot) {
-                    const message = snapshot.val();
-                    console.log('رسالة جديدة:', message);
-                    displayMessage(message);
-                });
+                    // الاستماع للرسائل الجديدة
+                    messagesRef.on('child_added', function(snapshot) {
+                        const message = snapshot.val();
+                        console.log('رسالة جديدة:', message);
+                        displayMessage(message);
+                    });
+                } else {
+                    console.log('Firebase غير متوفر، لا يمكن تحميل الرسائل');
+                    addMessageToChat('مرحباً بك في الشات!', 'النظام');
+                }
             }
 
             // عرض الرسالة
@@ -159,14 +176,25 @@
                 console.log('إرسال رسالة:', clientMsg, fileInput);
                 
                 if (clientMsg || fileInput) {
+                    // إضافة الرسالة فوراً للشات
                     if (fileInput) {
-                        console.log('رفع صورة:', fileInput.name);
-                        // رفع الصورة
-                        uploadFileToStorage(fileInput, clientMsg);
+                        addMessageToChat(clientMsg + (clientMsg ? '\n' : '') + '📎 ' + fileInput.name, 'أنت');
                     } else {
-                        console.log('إرسال رسالة نصية');
-                        // إرسال رسالة نصية فقط
-                        sendTextMessage(clientMsg);
+                        addMessageToChat(clientMsg, 'أنت');
+                    }
+                    
+                    if (currentUser && messagesRef) {
+                        if (fileInput && storage) {
+                            console.log('رفع صورة:', fileInput.name);
+                            // رفع الصورة
+                            uploadFileToStorage(fileInput, clientMsg);
+                        } else {
+                            console.log('إرسال رسالة نصية');
+                            // إرسال رسالة نصية فقط
+                            sendTextMessage(clientMsg);
+                        }
+                    } else {
+                        console.log('Firebase غير متوفر، الرسالة تظهر محلياً فقط');
                     }
                     
                     usermsg.val("");
@@ -220,6 +248,11 @@
 
             // إرسال رسالة نصية
             function sendTextMessage(text) {
+                if (!currentUser || !messagesRef) {
+                    console.log('لا يمكن حفظ الرسالة - Firebase غير متوفر');
+                    return;
+                }
+                
                 const messageData = {
                     text: text,
                     timestamp: firebase.database.ServerValue.TIMESTAMP,
