@@ -110,7 +110,14 @@
             function displayMessage(message) {
                 console.log('عرض الرسالة:', message);
                 
-                const messageElement = $('<div class="msgln"></div>');
+                // تجنب عرض الرسائل المكررة
+                const messageId = message.timestamp + '_' + message.userId;
+                if ($('#msg_' + messageId).length > 0) {
+                    console.log('رسالة مكررة، تم تجاهلها');
+                    return;
+                }
+                
+                const messageElement = $('<div class="msgln" id="msg_' + messageId + '"></div>');
                 const messageContent = $('<div class="y0"></div>');
                 
                 const textDiv = $('<div class="x0 chatext"></div>');
@@ -180,13 +187,6 @@
                 console.log('messagesRef موجود:', !!messagesRef);
                 
                 if (clientMsg || fileInput) {
-                    // إضافة الرسالة فوراً للشات
-                    if (fileInput) {
-                        addMessageToChat(clientMsg + (clientMsg ? '\n' : '') + '📎 ' + fileInput.name, 'أنت');
-                    } else {
-                        addMessageToChat(clientMsg, 'أنت');
-                    }
-                    
                     if (currentUser && messagesRef) {
                         if (fileInput && storage) {
                             console.log('رفع صورة:', fileInput.name);
@@ -199,8 +199,12 @@
                         }
                     } else {
                         console.log('Firebase غير متوفر، الرسالة تظهر محلياً فقط');
-                        console.log('currentUser:', currentUser);
-                        console.log('messagesRef:', messagesRef);
+                        // إضافة الرسالة محلياً فقط
+                        if (fileInput) {
+                            addMessageToChat(clientMsg + (clientMsg ? '\n' : '') + '📎 ' + fileInput.name, 'أنت');
+                        } else {
+                            addMessageToChat(clientMsg, 'أنت');
+                        }
                     }
                     
                     usermsg.val("");
