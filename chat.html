@@ -21,8 +21,14 @@
                 <span id="notificationText">+1 رسالة جديدة</span>
             </div>
             <div class="input-container">
-                <input type="text" id="usermsg" placeholder="اكتب رسالتك هنا...">
-                <button id="submitmsg">إرسال</button>
+                <div class="input-wrapper">
+                    <input type="text" id="usermsg" placeholder="اكتب رسالتك هنا...">
+                    <button id="submitmsg" class="send-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 19V5M5 12L12 5L19 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
                 <button id="clearChat">🗑️ حذف الشات</button>
             </div>
         </div>
@@ -398,6 +404,16 @@
                 if (e.which === 13) {
                     e.preventDefault();
                     sendMessage();
+                }
+            });
+
+            // تفعيل/إلغاء تفعيل زر الإرسال
+            usermsg.on('input', function() {
+                const hasText = $(this).val().trim().length > 0;
+                if (hasText) {
+                    submitBtn.addClass('active');
+                } else {
+                    submitBtn.removeClass('active');
                 }
             });
             
