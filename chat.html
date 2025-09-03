@@ -12,14 +12,17 @@
 
 </head>
 <body>
-    <div class="chat">
-        <div id="chatbox" class="ScrollBar_v1"></div>
-        <div class="input-container">
-            <input type="text" id="usermsg" placeholder="اكتب رسالتك هنا...">
-            <button id="submitmsg">إرسال</button>
-            <button id="clearChat">🗑️ حذف الشات</button>
+            <div class="chat">
+            <div class="chat-header">
+                <h3>💬 شات Firebase</h3>
+            </div>
+            <div id="chatbox" class="ScrollBar_v1"></div>
+            <div class="input-container">
+                <input type="text" id="usermsg" placeholder="اكتب رسالتك هنا...">
+                <button id="submitmsg">إرسال</button>
+                <button id="clearChat">🗑️ حذف الشات</button>
+            </div>
         </div>
-    </div>
 
     <script>
         const firebaseConfig = {
