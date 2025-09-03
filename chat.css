@@ -145,6 +145,38 @@ div.chat {
     line-height: 1.4;
 }
 
+/* تخصيص شريط التمرير لمربع النص - Chrome/Safari/Edge */
+#usermsg::-webkit-scrollbar {
+    width: 6px;
+}
+
+#usermsg::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#usermsg::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+#usermsg::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+#usermsg::-webkit-scrollbar-button {
+    display: none;
+}
+
+#usermsg::-webkit-scrollbar-corner {
+    display: none;
+}
+
+/* تخصيص شريط التمرير لمربع النص - Firefox */
+#usermsg {
+    scrollbar-width: thin;
+    scrollbar-color: #c1c1c1 transparent;
+}
+
 #usermsg:focus {
     border-color: #007bff;
     box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
