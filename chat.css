@@ -71,8 +71,7 @@ div.chat {
 }
 
 #chatbox::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 3px;
+    background: transparent;
 }
 
 #chatbox::-webkit-scrollbar-thumb {
@@ -84,10 +83,18 @@ div.chat {
     background: #a8a8a8;
 }
 
+#chatbox::-webkit-scrollbar-button {
+    display: none;
+}
+
+#chatbox::-webkit-scrollbar-corner {
+    display: none;
+}
+
 /* تخصيص شريط التمرير للشات - Firefox */
 #chatbox {
     scrollbar-width: thin;
-    scrollbar-color: #c1c1c1 #f1f1f1;
+    scrollbar-color: #c1c1c1 transparent;
 }
 
 /* تخصيص شريط التمرير العام - Chrome/Safari/Edge */
@@ -99,14 +106,19 @@ div.chat {
     border-radius: 3px;
 }
 .ScrollBar_v1::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 3px;
+    background: transparent;
+}
+.ScrollBar_v1::-webkit-scrollbar-button {
+    display: none;
+}
+.ScrollBar_v1::-webkit-scrollbar-corner {
+    display: none;
 }
 
 /* تخصيص شريط التمرير العام - Firefox */
 .ScrollBar_v1 {
     scrollbar-width: thin;
-    scrollbar-color: #c1c1c1 #f1f1f1;
+    scrollbar-color: #c1c1c1 transparent;
 }
 .input-wrapper {
     position: relative;
