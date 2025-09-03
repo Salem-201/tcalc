@@ -53,7 +53,7 @@
                         <span>إرسال رابط</span>
                     </div>
                 </div>
-                <button id="clearChat">🗑️ حذف الشات</button>
+
             </div>
         </div>
 
@@ -88,7 +88,7 @@
             const chatbox = $('#chatbox');
             const usermsg = $('#usermsg');
             const submitBtn = $('#submitmsg');
-            const clearBtn = $('#clearChat');
+
             const mediaBtn = $('#mediabtn');
             const mediaDropdown = $('#mediaDropdown');
             const imageOption = $('#imageOption');
@@ -460,10 +460,7 @@
                 }
             });
             
-            clearBtn.on('click', function (e) {
-                e.preventDefault();
-                clearAllMessages();
-            });
+
 
             // إظهار/إخفاء قائمة الوسائط
             mediaBtn.on('click', function(e) {
