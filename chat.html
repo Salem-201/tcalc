@@ -24,6 +24,7 @@
                 <input type="text" id="usermsg" placeholder="اكتب رسالتك هنا...">
                 <button id="submitmsg">إرسال</button>
                 <button id="clearChat">🗑️ حذف الشات</button>
+                <button id="testNotification">اختبار الإشعار</button>
             </div>
         </div>
 
@@ -61,6 +62,7 @@
             const clearBtn = $('#clearChat');
             const notification = $('#newMessageNotification');
             const notificationText = $('#notificationText');
+            const testBtn = $('#testNotification');
 
             // تسجيل الدخول التلقائي
             if (auth) {
@@ -109,8 +111,10 @@
                         
                         // التحقق من أن الرسالة ليست من المستخدم الحالي
                         if (message.userId !== currentUser.uid) {
+                            console.log('رسالة من مستخدم آخر - في الأسفل:', isUserAtBottom);
                             if (isUserAtBottom) {
                                 displayMessage(message);
+                                // ننزل للأسفل فقط إذا كان المستخدم في الأسفل
                                 chatbox.scrollTop(chatbox[0].scrollHeight);
                             } else {
                                 // المستخدم ليس في الأسفل، إظهار الإشعار
@@ -118,11 +122,14 @@
                                 if (!firstNewMessageId) {
                                     firstNewMessageId = message.timestamp + '_' + message.userId;
                                 }
+                                console.log('إظهار إشعار - عدد الرسائل:', newMessageCount);
                                 updateNotification();
                                 displayMessage(message);
+                                // لا ننزل للأسفل هنا
                             }
                         } else {
                             // رسالة من المستخدم الحالي، عرضها دائماً
+                            console.log('رسالة من المستخدم الحالي');
                             displayMessage(message);
                             chatbox.scrollTop(chatbox[0].scrollHeight);
                         }
@@ -213,11 +220,14 @@
 
             // تحديث الإشعار
             function updateNotification() {
+                console.log('تحديث الإشعار - عدد الرسائل الجديدة:', newMessageCount);
                 if (newMessageCount > 0) {
                     notificationText.text('+' + newMessageCount + ' رسالة جديدة');
                     notification.show();
+                    console.log('تم إظهار الإشعار');
                 } else {
                     notification.hide();
+                    console.log('تم إخفاء الإشعار');
                 }
             }
 
@@ -253,6 +263,8 @@
                 
                 // إذا كان المستخدم في الأسفل (مع هامش 50px)
                 isUserAtBottom = (scrollTop + clientHeight >= scrollHeight - 50);
+                
+                console.log('موقع التمرير - في الأسفل:', isUserAtBottom, 'عدد الرسائل الجديدة:', newMessageCount);
                 
                 // إذا كان المستخدم في الأسفل، إخفاء الإشعار
                 if (isUserAtBottom && newMessageCount > 0) {
@@ -359,6 +371,13 @@
 
             // كشف التمرير عند بدء التطبيق
             checkScrollPosition();
+
+            // اختبار الإشعار
+            testBtn.on('click', function() {
+                newMessageCount = 3;
+                updateNotification();
+                console.log('تم اختبار الإشعار');
+            });
 
         });
     </script>
