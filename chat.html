@@ -9,16 +9,15 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+
 </head>
 <body>
     <div class="chat">
         <div id="chatbox" class="ScrollBar_v1"></div>
         <div class="input-container">
             <input type="text" id="usermsg" placeholder="اكتب رسالتك هنا...">
-            <input type="file" id="Screeen" accept="image/*" style="display: none;">
             <button id="submitmsg">إرسال</button>
-            <button id="fileBtn">📎</button>
+            <button id="clearChat">🗑️ حذف الشات</button>
         </div>
     </div>
 
@@ -34,13 +33,12 @@
             measurementId: "G-9YQPYV8839"
         };
 
-        let app, database, auth, storage, currentUser, messagesRef;
+        let app, database, auth, currentUser, messagesRef;
         
         try {
             app = firebase.initializeApp(firebaseConfig);
             database = firebase.database();
             auth = firebase.auth();
-            storage = firebase.storage();
             messagesRef = database.ref('messages');
             console.log('تم تهيئة Firebase بنجاح');
         } catch (error) {
@@ -50,9 +48,8 @@
         $(function () {
             const chatbox = $('#chatbox');
             const usermsg = $('#usermsg');
-            const screenInput = $('#Screeen');
             const submitBtn = $('#submitmsg');
-            const fileBtn = $('#fileBtn');
+            const clearBtn = $('#clearChat');
 
             // تسجيل الدخول التلقائي
             if (auth) {
@@ -122,35 +119,9 @@
                 
                 const textDiv = $('<div class="x0 chatext"></div>');
                 
-                // إضافة النص
+                // إضافة النص فقط
                 if (message.text) {
                     textDiv.append($('<div></div>').text(message.text));
-                }
-                
-                // إضافة الصورة إذا كانت موجودة
-                if (message.hasFile && message.imageUrl) {
-                    console.log('عرض الصورة:', message.imageUrl);
-                    const imageDiv = $('<div style="margin-top: 5px;"></div>');
-                    const img = $('<img>').attr({
-                        'src': message.imageUrl,
-                        'alt': message.fileName,
-                        'class': 'chat-image'
-                    });
-                    
-                    // إضافة اسم الملف
-                    const fileNameDiv = $('<div style="font-size: 12px; color: #666; margin-top: 2px;"></div>').text('📎 ' + message.fileName);
-                    
-                    imageDiv.append(img).append(fileNameDiv);
-                    textDiv.append(imageDiv);
-                    
-                    // إضافة إمكانية فتح الصورة في نافذة جديدة
-                    img.on('click', function() {
-                        window.open(message.imageUrl, '_blank');
-                    });
-                } else if (message.hasFile) {
-                    // إذا لم تكن هناك صورة، اعرض اسم الملف فقط
-                    const fileDiv = $('<div style="margin-top: 5px;"></div>').text('📎 ' + message.fileName);
-                    textDiv.append(fileDiv);
                 }
                 
                 const userDiv = $('<div class="x1"></div>').text(message.username || 'مجهول');
@@ -180,103 +151,28 @@
             // إرسال الرسالة
             function sendMessage() {
                 const clientMsg = usermsg.val().trim();
-                const fileInput = screenInput[0].files[0];
                 
-                console.log('إرسال رسالة:', clientMsg, fileInput);
+                console.log('إرسال رسالة:', clientMsg);
                 console.log('currentUser موجود:', !!currentUser);
                 console.log('messagesRef موجود:', !!messagesRef);
                 
-                if (clientMsg || fileInput) {
+                if (clientMsg) {
                     if (currentUser && messagesRef) {
-                        if (fileInput && storage) {
-                            console.log('رفع صورة:', fileInput.name);
-                            // رفع الصورة
-                            uploadFileToStorage(fileInput, clientMsg);
-                        } else {
-                            console.log('إرسال رسالة نصية');
-                            // إرسال رسالة نصية فقط
-                            sendTextMessage(clientMsg);
-                        }
+                        console.log('إرسال رسالة نصية');
+                        // إرسال رسالة نصية فقط
+                        sendTextMessage(clientMsg);
                     } else {
                         console.log('Firebase غير متوفر، الرسالة تظهر محلياً فقط');
                         // إضافة الرسالة محلياً فقط
-                        if (fileInput) {
-                            addMessageToChat(clientMsg + (clientMsg ? '\n' : '') + '📎 ' + fileInput.name, 'أنت');
-                        } else {
-                            addMessageToChat(clientMsg, 'أنت');
-                        }
+                        addMessageToChat(clientMsg, 'أنت');
                     }
                     
                     usermsg.val("");
-                    screenInput.val("");
-                    fileBtn.text('📎');
                 }
                 usermsg.focus();
             }
 
-            // رفع الملف إلى الخادم الخاص
-            function uploadFileToStorage(file, text) {
-                console.log('بدء رفع الملف:', file.name);
-                
-                // إنشاء رابط الصورة المتوقع
-                const timestamp = Date.now();
-                const fileExtension = file.name.split('.').pop();
-                const imageUrl = `https://utatar.com/uploads/${timestamp}${Math.random().toString(36).substr(2, 9)}-chat.${fileExtension}`;
-                
-                console.log('رابط الصورة المتوقع:', imageUrl);
-                
-                // حفظ الرسالة مع رابط الصورة المتوقع
-                const messageData = {
-                    text: text,
-                    timestamp: firebase.database.ServerValue.TIMESTAMP,
-                    userId: currentUser.uid,
-                    username: currentUser.displayName || 'مجهول',
-                    hasFile: true,
-                    fileName: file.name,
-                    fileSize: file.size,
-                    fileType: file.type,
-                    imageUrl: imageUrl
-                };
-                
-                console.log('حفظ الرسالة:', messageData);
-                messagesRef.push(messageData).then(function() {
-                    console.log('تم حفظ الرسالة مع الصورة في Firebase');
-                }).catch(function(error) {
-                    console.error('خطأ في حفظ الرسالة:', error);
-                });
-                
-                // محاولة رفع الملف باستخدام iframe للتحايل على CORS
-                const iframe = document.createElement('iframe');
-                iframe.style.display = 'none';
-                document.body.appendChild(iframe);
-                
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = 'https://utatar.com/chat';
-                form.target = iframe.name;
-                form.enctype = 'multipart/form-data';
-                
-                const textInput = document.createElement('input');
-                textInput.type = 'hidden';
-                textInput.name = 'text';
-                textInput.value = text;
-                form.appendChild(textInput);
-                
-                const fileInput = document.createElement('input');
-                fileInput.type = 'file';
-                fileInput.name = 'Screen';
-                fileInput.files = [file];
-                form.appendChild(fileInput);
-                
-                document.body.appendChild(form);
-                form.submit();
-                
-                // تنظيف
-                setTimeout(function() {
-                    document.body.removeChild(form);
-                    document.body.removeChild(iframe);
-                }, 1000);
-            }
+
 
             // إرسال رسالة نصية
             function sendTextMessage(text) {
@@ -302,6 +198,25 @@
                     console.error('خطأ في حفظ الرسالة:', error);
                 });
             }
+            
+            // حذف جميع الرسائل
+            function clearAllMessages() {
+                if (confirm('هل أنت متأكد من حذف جميع الرسائل؟')) {
+                    if (messagesRef) {
+                        messagesRef.remove().then(function() {
+                            console.log('تم حذف جميع الرسائل من Firebase');
+                            chatbox.empty();
+                            addMessageToChat('تم حذف جميع الرسائل', 'النظام');
+                        }).catch(function(error) {
+                            console.error('خطأ في حذف الرسائل:', error);
+                        });
+                    } else {
+                        console.log('Firebase غير متوفر، حذف محلي فقط');
+                        chatbox.empty();
+                        addMessageToChat('تم حذف جميع الرسائل', 'النظام');
+                    }
+                }
+            }
 
             // أحداث الأزرار
             submitBtn.on('click', function (e) {
@@ -315,16 +230,13 @@
                     sendMessage();
                 }
             });
-
-            fileBtn.on('click', function() {
-                screenInput.click();
+            
+            clearBtn.on('click', function (e) {
+                e.preventDefault();
+                clearAllMessages();
             });
 
-            screenInput.on('change', function() {
-                if (this.files[0]) {
-                    fileBtn.text('📎 ' + this.files[0].name);
-                }
-            });
+
         });
     </script>
 </body>
