@@ -75,9 +75,15 @@ div.chat {
 .ScrollBar_v1::-webkit-scrollbar-track {
     background: #f2f2f2;
 }
-#usermsg {
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
     margin: 10px 0;
-    padding: 12px 15px;
+}
+
+#usermsg {
+    padding: 12px 50px 12px 15px;
     font-size: 16px;
     height: 45px;
     width: 100%;
@@ -93,25 +99,35 @@ div.chat {
     border-color: #007bff;
     box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
-#submitmsg {
-    width: 100%;
-    height: 45px;
-    border-radius: 25px;
+.send-btn {
+    position: absolute;
+    right: 5px;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
     border: none;
-    text-align: center;
-    background: #007bff;
+    background: #6c757d;
     cursor: pointer;
     color: white;
-    font-weight: 600;
-    font-size: 16px;
-    margin: 5px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     transition: all 0.3s;
+    opacity: 0.5;
 }
 
-#submitmsg:hover {
-    background: #0056b3;
-    transform: translateY(-1px);
+.send-btn.active {
+    background: #007bff;
+    opacity: 1;
+}
+
+.send-btn:hover {
+    transform: scale(1.1);
     box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.send-btn.active:hover {
+    background: #0056b3;
 }
 .chatext {word-wrap: break-word} .msgln { margin:0 0 2px 0;direction:ltr; }
 
@@ -225,8 +241,8 @@ div.chat {
 
 .new-message-notification {
     position: absolute;
-    bottom: 100px;
-    left: 10px;
+    bottom: 123px;
+    left: 46px;
     background: #007bff;
     color: white;
     padding: 8px 15px;
