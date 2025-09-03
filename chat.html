@@ -56,11 +56,11 @@
 
             // تسجيل الدخول التلقائي
             if (auth) {
-                auth.signInAnonymously().then(function(user) {
-                    currentUser = user;
-                    console.log('تم تسجيل الدخول:', user);
-                    console.log('User UID:', user.uid);
-                    console.log('User Display Name:', user.displayName);
+                auth.signInAnonymously().then(function(userCredential) {
+                    currentUser = userCredential.user;
+                    console.log('تم تسجيل الدخول:', currentUser);
+                    console.log('User UID:', currentUser.uid);
+                    console.log('User Display Name:', currentUser.displayName);
                     loadMessages();
                 }).catch(function(error) {
                     console.error('خطأ في تسجيل الدخول:', error);
