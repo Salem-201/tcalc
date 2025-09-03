@@ -65,15 +65,35 @@ div.chat {
     padding: 10px;
     box-sizing: border-box;
 }
+/* تخصيص شريط التمرير للشات */
+#chatbox::-webkit-scrollbar {
+    width: 6px;
+}
+
+#chatbox::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+#chatbox::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+#chatbox::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
 .ScrollBar_v1::-webkit-scrollbar {
-    width: 10px;
+    width: 6px;
 }
 .ScrollBar_v1::-webkit-scrollbar-thumb {
-    background-color: gray;
-    border-radius: 10px;
+    background-color: #c1c1c1;
+    border-radius: 3px;
 }
 .ScrollBar_v1::-webkit-scrollbar-track {
-    background: #f2f2f2;
+    background: #f1f1f1;
+    border-radius: 3px;
 }
 .input-wrapper {
     position: relative;
@@ -85,8 +105,8 @@ div.chat {
 #usermsg {
     padding: 12px 50px 12px 50px;
     font-size: 16px;
-    min-height: 55px;
-    max-height: 120px;
+    min-height: 83px;
+    max-height: 97px;
     width: 100%;
     border: 1px solid #dee2e6;
     text-align: right;
@@ -134,7 +154,7 @@ div.chat {
 
 .media-btn {
     position: absolute;
-    left: 10px;
+    left: 24px;
     bottom: 8px;
     width: 32px;
     height: 32px;
