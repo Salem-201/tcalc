@@ -207,6 +207,30 @@
             // رفع الملف إلى Firebase Storage
             function uploadFileToStorage(file, text) {
                 console.log('بدء رفع الملف:', file.name);
+                
+                if (!storage) {
+                    console.log('Storage غير متوفر، حفظ معلومات الملف فقط');
+                    // حفظ معلومات الملف بدون رفع
+                    const messageData = {
+                        text: text,
+                        timestamp: firebase.database.ServerValue.TIMESTAMP,
+                        userId: currentUser.uid,
+                        username: currentUser.displayName || 'مجهول',
+                        hasFile: true,
+                        fileName: file.name,
+                        fileSize: file.size,
+                        fileType: file.type,
+                        imageUrl: null
+                    };
+                    
+                    messagesRef.push(messageData).then(function() {
+                        console.log('تم حفظ معلومات الملف في Database');
+                    }).catch(function(error) {
+                        console.error('خطأ في حفظ الرسالة:', error);
+                    });
+                    return;
+                }
+                
                 const fileName = Date.now() + '_' + file.name;
                 const storageRef = storage.ref('chat-images/' + fileName);
                 
