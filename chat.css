@@ -175,7 +175,7 @@ div.chat {
 /* تخصيص شريط التمرير لمربع النص - Firefox */
 #usermsg {
     scrollbar-width: thin;
-    scrollbar-color: transparent transparent;
+    scrollbar-color: #c1c1c1 transparent;
 }
 
 #usermsg:focus {
