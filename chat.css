@@ -95,7 +95,6 @@ div.chat {
 #chatbox {
     scrollbar-width: thin;
     scrollbar-color: #c1c1c1 transparent;
-    scrollbar-gutter: stable;
 }
 
 /* تخصيص شريط التمرير العام - Chrome/Safari/Edge */
@@ -120,7 +119,6 @@ div.chat {
 .ScrollBar_v1 {
     scrollbar-width: thin;
     scrollbar-color: #c1c1c1 transparent;
-    scrollbar-gutter: stable;
 }
 .input-wrapper {
     position: relative;
@@ -176,8 +174,8 @@ div.chat {
 
 /* تخصيص شريط التمرير لمربع النص - Firefox */
 #usermsg {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
 }
 
 #usermsg:focus {
