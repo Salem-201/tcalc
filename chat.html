@@ -214,42 +214,41 @@
                 usermsg.focus();
             }
 
-            // رفع الملف إلى Firebase Storage
+            // رفع الملف إلى الخادم الخاص
             function uploadFileToStorage(file, text) {
                 console.log('بدء رفع الملف:', file.name);
                 
-                if (!storage) {
-                    console.log('Storage غير متوفر، حفظ معلومات الملف فقط');
-                    // حفظ معلومات الملف بدون رفع
-                    const messageData = {
-                        text: text,
-                        timestamp: firebase.database.ServerValue.TIMESTAMP,
-                        userId: currentUser.uid,
-                        username: currentUser.displayName || 'مجهول',
-                        hasFile: true,
-                        fileName: file.name,
-                        fileSize: file.size,
-                        fileType: file.type,
-                        imageUrl: null
-                    };
-                    
-                    messagesRef.push(messageData).then(function() {
-                        console.log('تم حفظ معلومات الملف في Database');
-                    }).catch(function(error) {
-                        console.error('خطأ في حفظ الرسالة:', error);
-                    });
-                    return;
-                }
+                const formData = new FormData();
+                formData.append("text", text);
+                formData.append("Screen", file);
                 
-                const fileName = Date.now() + '_' + file.name;
-                const storageRef = storage.ref('chat-images/' + fileName);
-                
-                storageRef.put(file).then(function(snapshot) {
-                    console.log('تم رفع الملف بنجاح');
-                    
-                    // الحصول على رابط التحميل
-                    snapshot.ref.getDownloadURL().then(function(downloadURL) {
-                        console.log('رابط الصورة:', downloadURL);
+                $.ajax({
+                    url: "https://utatar.com/chat",
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        console.log('تم رفع الملف بنجاح:', response);
+                        
+                        // استخراج رابط الصورة من الاستجابة
+                        let imageUrl = null;
+                        
+                        // محاولة استخراج الرابط من الاستجابة
+                        if (response) {
+                            // البحث عن رابط الصورة في الاستجابة
+                            const match = response.match(/uploads\/[^"'\s<>]+\.(jpg|jpeg|png|gif|webp)/i);
+                            if (match) {
+                                imageUrl = 'https://utatar.com/' + match[0];
+                            } else {
+                                // إذا لم نجد الرابط، نحاول إنشاءه بناءً على اسم الملف
+                                const timestamp = Date.now();
+                                const fileExtension = file.name.split('.').pop();
+                                imageUrl = `https://utatar.com/uploads/${timestamp}${Math.random().toString(36).substr(2, 9)}-chat.${fileExtension}`;
+                            }
+                        }
+                        
+                        console.log('رابط الصورة:', imageUrl);
                         
                         // حفظ الرسالة مع رابط الصورة
                         const messageData = {
@@ -261,7 +260,7 @@
                             fileName: file.name,
                             fileSize: file.size,
                             fileType: file.type,
-                            imageUrl: downloadURL
+                            imageUrl: imageUrl
                         };
                         
                         console.log('حفظ الرسالة:', messageData);
@@ -270,13 +269,14 @@
                         }).catch(function(error) {
                             console.error('خطأ في حفظ الرسالة:', error);
                         });
-                    }).catch(function(error) {
-                        console.error('خطأ في الحصول على رابط الصورة:', error);
-                    });
-                }).catch(function(error) {
-                    console.error('خطأ في رفع الملف:', error);
-                    // في حالة فشل الرفع، أرسل رسالة نصية فقط
-                    sendTextMessage(text);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('خطأ في رفع الملف:', error);
+                        console.log('استجابة الخادم:', xhr.responseText);
+                        
+                        // في حالة فشل الرفع، أرسل رسالة نصية فقط
+                        sendTextMessage(text);
+                    }
                 });
             }
 
