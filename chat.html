@@ -271,6 +271,9 @@
                     if (firstNewMessage.length > 0) {
                         const messageOffset = firstNewMessage.offset().top - chatbox.offset().top + chatbox.scrollTop() - 50;
                         chatbox.scrollTop(messageOffset);
+                        
+                        // إضافة تأثير وميض للرسائل الجديدة
+                        highlightNewMessages();
                     } else {
                         chatbox.scrollTop(chatbox[0].scrollHeight);
                     }
@@ -280,6 +283,20 @@
                 hideNotification();
                 isUserAtBottom = true;
                 console.log('تم الانتقال للرسالة الجديدة وتعيين المستخدم في الأسفل');
+            }
+
+            // تأثير وميض للرسائل الجديدة
+            function highlightNewMessages() {
+                // العثور على جميع الرسائل الجديدة
+                const newMessages = chatbox.find('.msgln').slice(-newMessageCount);
+                
+                // إضافة class للرسائل الجديدة
+                newMessages.addClass('new-message-highlight');
+                
+                // إزالة class بعد 3 ثوان
+                setTimeout(function() {
+                    newMessages.removeClass('new-message-highlight');
+                }, 3000);
             }
 
             // كشف موقع المستخدم في الشات
