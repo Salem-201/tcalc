@@ -370,7 +370,7 @@
                     
                     usermsg.val("");
                     // إعادة تعيين ارتفاع النص وإخفاء السكرول
-                    usermsg[0].style.height = '45px';
+                    usermsg[0].style.height = '55px';
                     usermsg[0].style.overflowY = 'hidden';
                     // لا نعيد تعيين isUserAtBottom هنا، نتركه كما هو
                 }
@@ -447,11 +447,11 @@
                 
                 // تكبير النص تلقائياً
                 this.style.height = 'auto';
-                const newHeight = Math.min(this.scrollHeight, 95);
+                const newHeight = Math.min(this.scrollHeight, 120);
                 this.style.height = newHeight + 'px';
                 
                 // إظهار السكرول فقط عند الحاجة
-                if (newHeight >= 95) {
+                if (newHeight >= 120) {
                     this.style.overflowY = 'auto';
                 } else {
                     this.style.overflowY = 'hidden';
