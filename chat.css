@@ -26,6 +26,8 @@ div.chat {
         margin: 0;
         height: 100vh;
         overflow: hidden;
+        position: fixed;
+        width: 100%;
     }
     
     div.chat {
@@ -37,6 +39,9 @@ div.chat {
         border-radius: 0;
         box-shadow: none;
         box-sizing: border-box;
+        position: fixed;
+        top: 0;
+        left: 0;
     }
     
     .chat-header h3 {
@@ -53,7 +58,7 @@ div.chat {
     #chatbox {
         background: #f8f9fa;
         width: 100%;
-        height: calc(100% - 155px) !important;
+        height: calc(100vh - 200px) !important;
         text-align: right;
         overflow-x: hidden;
         overflow-y: auto;
@@ -61,6 +66,7 @@ div.chat {
         border-radius: 8px;
         padding: 10px;
         box-sizing: border-box;
+        position: relative;
     }
     
     .media-btn, .send-btn {
@@ -80,7 +86,7 @@ div.chat {
     
     .media-dropdown {
         left: 12px;
-        bottom: 70px;
+        bottom: 80px;
         min-width: 140px;
     }
     
@@ -196,13 +202,20 @@ div.chat {
     scrollbar-width: thin;
     scrollbar-color: #c1c1c1 transparent;
 }
-.input-wrapper {
-    position: relative;
-    display: flex;
-    align-items: flex-end;
-    margin: 10px 0;
-    width: 100%;
-}
+    .input-wrapper {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        align-items: flex-end;
+        margin: 0;
+        width: 100%;
+        padding: 5px;
+        background: white;
+        border-top: 1px solid #dee2e6;
+        box-sizing: border-box;
+    }
 
 .textarea-wrapper {
     flex: 1;
