@@ -211,13 +211,17 @@ div.chat {
     transition: all 0.3s ease;
     z-index: 1000;
     animation: pulse 2s infinite;
-    display: block !important;
+    display: none;
 }
 
 .new-message-notification:hover {
     background: #0056b3;
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+}
+
+.new-message-notification.show {
+    display: block !important;
 }
 
 @keyframes pulse {
