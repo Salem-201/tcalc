@@ -105,13 +105,23 @@
                     });
 
                     // الاستماع للرسائل الجديدة
+                    let lastMessageTime = Date.now();
+                    
                     messagesRef.on('child_added', function(snapshot) {
                         const message = snapshot.val();
                         console.log('رسالة جديدة:', message);
                         
                         // التحقق من أن الرسالة ليست من المستخدم الحالي
-                        if (message.userId !== currentUser.uid) {
-                            console.log('رسالة من مستخدم آخر - في الأسفل:', isUserAtBottom);
+                        console.log('مقارنة userIds - رسالة:', message.userId, 'حالي:', currentUser.uid);
+                        
+                        // التحقق من أن الرسالة جديدة (أرسلت في آخر 5 ثوان)
+                        const messageTime = message.timestamp || Date.now();
+                        const isNewMessage = (Date.now() - messageTime) < 5000;
+                        
+                        console.log('هل الرسالة جديدة؟', isNewMessage, 'وقت الرسالة:', messageTime, 'الوقت الحالي:', Date.now());
+                        
+                        if (message.userId !== currentUser.uid && isNewMessage) {
+                            console.log('رسالة جديدة من مستخدم آخر - في الأسفل:', isUserAtBottom);
                             
                             // عرض الرسالة أولاً
                             displayMessage(message);
@@ -128,11 +138,15 @@
                                 console.log('إظهار إشعار - عدد الرسائل:', newMessageCount);
                                 updateNotification();
                             }
-                        } else {
+                        } else if (message.userId === currentUser.uid) {
                             // رسالة من المستخدم الحالي، عرضها دائماً وننزل للأسفل
-                            console.log('رسالة من المستخدم الحالي');
+                            console.log('رسالة من المستخدم الحالي - ننزل للأسفل');
                             displayMessage(message);
                             chatbox.scrollTop(chatbox[0].scrollHeight);
+                        } else {
+                            // رسالة قديمة، عرضها فقط
+                            console.log('رسالة قديمة - عرض فقط');
+                            displayMessage(message);
                         }
                     });
                 } else {
