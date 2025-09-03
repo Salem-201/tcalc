@@ -108,8 +108,8 @@ div.chat {
     position: absolute;
     right: 5px;
     bottom: 5px;
-    width: 35px;
-    height: 35px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     border: none;
     background: #6c757d;
@@ -133,11 +133,11 @@ div.chat {
 }
 
 .send-btn svg {
-    transition: transform 0.3s;
+    transition: none;
 }
 
 .send-btn:hover svg {
-    transform: translateY(-1px);
+    transform: none;
 }
 
 .send-btn.active:hover {
