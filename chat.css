@@ -19,6 +19,66 @@ div.chat {
     background: white;
 }
 
+/* تصميم متجاوب للجوال */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    
+    div.chat {
+        width: 95%;
+        min-width: 320px;
+        height: 90vh;
+        margin: 10px auto;
+        padding: 15px;
+    }
+    
+    .chat-header h3 {
+        font-size: 18px;
+    }
+    
+    #usermsg {
+        font-size: 16px;
+        padding: 10px 15px 45px 15px;
+        min-height: 70px;
+        max-height: 90px;
+    }
+    
+    .media-btn, .send-btn {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .media-btn {
+        left: 12px;
+        bottom: 6px;
+    }
+    
+    .send-btn {
+        right: 12px;
+        bottom: 6px;
+    }
+    
+    .media-dropdown {
+        left: 12px;
+        bottom: 70px;
+        min-width: 140px;
+    }
+    
+    .media-option {
+        padding: 10px 12px;
+    }
+    
+    .media-option span {
+        font-size: 13px;
+    }
+    
+    #clearChat {
+        font-size: 14px;
+        padding: 8px 16px;
+    }
+}
+
 .y0 {
     margin: 5px 5px;
     position: relative;
