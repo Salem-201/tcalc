@@ -65,7 +65,7 @@ div.chat {
     padding: 10px;
     box-sizing: border-box;
 }
-/* تخصيص شريط التمرير للشات */
+/* تخصيص شريط التمرير للشات - Chrome/Safari/Edge */
 #chatbox::-webkit-scrollbar {
     width: 6px;
 }
@@ -84,6 +84,13 @@ div.chat {
     background: #a8a8a8;
 }
 
+/* تخصيص شريط التمرير للشات - Firefox */
+#chatbox {
+    scrollbar-width: thin;
+    scrollbar-color: #c1c1c1 #f1f1f1;
+}
+
+/* تخصيص شريط التمرير العام - Chrome/Safari/Edge */
 .ScrollBar_v1::-webkit-scrollbar {
     width: 6px;
 }
@@ -94,6 +101,12 @@ div.chat {
 .ScrollBar_v1::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 3px;
+}
+
+/* تخصيص شريط التمرير العام - Firefox */
+.ScrollBar_v1 {
+    scrollbar-width: thin;
+    scrollbar-color: #c1c1c1 #f1f1f1;
 }
 .input-wrapper {
     position: relative;
