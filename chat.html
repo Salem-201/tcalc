@@ -343,8 +343,9 @@
                     }
                     
                     usermsg.val("");
-                    // إعادة تعيين ارتفاع النص
+                    // إعادة تعيين ارتفاع النص وإخفاء السكرول
                     usermsg[0].style.height = '45px';
+                    usermsg[0].style.overflowY = 'hidden';
                     // لا نعيد تعيين isUserAtBottom هنا، نتركه كما هو
                 }
                 usermsg.focus();
