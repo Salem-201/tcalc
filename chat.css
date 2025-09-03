@@ -140,24 +140,7 @@ div.chat {
     box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
 }
 
-#testNotification {
-    background: #28a745;
-    color: white;
-    padding: 6px 12px;
-    border: none;
-    border-radius: 15px;
-    cursor: pointer;
-    font-weight: 500;
-    font-size: 12px;
-    transition: all 0.3s;
-    margin-left: 5px;
-}
 
-#testNotification:hover {
-    background: #218838;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
-}
 
 .text-with-time {
     width: 100%;
