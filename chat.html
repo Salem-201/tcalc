@@ -24,6 +24,7 @@
                 <input type="text" id="usermsg" placeholder="اكتب رسالتك هنا...">
                 <button id="submitmsg">إرسال</button>
                 <button id="clearChat">🗑️ حذف الشات</button>
+                <button id="testNotification">اختبار الإشعار</button>
             </div>
         </div>
 
@@ -61,6 +62,7 @@
             const clearBtn = $('#clearChat');
             const notification = $('#newMessageNotification');
             const notificationText = $('#notificationText');
+            const testBtn = $('#testNotification');
             
             // إخفاء الإشعار في البداية
             notification.removeClass('show');
@@ -128,8 +130,8 @@
                         
                         console.log('هل الرسالة جديدة؟', isNewMessage, 'وقت الرسالة:', messageTime, 'الوقت الحالي:', Date.now());
                         
-                        if (message.userId !== currentUser.uid && isNewMessage) {
-                            console.log('رسالة جديدة من مستخدم آخر - في الأسفل:', isUserAtBottom);
+                        if (isNewMessage) {
+                            console.log('رسالة جديدة - في الأسفل:', isUserAtBottom);
                             
                             // عرض الرسالة أولاً
                             displayMessage(message);
@@ -137,6 +139,7 @@
                             if (isUserAtBottom) {
                                 // المستخدم في الأسفل، ننزل للأسفل
                                 chatbox.scrollTop(chatbox[0].scrollHeight);
+                                console.log('تم النزول للأسفل');
                             } else {
                                 // المستخدم ليس في الأسفل، إظهار الإشعار
                                 newMessageCount++;
@@ -144,25 +147,6 @@
                                     firstNewMessageId = message.timestamp + '_' + message.userId;
                                 }
                                 console.log('إظهار إشعار - عدد الرسائل:', newMessageCount);
-                                updateNotification();
-                            }
-                        } else if (message.userId === currentUser.uid && isNewMessage) {
-                            // رسالة من المستخدم الحالي
-                            console.log('رسالة من المستخدم الحالي - في الأسفل:', isUserAtBottom);
-                            displayMessage(message);
-                            
-                            // فقط ننزل للأسفل إذا كان المستخدم في الأسفل
-                            if (isUserAtBottom) {
-                                chatbox.scrollTop(chatbox[0].scrollHeight);
-                                console.log('تم النزول للأسفل');
-                            } else {
-                                console.log('المستخدم في الأعلى - لم يتم النزول للأسفل');
-                                // نعرض إشعار للرسالة التي أرسلها المستخدم نفسه
-                                newMessageCount++;
-                                if (!firstNewMessageId) {
-                                    firstNewMessageId = message.timestamp + '_' + message.userId;
-                                }
-                                console.log('إظهار إشعار للرسالة المرسلة - عدد الرسائل:', newMessageCount);
                                 updateNotification();
                             }
                         } else {
@@ -262,13 +246,15 @@
             // تحديث الإشعار
             function updateNotification() {
                 console.log('تحديث الإشعار - عدد الرسائل الجديدة:', newMessageCount);
+                console.log('الإشعار موجود:', notification.length > 0);
                 if (newMessageCount > 0) {
                     notificationText.text('+' + newMessageCount + ' رسالة جديدة');
                     notification.addClass('show');
-                    console.log('تم إظهار الإشعار');
+                    console.log('تم إظهار الإشعار - class show مضاف');
+                    console.log('classes الحالية:', notification.attr('class'));
                 } else {
                     notification.removeClass('show');
-                    console.log('تم إخفاء الإشعار');
+                    console.log('تم إخفاء الإشعار - class show محذوف');
                 }
             }
 
@@ -441,6 +427,18 @@
                 // إخفاء أي إشعار موجود عند بدء التطبيق
                 hideNotification();
             }, 1000);
+
+            // اختبار الإشعار
+            testBtn.on('click', function() {
+                if (newMessageCount > 0) {
+                    hideNotification();
+                    console.log('تم إخفاء الإشعار');
+                } else {
+                    newMessageCount = 3;
+                    updateNotification();
+                    console.log('تم إظهار إشعار تجريبي');
+                }
+            });
 
 
 
