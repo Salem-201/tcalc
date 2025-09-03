@@ -138,11 +138,18 @@
                                 console.log('إظهار إشعار - عدد الرسائل:', newMessageCount);
                                 updateNotification();
                             }
-                        } else if (message.userId === currentUser.uid) {
-                            // رسالة من المستخدم الحالي، عرضها دائماً وننزل للأسفل
-                            console.log('رسالة من المستخدم الحالي - ننزل للأسفل');
+                        } else if (message.userId === currentUser.uid && isNewMessage) {
+                            // رسالة من المستخدم الحالي
+                            console.log('رسالة من المستخدم الحالي - في الأسفل:', isUserAtBottom);
                             displayMessage(message);
-                            chatbox.scrollTop(chatbox[0].scrollHeight);
+                            
+                            // فقط ننزل للأسفل إذا كان المستخدم في الأسفل
+                            if (isUserAtBottom) {
+                                chatbox.scrollTop(chatbox[0].scrollHeight);
+                                console.log('تم النزول للأسفل');
+                            } else {
+                                console.log('المستخدم في الأعلى - لم يتم النزول للأسفل');
+                            }
                         } else {
                             // رسالة قديمة، عرضها فقط
                             console.log('رسالة قديمة - عرض فقط');
@@ -277,8 +284,8 @@
                 const scrollHeight = chatbox[0].scrollHeight;
                 const clientHeight = chatbox[0].clientHeight;
                 
-                // إذا كان المستخدم في الأسفل (مع هامش 10px)
-                isUserAtBottom = (scrollTop + clientHeight >= scrollHeight - 10);
+                // إذا كان المستخدم في الأسفل (مع هامش 100px)
+                isUserAtBottom = (scrollTop + clientHeight >= scrollHeight - 100);
                 
                 console.log('موقع التمرير - في الأسفل:', isUserAtBottom, 'عدد الرسائل الجديدة:', newMessageCount);
                 console.log('scrollTop:', scrollTop, 'scrollHeight:', scrollHeight, 'clientHeight:', clientHeight);
@@ -392,7 +399,7 @@
                 const scrollHeight = chatbox[0].scrollHeight;
                 const clientHeight = chatbox[0].clientHeight;
                 
-                if (scrollTop + clientHeight < scrollHeight - 50) {
+                if (scrollTop + clientHeight < scrollHeight - 100) {
                     isUserAtBottom = false;
                     console.log('المستخدم يقرأ في الأعلى - تم تعيين isUserAtBottom = false');
                 } else {
@@ -412,9 +419,16 @@
 
             // اختبار الإشعار
             testBtn.on('click', function() {
-                newMessageCount = 3;
-                updateNotification();
-                console.log('تم اختبار الإشعار');
+                if (newMessageCount > 0) {
+                    // إذا كان هناك إشعار، أخفه
+                    hideNotification();
+                    console.log('تم إخفاء الإشعار');
+                } else {
+                    // إذا لم يكن هناك إشعار، أظهره
+                    newMessageCount = 3;
+                    updateNotification();
+                    console.log('تم إظهار إشعار تجريبي');
+                }
             });
 
         });
