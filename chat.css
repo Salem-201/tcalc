@@ -225,8 +225,8 @@ div.chat {
 
 .new-message-notification {
     position: absolute;
-    bottom: 100px;
-    left: 10px;
+    bottom: 130px;
+    left: 53px;
     background: #007bff;
     color: white;
     padding: 8px 15px;
@@ -262,4 +262,5 @@ div.chat {
         box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
     }
 }
+
 
