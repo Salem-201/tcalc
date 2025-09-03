@@ -98,7 +98,7 @@
                             });
                         } else {
                             console.log('لا توجد رسائل محفوظة');
-                            addMessageToChat('مرحباً بك في الشات!', 'النظام');
+                            addMessageToChat('مرحباً بك في الشات!', 'النظام', true);
                         }
                     }).catch(function(error) {
                         console.error('خطأ في تحميل الرسائل:', error);
@@ -158,7 +158,7 @@
                     });
                 } else {
                     console.log('Firebase غير متوفر، لا يمكن تحميل الرسائل');
-                    addMessageToChat('مرحباً بك في الشات!', 'النظام');
+                    addMessageToChat('مرحباً بك في الشات!', 'النظام', true);
                 }
             }
 
@@ -202,7 +202,7 @@
             }
             
             // إضافة رسالة للشات
-            function addMessageToChat(text, username) {
+            function addMessageToChat(text, username, shouldScroll = true) {
                 const messageElement = $('<div class="msgln"></div>');
                 const messageContent = $('<div class="y0"></div>');
                 
@@ -226,7 +226,11 @@
                 messageElement.append(messageContent);
                 
                 chatbox.append(messageElement);
-                chatbox.scrollTop(chatbox[0].scrollHeight);
+                
+                // فقط ننزل للأسفل إذا كان مطلوباً
+                if (shouldScroll) {
+                    chatbox.scrollTop(chatbox[0].scrollHeight);
+                }
             }
             
             // تنسيق الوقت
@@ -312,7 +316,7 @@
                     } else {
                         console.log('Firebase غير متوفر، الرسالة تظهر محلياً فقط');
                         // إضافة الرسالة محلياً فقط
-                        addMessageToChat(clientMsg, 'أنت');
+                        addMessageToChat(clientMsg, 'أنت', isUserAtBottom);
                     }
                     
                     usermsg.val("");
@@ -356,15 +360,15 @@
                         messagesRef.remove().then(function() {
                             console.log('تم حذف جميع الرسائل من Firebase');
                             chatbox.empty();
-                            addMessageToChat('تم حذف جميع الرسائل', 'النظام');
+                            addMessageToChat('تم حذف جميع الرسائل', 'النظام', true);
                         }).catch(function(error) {
                             console.error('خطأ في حذف الرسائل:', error);
                         });
-                    } else {
-                        console.log('Firebase غير متوفر، حذف محلي فقط');
-                        chatbox.empty();
-                        addMessageToChat('تم حذف جميع الرسائل', 'النظام');
-                    }
+                                            } else {
+                            console.log('Firebase غير متوفر، حذف محلي فقط');
+                            chatbox.empty();
+                            addMessageToChat('تم حذف جميع الرسائل', 'النظام', true);
+                        }
                 }
             }
 
