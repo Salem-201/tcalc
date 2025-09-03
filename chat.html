@@ -63,7 +63,7 @@
             const notificationText = $('#notificationText');
             
             // إخفاء الإشعار في البداية
-            notification.hide();
+            notification.removeClass('show');
             newMessageCount = 0;
             firstNewMessageId = null;
 
@@ -157,7 +157,13 @@
                                 console.log('تم النزول للأسفل');
                             } else {
                                 console.log('المستخدم في الأعلى - لم يتم النزول للأسفل');
-                                // لا نعرض إشعار للرسائل التي أرسلها المستخدم نفسه
+                                // نعرض إشعار للرسالة التي أرسلها المستخدم نفسه
+                                newMessageCount++;
+                                if (!firstNewMessageId) {
+                                    firstNewMessageId = message.timestamp + '_' + message.userId;
+                                }
+                                console.log('إظهار إشعار للرسالة المرسلة - عدد الرسائل:', newMessageCount);
+                                updateNotification();
                             }
                         } else {
                             // رسالة قديمة، عرضها فقط
@@ -258,10 +264,10 @@
                 console.log('تحديث الإشعار - عدد الرسائل الجديدة:', newMessageCount);
                 if (newMessageCount > 0) {
                     notificationText.text('+' + newMessageCount + ' رسالة جديدة');
-                    notification.show();
+                    notification.addClass('show');
                     console.log('تم إظهار الإشعار');
                 } else {
-                    notification.hide();
+                    notification.removeClass('show');
                     console.log('تم إخفاء الإشعار');
                 }
             }
@@ -270,7 +276,7 @@
             function hideNotification() {
                 newMessageCount = 0;
                 firstNewMessageId = null;
-                notification.hide();
+                notification.removeClass('show');
                 console.log('تم إخفاء الإشعار وإعادة تعيين العداد');
             }
 
