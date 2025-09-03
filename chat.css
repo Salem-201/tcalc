@@ -152,7 +152,7 @@ div.chat {
 }
 
 .media-btn:hover {
-    background: #5a6268;
+    background: #007bff;
     opacity: 1;
 }
 
@@ -168,8 +168,8 @@ div.chat {
 
 .media-dropdown {
     position: absolute;
-    bottom: 50px;
-    left: 50px;
+    bottom: 88px;
+    left: 51px;
     background: white;
     border: 1px solid #dee2e6;
     border-radius: 8px;
