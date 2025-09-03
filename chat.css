@@ -172,3 +172,24 @@ div.chat {
     font-size: 18px;
     font-weight: 600;
 }
+
+.y0 .x0 {
+    padding: 2px 8px;
+    width: 350px;
+    max-width: 375px;
+    text-align: right;
+    display: table-cell;
+    height: 100%;
+    background: #f2f2f2;
+    vertical-align: middle;
+    word-wrap: break-word;
+    border-right: 0;
+    font-size: 15px;
+    font-weight: 900 !important;
+}
+
+.y0 .x1 {
+    width: 20% !important;
+    min-width: 80px !important;
+    background-color: #e8e5e5;
+}
