@@ -24,7 +24,6 @@
                 <input type="text" id="usermsg" placeholder="اكتب رسالتك هنا...">
                 <button id="submitmsg">إرسال</button>
                 <button id="clearChat">🗑️ حذف الشات</button>
-                <button id="testNotification">اختبار الإشعار</button>
             </div>
         </div>
 
@@ -62,7 +61,11 @@
             const clearBtn = $('#clearChat');
             const notification = $('#newMessageNotification');
             const notificationText = $('#notificationText');
-            const testBtn = $('#testNotification');
+            
+            // إخفاء الإشعار في البداية
+            notification.hide();
+            newMessageCount = 0;
+            firstNewMessageId = null;
 
             // تسجيل الدخول التلقائي
             if (auth) {
@@ -433,19 +436,7 @@
                 hideNotification();
             }, 1000);
 
-            // اختبار الإشعار
-            testBtn.on('click', function() {
-                if (newMessageCount > 0) {
-                    // إذا كان هناك إشعار، أخفه
-                    hideNotification();
-                    console.log('تم إخفاء الإشعار');
-                } else {
-                    // إذا لم يكن هناك إشعار، أظهره
-                    newMessageCount = 3;
-                    updateNotification();
-                    console.log('تم إظهار إشعار تجريبي');
-                }
-            });
+
 
         });
     </script>
