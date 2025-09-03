@@ -51,7 +51,16 @@ div.chat {
     }
     
     #chatbox {
-        height: calc(100vh - 160px) !important;
+        background: #f8f9fa;
+        width: 100%;
+        height: calc(100% - 155px) !important;
+        text-align: right;
+        overflow-x: hidden;
+        overflow-y: auto;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 10px;
+        box-sizing: border-box;
     }
     
     .media-btn, .send-btn {
