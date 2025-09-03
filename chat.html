@@ -421,10 +421,11 @@
                 
                 // تكبير النص تلقائياً
                 this.style.height = 'auto';
-                this.style.height = Math.min(this.scrollHeight, 95) + 'px';
+                const newHeight = Math.min(this.scrollHeight, 95);
+                this.style.height = newHeight + 'px';
                 
                 // إخفاء السكرول إذا كان النص قصير
-                if (this.scrollHeight <= 45) {
+                if (newHeight <= 45) {
                     this.style.overflowY = 'hidden';
                 } else {
                     this.style.overflowY = 'auto';
