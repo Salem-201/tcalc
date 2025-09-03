@@ -50,7 +50,7 @@ div.chat {
     border: 2px solid silver;
     border-right: 1px solid silver;
     border-left: 1px solid silver;
-    border: 1px solid #dddddd;
+    border: 1px solid #000;
     border-radius: 0px 0px 5px 5px;
 }
 .ScrollBar_v1::-webkit-scrollbar {
@@ -160,9 +160,10 @@ div.chat {
 
 .chat-header {
     background-image: linear-gradient(#fff, #d7d7d7);
-    padding: 15px 20px;
+    padding: 1px 15px;
     border-bottom: 1px solid #ccc;
     text-align: center;
+    border: 1px solid #000;
 }
 
 .chat-header h3 {
