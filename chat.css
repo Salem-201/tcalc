@@ -98,6 +98,11 @@ div.chat {
         font-size: 13px;
     }
     
+    .new-message-notification {
+        bottom: 120px !important;
+        left: 20px !important;
+    }
+    
 
 }
 
