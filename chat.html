@@ -42,7 +42,7 @@
 
         let app, database, auth, currentUser, messagesRef;
         let newMessageCount = 0;
-        let isUserAtBottom = false;
+        let isUserAtBottom = true;
         let firstNewMessageId = null;
         
         try {
@@ -96,6 +96,11 @@
                                 console.log('رسالة:', message);
                                 displayMessage(message);
                             });
+                            // بعد تحميل جميع الرسائل، ننزل للأسفل
+                            setTimeout(function() {
+                                chatbox.scrollTop(chatbox[0].scrollHeight);
+                                console.log('تم النزول للأسفل بعد تحميل الرسائل');
+                            }, 100);
                         } else {
                             console.log('لا توجد رسائل محفوظة');
                             addMessageToChat('مرحباً بك في الشات!', 'النظام', true);
@@ -427,8 +432,7 @@
             
             // تعيين المستخدم في الأسفل عند بدء التطبيق
             setTimeout(function() {
-                isUserAtBottom = true;
-                console.log('تم تعيين المستخدم في الأسفل عند بدء التطبيق');
+                console.log('تم تهيئة الشات - المستخدم في الأسفل');
             }, 1000);
 
             // اختبار الإشعار
