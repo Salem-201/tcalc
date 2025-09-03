@@ -53,7 +53,7 @@ div.chat {
     #chatbox {
         background: #f8f9fa;
         width: 100%;
-        height: calc(100% - 195px) !important;
+        height: calc(100% - 155px) !important;
         text-align: right;
         overflow-x: hidden;
         overflow-y: auto;
@@ -132,7 +132,7 @@ div.chat {
 #chatbox {
     background: #f8f9fa;
     width: 100%;
-    height: calc(100% - 120px) !important;
+    height: calc(100% - 195px) !important;
     text-align: right;
     overflow-x: hidden;
     overflow-y: auto;
@@ -549,5 +549,4 @@ div.chat {
         box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
     }
 }
-
 
