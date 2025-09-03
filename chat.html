@@ -17,6 +17,9 @@
                 <h3>💬 شات Firebase</h3>
             </div>
             <div id="chatbox" class="ScrollBar_v1"></div>
+            <div id="newMessageNotification" class="new-message-notification" style="display: none;">
+                <span id="notificationText">+1 رسالة جديدة</span>
+            </div>
             <div class="input-container">
                 <input type="text" id="usermsg" placeholder="اكتب رسالتك هنا...">
                 <button id="submitmsg">إرسال</button>
@@ -37,6 +40,9 @@
         };
 
         let app, database, auth, currentUser, messagesRef;
+        let newMessageCount = 0;
+        let isUserAtBottom = true;
+        let firstNewMessageId = null;
         
         try {
             app = firebase.initializeApp(firebaseConfig);
@@ -53,6 +59,8 @@
             const usermsg = $('#usermsg');
             const submitBtn = $('#submitmsg');
             const clearBtn = $('#clearChat');
+            const notification = $('#newMessageNotification');
+            const notificationText = $('#notificationText');
 
             // تسجيل الدخول التلقائي
             if (auth) {
@@ -98,7 +106,26 @@
                     messagesRef.on('child_added', function(snapshot) {
                         const message = snapshot.val();
                         console.log('رسالة جديدة:', message);
-                        displayMessage(message);
+                        
+                        // التحقق من أن الرسالة ليست من المستخدم الحالي
+                        if (message.userId !== currentUser.uid) {
+                            if (isUserAtBottom) {
+                                displayMessage(message);
+                                chatbox.scrollTop(chatbox[0].scrollHeight);
+                            } else {
+                                // المستخدم ليس في الأسفل، إظهار الإشعار
+                                newMessageCount++;
+                                if (!firstNewMessageId) {
+                                    firstNewMessageId = message.timestamp + '_' + message.userId;
+                                }
+                                updateNotification();
+                                displayMessage(message);
+                            }
+                        } else {
+                            // رسالة من المستخدم الحالي، عرضها دائماً
+                            displayMessage(message);
+                            chatbox.scrollTop(chatbox[0].scrollHeight);
+                        }
                     });
                 } else {
                     console.log('Firebase غير متوفر، لا يمكن تحميل الرسائل');
@@ -142,7 +169,7 @@
                 messageElement.append(messageContent);
                 
                 chatbox.append(messageElement);
-                chatbox.scrollTop(chatbox[0].scrollHeight);
+                // لا ننزل للأسفل تلقائياً هنا، يتم التحكم في ذلك من مكان آخر
             }
             
             // إضافة رسالة للشات
@@ -182,6 +209,55 @@
                 hours = hours % 12;
                 hours = hours ? hours : 12; // الساعة 0 تصبح 12
                 return hours + ':' + minutes + ' ' + ampm;
+            }
+
+            // تحديث الإشعار
+            function updateNotification() {
+                if (newMessageCount > 0) {
+                    notificationText.text('+' + newMessageCount + ' رسالة جديدة');
+                    notification.show();
+                } else {
+                    notification.hide();
+                }
+            }
+
+            // إخفاء الإشعار
+            function hideNotification() {
+                newMessageCount = 0;
+                firstNewMessageId = null;
+                notification.hide();
+            }
+
+            // الانتقال للرسالة الجديدة
+            function scrollToNewMessage() {
+                if (firstNewMessageId) {
+                    const firstNewMessage = $('#msg_' + firstNewMessageId);
+                    if (firstNewMessage.length > 0) {
+                        const messageOffset = firstNewMessage.offset().top - chatbox.offset().top + chatbox.scrollTop() - 50;
+                        chatbox.scrollTop(messageOffset);
+                    } else {
+                        chatbox.scrollTop(chatbox[0].scrollHeight);
+                    }
+                } else {
+                    chatbox.scrollTop(chatbox[0].scrollHeight);
+                }
+                hideNotification();
+                isUserAtBottom = true;
+            }
+
+            // كشف موقع المستخدم في الشات
+            function checkScrollPosition() {
+                const scrollTop = chatbox.scrollTop();
+                const scrollHeight = chatbox[0].scrollHeight;
+                const clientHeight = chatbox[0].clientHeight;
+                
+                // إذا كان المستخدم في الأسفل (مع هامش 50px)
+                isUserAtBottom = (scrollTop + clientHeight >= scrollHeight - 50);
+                
+                // إذا كان المستخدم في الأسفل، إخفاء الإشعار
+                if (isUserAtBottom && newMessageCount > 0) {
+                    hideNotification();
+                }
             }
 
             // إرسال الرسالة
@@ -272,8 +348,20 @@
                 clearAllMessages();
             });
 
+            // أحداث الإشعار والتمرير
+            notification.on('click', function() {
+                scrollToNewMessage();
+            });
+
+            chatbox.on('scroll', function() {
+                checkScrollPosition();
+            });
+
+            // كشف التمرير عند بدء التطبيق
+            checkScrollPosition();
 
         });
     </script>
 </body>
 </html>
+
