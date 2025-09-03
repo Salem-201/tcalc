@@ -225,8 +225,8 @@ div.chat {
 
 .new-message-notification {
     position: absolute;
-    bottom: 130px;
-    left: 53px;
+    bottom: 100px;
+    left: 10px;
     background: #007bff;
     color: white;
     padding: 8px 15px;
@@ -251,6 +251,33 @@ div.chat {
     display: block !important;
 }
 
+.new-message-highlight {
+    animation: messageHighlight 3s ease-in-out;
+}
+
+@keyframes messageHighlight {
+    0% {
+        background-color: #fff3cd;
+        transform: scale(1);
+    }
+    25% {
+        background-color: #ffeaa7;
+        transform: scale(1.02);
+    }
+    50% {
+        background-color: #fff3cd;
+        transform: scale(1);
+    }
+    75% {
+        background-color: #ffeaa7;
+        transform: scale(1.02);
+    }
+    100% {
+        background-color: transparent;
+        transform: scale(1);
+    }
+}
+
 @keyframes pulse {
     0% {
         box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
@@ -262,5 +289,4 @@ div.chat {
         box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
     }
 }
-
 
