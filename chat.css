@@ -85,8 +85,8 @@ div.chat {
 #usermsg {
     padding: 12px 50px 12px 50px;
     font-size: 16px;
-    min-height: 45px;
-    max-height: 95px;
+    min-height: 55px;
+    max-height: 120px;
     width: 100%;
     border: 1px solid #dee2e6;
     text-align: right;
