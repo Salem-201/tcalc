@@ -44,28 +44,28 @@ div.chat {
     
     #usermsg {
         font-size: 16px;
-        padding: 10px 15px 45px 15px;
-        min-height: 60px;
-        max-height: 80px;
+        padding: 8px 15px 40px 15px;
+        min-height: 50px;
+        max-height: 70px;
     }
     
     #chatbox {
-        height: calc(100vh - 200px) !important;
+        height: calc(100vh - 180px) !important;
     }
     
     .media-btn, .send-btn {
-        width: 28px;
-        height: 28px;
+        width: 26px;
+        height: 26px;
     }
     
     .media-btn {
         left: 12px;
-        bottom: 6px;
+        bottom: 4px;
     }
     
     .send-btn {
         right: 12px;
-        bottom: 6px;
+        bottom: 4px;
     }
     
     .media-dropdown {
