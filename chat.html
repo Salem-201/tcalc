@@ -119,16 +119,19 @@
                 
                 const textDiv = $('<div class="x0 chatext"></div>');
                 
-                // إضافة النص فقط
+                // إضافة النص والوقت في نفس السطر
                 if (message.text) {
-                    textDiv.append($('<div></div>').text(message.text));
+                    const textAndTimeDiv = $('<div class="text-with-time"></div>');
+                    textAndTimeDiv.append($('<span class="message-text"></span>').text(message.text));
+                    
+                    // إضافة الوقت
+                    const timeSpan = $('<span class="message-time"></span>');
+                    const messageTime = formatTime(message.timestamp);
+                    timeSpan.text(messageTime);
+                    textAndTimeDiv.append(timeSpan);
+                    
+                    textDiv.append(textAndTimeDiv);
                 }
-                
-                // إضافة الوقت
-                const timeDiv = $('<div class="message-time"></div>');
-                const messageTime = formatTime(message.timestamp);
-                timeDiv.text(messageTime);
-                textDiv.append(timeDiv);
                 
                 const userDiv = $('<div class="x1"></div>').text(message.username || 'مجهول');
                 
@@ -145,13 +148,18 @@
                 const messageContent = $('<div class="y0"></div>');
                 
                 const textDiv = $('<div class="x0 chatext"></div>');
-                textDiv.append($('<div></div>').text(text));
+                
+                // إضافة النص والوقت في نفس السطر
+                const textAndTimeDiv = $('<div class="text-with-time"></div>');
+                textAndTimeDiv.append($('<span class="message-text"></span>').text(text));
                 
                 // إضافة الوقت الحالي
-                const timeDiv = $('<div class="message-time"></div>');
+                const timeSpan = $('<span class="message-time"></span>');
                 const currentTime = formatTime(Date.now());
-                timeDiv.text(currentTime);
-                textDiv.append(timeDiv);
+                timeSpan.text(currentTime);
+                textAndTimeDiv.append(timeSpan);
+                
+                textDiv.append(textAndTimeDiv);
                 
                 const userDiv = $('<div class="x1"></div>').text(username || 'مجهول');
                 
