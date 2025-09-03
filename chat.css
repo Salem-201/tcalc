@@ -253,6 +253,7 @@ div.chat {
 
 .new-message-highlight .x0 {
     animation: messageHighlight 3s ease-in-out;
+    background-color: #fff3cd !important;
 }
 
 @keyframes messageHighlight {
