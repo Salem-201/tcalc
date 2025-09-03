@@ -58,7 +58,9 @@
             if (auth) {
                 auth.signInAnonymously().then(function(user) {
                     currentUser = user;
-                    console.log('تم تسجيل الدخول:', user.uid);
+                    console.log('تم تسجيل الدخول:', user);
+                    console.log('User UID:', user.uid);
+                    console.log('User Display Name:', user.displayName);
                     loadMessages();
                 }).catch(function(error) {
                     console.error('خطأ في تسجيل الدخول:', error);
@@ -174,6 +176,8 @@
                 const fileInput = screenInput[0].files[0];
                 
                 console.log('إرسال رسالة:', clientMsg, fileInput);
+                console.log('currentUser موجود:', !!currentUser);
+                console.log('messagesRef موجود:', !!messagesRef);
                 
                 if (clientMsg || fileInput) {
                     // إضافة الرسالة فوراً للشات
@@ -195,6 +199,8 @@
                         }
                     } else {
                         console.log('Firebase غير متوفر، الرسالة تظهر محلياً فقط');
+                        console.log('currentUser:', currentUser);
+                        console.log('messagesRef:', messagesRef);
                     }
                     
                     usermsg.val("");
@@ -285,6 +291,9 @@
                 };
                 
                 console.log('حفظ الرسالة النصية:', messageData);
+                console.log('currentUser:', currentUser);
+                console.log('messagesRef:', messagesRef);
+                
                 messagesRef.push(messageData).then(function() {
                     console.log('تم حفظ الرسالة النصية في Firebase');
                 }).catch(function(error) {
