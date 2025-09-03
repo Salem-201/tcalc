@@ -1,108 +1,225 @@
-<script>(function() { 
-    $(function () {
-        const chatModule = (function () {
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>شات Firebase</title>
+    <link rel="stylesheet" href="chat.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+</head>
+<body>
+    <div class="chat">
+        <div id="chatbox" class="ScrollBar_v1"></div>
+        <div class="input-container">
+            <input type="text" id="usermsg" placeholder="اكتب رسالتك هنا...">
+            <input type="file" id="Screeen" accept="image/*" style="display: none;">
+            <button id="submitmsg">إرسال</button>
+            <button id="fileBtn">📎</button>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCaT5Mnkwl4DVBN6e2G3lr8og4yPyGSgsY",
+            authDomain: "test-3914e.firebaseapp.com",
+            databaseURL: "https://test-3914e-default-rtdb.europe-west1.firebasedatabase.app/",
+            projectId: "test-3914e",
+            storageBucket: "test-3914e.firebasestorage.app",
+            messagingSenderId: "733979979029",
+            appId: "1:733979979029:web:3e88652688f8fe59394d1c",
+            measurementId: "G-9YQPYV8839"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const auth = firebase.auth();
+        const storage = firebase.storage();
+
+        let currentUser = null;
+        let messagesRef = database.ref('messages');
+
+        $(function () {
             const chatbox = $('#chatbox');
             const usermsg = $('#usermsg');
             const screenInput = $('#Screeen');
             const submitBtn = $('#submitmsg');
-            chatbox.scrollTop(chatbox[0].scrollHeight);
-            let poller = null;
-            function sendMessage() {
-                const clientMsg = usermsg.val();
-                const fileInput = screenInput[0].files[0];
-                if (clientMsg || fileInput) {
-                    const formData = new FormData();
-                    formData.append("text", clientMsg);
-                    if (fileInput) {
-                        formData.append("Screen", fileInput);
+            const fileBtn = $('#fileBtn');
+
+            // تسجيل الدخول التلقائي
+            auth.signInAnonymously().then(function(user) {
+                currentUser = user;
+                console.log('تم تسجيل الدخول:', user.uid);
+                loadMessages();
+            }).catch(function(error) {
+                console.error('خطأ في تسجيل الدخول:', error);
+            });
+
+            // تحميل الرسائل المحفوظة
+            function loadMessages() {
+                messagesRef.orderByChild('timestamp').once('value', function(snapshot) {
+                    if (snapshot.exists()) {
+                        snapshot.forEach(function(childSnapshot) {
+                            const message = childSnapshot.val();
+                            displayMessage(message);
+                        });
                     }
-                    $.ajax({
-                        url: "chat",
-                        type: "POST",
-                        data: formData,
-                        processData: false,
-                        contentType: false
+                });
+
+                // الاستماع للرسائل الجديدة
+                messagesRef.orderByChild('timestamp').on('child_added', function(snapshot) {
+                    const message = snapshot.val();
+                    displayMessage(message);
+                });
+            }
+
+            // عرض الرسالة
+            function displayMessage(message) {
+                const messageElement = $('<div class="msgln"></div>');
+                const messageContent = $('<div class="y0"></div>');
+                
+                const textDiv = $('<div class="x0 chatext"></div>');
+                
+                // إضافة النص
+                if (message.text) {
+                    textDiv.append($('<div></div>').text(message.text));
+                }
+                
+                // إضافة الصورة إذا كانت موجودة
+                if (message.hasFile && message.imageUrl) {
+                    const imageDiv = $('<div style="margin-top: 5px;"></div>');
+                    const img = $('<img>').attr({
+                        'src': message.imageUrl,
+                        'alt': message.fileName,
+                        'class': 'chat-image'
                     });
+                    
+                    // إضافة اسم الملف
+                    const fileNameDiv = $('<div style="font-size: 12px; color: #666; margin-top: 2px;"></div>').text('📎 ' + message.fileName);
+                    
+                    imageDiv.append(img).append(fileNameDiv);
+                    textDiv.append(imageDiv);
+                    
+                    // إضافة إمكانية فتح الصورة في نافذة جديدة
+                    img.on('click', function() {
+                        window.open(message.imageUrl, '_blank');
+                    });
+                } else if (message.hasFile) {
+                    // إذا لم تكن هناك صورة، اعرض اسم الملف فقط
+                    const fileDiv = $('<div style="margin-top: 5px;"></div>').text('📎 ' + message.fileName);
+                    textDiv.append(fileDiv);
+                }
+                
+                const userDiv = $('<div class="x1"></div>').text(message.username || 'مجهول');
+                
+                messageContent.append(textDiv).append(userDiv);
+                messageElement.append(messageContent);
+                
+                chatbox.append(messageElement);
+                chatbox.scrollTop(chatbox[0].scrollHeight);
+            }
+
+            // إرسال الرسالة
+            function sendMessage() {
+                const clientMsg = usermsg.val().trim();
+                const fileInput = screenInput[0].files[0];
+                
+                if (clientMsg || fileInput) {
+                    if (fileInput) {
+                        // رفع الصورة
+                        uploadFileToStorage(fileInput, clientMsg);
+                    } else {
+                        // إرسال رسالة نصية فقط
+                        sendTextMessage(clientMsg);
+                    }
+                    
                     usermsg.val("");
                     screenInput.val("");
+                    fileBtn.text('📎');
                 }
                 usermsg.focus();
             }
-            function loadLog() {
-                const oldScrollHeight = chatbox[0].scrollHeight;
-                $.ajax({
-                    url: "chathelper",
-                    cache: false,
-                    success: function (html) {
-                        chatbox.html(html);
-                        const newScrollHeight = chatbox[0].scrollHeight;
-                        if (newScrollHeight > oldScrollHeight) {
-                            chatbox.animate({ scrollTop: newScrollHeight }, 'normal');
-                        }
-                    }
+
+            // رفع الملف إلى Firebase Storage
+            function uploadFileToStorage(file, text) {
+                const fileName = Date.now() + '_' + file.name;
+                const storageRef = storage.ref('chat-images/' + fileName);
+                
+                storageRef.put(file).then(function(snapshot) {
+                    console.log('تم رفع الملف بنجاح');
+                    
+                    // الحصول على رابط التحميل
+                    snapshot.ref.getDownloadURL().then(function(downloadURL) {
+                        console.log('رابط الصورة:', downloadURL);
+                        
+                        // حفظ الرسالة مع رابط الصورة
+                        const messageData = {
+                            text: text,
+                            timestamp: firebase.database.ServerValue.TIMESTAMP,
+                            userId: currentUser.uid,
+                            username: currentUser.displayName || 'مجهول',
+                            hasFile: true,
+                            fileName: file.name,
+                            fileSize: file.size,
+                            fileType: file.type,
+                            imageUrl: downloadURL
+                        };
+                        
+                        messagesRef.push(messageData).then(function() {
+                            console.log('تم حفظ الرسالة مع الصورة في Firebase');
+                        }).catch(function(error) {
+                            console.error('خطأ في حفظ الرسالة:', error);
+                        });
+                    });
+                }).catch(function(error) {
+                    console.error('خطأ في رفع الملف:', error);
+                    // في حالة فشل الرفع، أرسل رسالة نصية فقط
+                    sendTextMessage(text);
                 });
             }
-            function initEvents() {
-                submitBtn.on('click.chat', function (e) {
+
+            // إرسال رسالة نصية
+            function sendTextMessage(text) {
+                const messageData = {
+                    text: text,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP,
+                    userId: currentUser.uid,
+                    username: currentUser.displayName || 'مجهول'
+                };
+                
+                messagesRef.push(messageData).then(function() {
+                    console.log('تم حفظ الرسالة النصية في Firebase');
+                }).catch(function(error) {
+                    console.error('خطأ في حفظ الرسالة:', error);
+                });
+            }
+
+            // أحداث الأزرار
+            submitBtn.on('click', function (e) {
+                e.preventDefault();
+                sendMessage();
+            });
+
+            usermsg.on('keypress', function (e) {
+                if (e.which === 13) {
                     e.preventDefault();
                     sendMessage();
-                });
-                usermsg.on('keypress.chat', function (e) {
-                    if (e.which === 13) {
-                        e.preventDefault();
-                        sendMessage();
-                    }
-                });
-            }
-            function startAutoLoad() {
-                if (!poller) {
-                    poller = setInterval(function () {
-                        if (window.location.pathname === '/chat' && document.hasFocus()) {
-                            loadLog();
-                        }
-                    }, 2500);
-                }
-            }
-            function stopAutoLoad() {
-                if (poller) {
-                    clearInterval(poller);
-                    poller = null;
-                }
-            }
-            window.addEventListener('popstate', function () {
-                if (window.location.pathname === '/chat' && document.hasFocus()) {
-                    startAutoLoad();
-                } else {
-                    stopAutoLoad();
                 }
             });
-            window.addEventListener('focus', function () {
-                if (window.location.pathname === '/chat') {
-                    startAutoLoad();
-                }
-            });
-            window.addEventListener('blur', function () {
-                stopAutoLoad();
-            });
-            return {
-                init: function () {
-                    initEvents();
-                    if (window.location.pathname === '/chat' && document.hasFocus()) {
-                        startAutoLoad();
-                    }
-                }
-            };
-        })();
-        chatModule.init();
-    });
 
-    function reportChat(id, playerId) {
-        event.preventDefault();
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "chat", true);
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        var data = "chatId=" + encodeURIComponent(id);
-        xhr.send(data);
-    }
+            fileBtn.on('click', function() {
+                screenInput.click();
+            });
 
- })();</script>
+            screenInput.on('change', function() {
+                if (this.files[0]) {
+                    fileBtn.text('📎 ' + this.files[0].name);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
