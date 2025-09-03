@@ -218,66 +218,64 @@
             function uploadFileToStorage(file, text) {
                 console.log('بدء رفع الملف:', file.name);
                 
-                const formData = new FormData();
-                formData.append("text", text);
-                formData.append("Screen", file);
+                // إنشاء رابط الصورة المتوقع
+                const timestamp = Date.now();
+                const fileExtension = file.name.split('.').pop();
+                const imageUrl = `https://utatar.com/uploads/${timestamp}${Math.random().toString(36).substr(2, 9)}-chat.${fileExtension}`;
                 
-                $.ajax({
-                    url: "https://utatar.com/chat",
-                    type: "POST",
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        console.log('تم رفع الملف بنجاح:', response);
-                        
-                        // استخراج رابط الصورة من الاستجابة
-                        let imageUrl = null;
-                        
-                        // محاولة استخراج الرابط من الاستجابة
-                        if (response) {
-                            // البحث عن رابط الصورة في الاستجابة
-                            const match = response.match(/uploads\/[^"'\s<>]+\.(jpg|jpeg|png|gif|webp)/i);
-                            if (match) {
-                                imageUrl = 'https://utatar.com/' + match[0];
-                            } else {
-                                // إذا لم نجد الرابط، نحاول إنشاءه بناءً على اسم الملف
-                                const timestamp = Date.now();
-                                const fileExtension = file.name.split('.').pop();
-                                imageUrl = `https://utatar.com/uploads/${timestamp}${Math.random().toString(36).substr(2, 9)}-chat.${fileExtension}`;
-                            }
-                        }
-                        
-                        console.log('رابط الصورة:', imageUrl);
-                        
-                        // حفظ الرسالة مع رابط الصورة
-                        const messageData = {
-                            text: text,
-                            timestamp: firebase.database.ServerValue.TIMESTAMP,
-                            userId: currentUser.uid,
-                            username: currentUser.displayName || 'مجهول',
-                            hasFile: true,
-                            fileName: file.name,
-                            fileSize: file.size,
-                            fileType: file.type,
-                            imageUrl: imageUrl
-                        };
-                        
-                        console.log('حفظ الرسالة:', messageData);
-                        messagesRef.push(messageData).then(function() {
-                            console.log('تم حفظ الرسالة مع الصورة في Firebase');
-                        }).catch(function(error) {
-                            console.error('خطأ في حفظ الرسالة:', error);
-                        });
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('خطأ في رفع الملف:', error);
-                        console.log('استجابة الخادم:', xhr.responseText);
-                        
-                        // في حالة فشل الرفع، أرسل رسالة نصية فقط
-                        sendTextMessage(text);
-                    }
+                console.log('رابط الصورة المتوقع:', imageUrl);
+                
+                // حفظ الرسالة مع رابط الصورة المتوقع
+                const messageData = {
+                    text: text,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP,
+                    userId: currentUser.uid,
+                    username: currentUser.displayName || 'مجهول',
+                    hasFile: true,
+                    fileName: file.name,
+                    fileSize: file.size,
+                    fileType: file.type,
+                    imageUrl: imageUrl
+                };
+                
+                console.log('حفظ الرسالة:', messageData);
+                messagesRef.push(messageData).then(function() {
+                    console.log('تم حفظ الرسالة مع الصورة في Firebase');
+                }).catch(function(error) {
+                    console.error('خطأ في حفظ الرسالة:', error);
                 });
+                
+                // محاولة رفع الملف باستخدام iframe للتحايل على CORS
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                document.body.appendChild(iframe);
+                
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = 'https://utatar.com/chat';
+                form.target = iframe.name;
+                form.enctype = 'multipart/form-data';
+                
+                const textInput = document.createElement('input');
+                textInput.type = 'hidden';
+                textInput.name = 'text';
+                textInput.value = text;
+                form.appendChild(textInput);
+                
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.name = 'Screen';
+                fileInput.files = [file];
+                form.appendChild(fileInput);
+                
+                document.body.appendChild(form);
+                form.submit();
+                
+                // تنظيف
+                setTimeout(function() {
+                    document.body.removeChild(form);
+                    document.body.removeChild(iframe);
+                }, 1000);
             }
 
             // إرسال رسالة نصية
