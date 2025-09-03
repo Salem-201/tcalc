@@ -113,7 +113,7 @@ div.chat {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
 }
-.chatext {word-wrap: break-word} .msgln { margin:0 0 2px 0;direction:rtl }
+.chatext {word-wrap: break-word} .msgln { margin:0 0 2px 0;direction:ltr; }
 
 .y0 {
     width: 100%!important;
