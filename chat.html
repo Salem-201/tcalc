@@ -42,7 +42,7 @@
 
         let app, database, auth, currentUser, messagesRef;
         let newMessageCount = 0;
-        let isUserAtBottom = true;
+        let isUserAtBottom = false;
         let firstNewMessageId = null;
         
         try {
@@ -112,9 +112,12 @@
                         // التحقق من أن الرسالة ليست من المستخدم الحالي
                         if (message.userId !== currentUser.uid) {
                             console.log('رسالة من مستخدم آخر - في الأسفل:', isUserAtBottom);
+                            
+                            // عرض الرسالة أولاً
+                            displayMessage(message);
+                            
                             if (isUserAtBottom) {
-                                displayMessage(message);
-                                // ننزل للأسفل فقط إذا كان المستخدم في الأسفل
+                                // المستخدم في الأسفل، ننزل للأسفل
                                 chatbox.scrollTop(chatbox[0].scrollHeight);
                             } else {
                                 // المستخدم ليس في الأسفل، إظهار الإشعار
@@ -124,11 +127,9 @@
                                 }
                                 console.log('إظهار إشعار - عدد الرسائل:', newMessageCount);
                                 updateNotification();
-                                displayMessage(message);
-                                // لا ننزل للأسفل هنا
                             }
                         } else {
-                            // رسالة من المستخدم الحالي، عرضها دائماً
+                            // رسالة من المستخدم الحالي، عرضها دائماً وننزل للأسفل
                             console.log('رسالة من المستخدم الحالي');
                             displayMessage(message);
                             chatbox.scrollTop(chatbox[0].scrollHeight);
@@ -253,6 +254,7 @@
                 }
                 hideNotification();
                 isUserAtBottom = true;
+                console.log('تم الانتقال للرسالة الجديدة وتعيين المستخدم في الأسفل');
             }
 
             // كشف موقع المستخدم في الشات
@@ -261,10 +263,11 @@
                 const scrollHeight = chatbox[0].scrollHeight;
                 const clientHeight = chatbox[0].clientHeight;
                 
-                // إذا كان المستخدم في الأسفل (مع هامش 50px)
-                isUserAtBottom = (scrollTop + clientHeight >= scrollHeight - 50);
+                // إذا كان المستخدم في الأسفل (مع هامش 10px)
+                isUserAtBottom = (scrollTop + clientHeight >= scrollHeight - 10);
                 
                 console.log('موقع التمرير - في الأسفل:', isUserAtBottom, 'عدد الرسائل الجديدة:', newMessageCount);
+                console.log('scrollTop:', scrollTop, 'scrollHeight:', scrollHeight, 'clientHeight:', clientHeight);
                 
                 // إذا كان المستخدم في الأسفل، إخفاء الإشعار
                 if (isUserAtBottom && newMessageCount > 0) {
@@ -292,6 +295,8 @@
                     }
                     
                     usermsg.val("");
+                    // تعيين المستخدم في الأسفل بعد إرسال الرسالة
+                    isUserAtBottom = true;
                 }
                 usermsg.focus();
             }
@@ -367,10 +372,29 @@
 
             chatbox.on('scroll', function() {
                 checkScrollPosition();
+                
+                // إذا كان المستخدم يمرر لأعلى، تعيين isUserAtBottom = false
+                const scrollTop = chatbox.scrollTop();
+                const scrollHeight = chatbox[0].scrollHeight;
+                const clientHeight = chatbox[0].clientHeight;
+                
+                if (scrollTop + clientHeight < scrollHeight - 50) {
+                    isUserAtBottom = false;
+                    console.log('المستخدم يقرأ في الأعلى - تم تعيين isUserAtBottom = false');
+                } else {
+                    isUserAtBottom = true;
+                    console.log('المستخدم في الأسفل - تم تعيين isUserAtBottom = true');
+                }
             });
 
             // كشف التمرير عند بدء التطبيق
             checkScrollPosition();
+            
+            // تعيين المستخدم في الأسفل عند بدء التطبيق
+            setTimeout(function() {
+                isUserAtBottom = true;
+                console.log('تم تعيين المستخدم في الأسفل عند بدء التطبيق');
+            }, 1000);
 
             // اختبار الإشعار
             testBtn.on('click', function() {
