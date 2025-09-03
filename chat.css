@@ -251,29 +251,29 @@ div.chat {
     display: block !important;
 }
 
-.new-message-highlight {
+.new-message-highlight .x0 {
     animation: messageHighlight 3s ease-in-out;
 }
 
 @keyframes messageHighlight {
     0% {
-        background-color: #fff3cd;
+        background-color: #fff3cd !important;
         transform: scale(1);
     }
     25% {
-        background-color: #ffeaa7;
+        background-color: #ffeaa7 !important;
         transform: scale(1.02);
     }
     50% {
-        background-color: #fff3cd;
+        background-color: #fff3cd !important;
         transform: scale(1);
     }
     75% {
-        background-color: #ffeaa7;
+        background-color: #ffeaa7 !important;
         transform: scale(1.02);
     }
     100% {
-        background-color: transparent;
+        background-color: #f2f2f2 !important;
         transform: scale(1);
     }
 }
