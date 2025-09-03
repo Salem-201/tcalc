@@ -20,7 +20,6 @@
             <button id="submitmsg">إرسال</button>
             <button id="fileBtn">📎</button>
         </div>
-
     </div>
 
     <script>
@@ -35,369 +34,230 @@
             measurementId: "G-9YQPYV8839"
         };
 
-        try {
-            firebase.initializeApp(firebaseConfig);
-            const database = firebase.database();
-            const auth = firebase.auth();
-            
-            auth.useDeviceLanguage();
-            console.log('تم تهيئة Firebase بنجاح');
-        } catch (error) {
-            console.error('خطأ في تهيئة Firebase:', error);
-        }
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const auth = firebase.auth();
+        const storage = firebase.storage();
 
         let currentUser = null;
-        let messagesRef = null;
-        let poller = null;
-        
-        // تهيئة Firebase بشكل آمن
-        let storage = null;
-        if (typeof firebase !== 'undefined') {
-            try {
-                const database = firebase.database();
-                const auth = firebase.auth();
-                storage = firebase.storage();
-                messagesRef = database.ref('messages');
-            } catch (error) {
-                console.error('خطأ في تهيئة Firebase:', error);
-            }
-        }
+        let messagesRef = database.ref('messages');
 
         $(function () {
-            const chatModule = (function () {
-                const chatbox = $('#chatbox');
-                const usermsg = $('#usermsg');
-                const screenInput = $('#Screeen');
-                const submitBtn = $('#submitmsg');
-                const fileBtn = $('#fileBtn');
+            const chatbox = $('#chatbox');
+            const usermsg = $('#usermsg');
+            const screenInput = $('#Screeen');
+            const submitBtn = $('#submitmsg');
+            const fileBtn = $('#fileBtn');
 
-                function initAuth() {
-                    if (typeof firebase !== 'undefined' && firebase.auth) {
-                        firebase.auth().signInAnonymously().then(function(user) {
-                            currentUser = user;
-                            console.log('تم تسجيل الدخول:', user.uid);
-                            loadMessages();
-                        }).catch(function(error) {
-                            console.error('خطأ في تسجيل الدخول:', error);
-                            loadMessages();
-                        });
-                    } else {
-                        console.log('Firebase غير متوفر، الشات يعمل بدون حفظ');
-                        loadMessages();
-                    }
-                }
+            // تسجيل الدخول التلقائي
+            auth.signInAnonymously().then(function(user) {
+                currentUser = user;
+                console.log('تم تسجيل الدخول:', user.uid);
+                loadMessages();
+            }).catch(function(error) {
+                console.error('خطأ في تسجيل الدخول:', error);
+            });
 
-                function sendMessage() {
-                    const clientMsg = usermsg.val().trim();
-                    const fileInput = screenInput[0].files[0];
-                    
-                    if (clientMsg || fileInput) {
-                        // إضافة الرسالة فوراً للشات
-                        if (fileInput) {
-                            addMessageToChat(clientMsg + (clientMsg ? '\n' : '') + '📎 ' + fileInput.name, 'أنت');
-                        } else {
-                            addMessageToChat(clientMsg, 'أنت');
-                        }
-                        
-                        // رفع الملف إلى Firebase Storage
-                        if (fileInput && storage && currentUser) {
-                            uploadFileToStorage(fileInput, clientMsg);
-                        } else if (currentUser && messagesRef) {
-                            // إرسال رسالة نصية فقط
-                            sendTextMessage(clientMsg);
-                        }
-                        
-                        // إرسال إلى الخادم المحلي
-                        const formData = new FormData();
-                        formData.append("text", clientMsg);
-                        if (fileInput) {
-                            formData.append("Screen", fileInput);
-                        }
-                        $.ajax({
-                            url: "chat",
-                            type: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                            success: function() {
-                                console.log('تم الإرسال للخادم المحلي');
-                            },
-                            error: function() {
-                                console.log('فشل الإرسال للخادم المحلي');
-                            }
-                        });
-                        
-                        usermsg.val("");
-                        screenInput.val("");
-                        fileBtn.text('📎');
-                    }
-                    usermsg.focus();
-                }
+            // تحميل الرسائل المحفوظة
+            function loadMessages() {
+                console.log('بدء تحميل الرسائل...');
                 
-                function uploadFileToStorage(file, text) {
-                    const fileName = Date.now() + '_' + file.name;
-                    const storageRef = storage.ref('chat-images/' + fileName);
-                    
-                    storageRef.put(file).then(function(snapshot) {
-                        console.log('تم رفع الملف بنجاح');
-                        
-                        // الحصول على رابط التحميل
-                        snapshot.ref.getDownloadURL().then(function(downloadURL) {
-                            console.log('رابط الصورة:', downloadURL);
-                            
-                            // حفظ الرسالة مع رابط الصورة
-                            const messageData = {
-                                text: text,
-                                timestamp: firebase.database.ServerValue.TIMESTAMP,
-                                userId: currentUser.uid,
-                                username: currentUser.displayName || 'مجهول',
-                                hasFile: true,
-                                fileName: file.name,
-                                fileSize: file.size,
-                                fileType: file.type,
-                                imageUrl: downloadURL
-                            };
-                            
-                            messagesRef.push(messageData).then(function() {
-                                console.log('تم حفظ الرسالة مع الصورة في Firebase');
-                            }).catch(function(error) {
-                                console.error('خطأ في حفظ الرسالة:', error);
-                            });
-                        });
-                    }).catch(function(error) {
-                        console.error('خطأ في رفع الملف:', error);
-                        // في حالة فشل الرفع، أرسل رسالة نصية فقط
-                        sendTextMessage(text);
-                    });
-                }
-                
-                function sendTextMessage(text) {
-                    const messageData = {
-                        text: text,
-                        timestamp: firebase.database.ServerValue.TIMESTAMP,
-                        userId: currentUser.uid,
-                        username: currentUser.displayName || 'مجهول'
-                    };
-                    
-                    messagesRef.push(messageData).then(function() {
-                        console.log('تم حفظ الرسالة النصية في Firebase');
-                    }).catch(function(error) {
-                        console.error('خطأ في حفظ الرسالة:', error);
-                    });
-                }
-
-                function loadMessages() {
-                    // تحميل الرسائل الجديدة من Firebase
-                    if (messagesRef) {
-                        messagesRef.orderByChild('timestamp').on('child_added', function(snapshot) {
-                            const message = snapshot.val();
+                messagesRef.once('value', function(snapshot) {
+                    console.log('تم تحميل البيانات:', snapshot.exists());
+                    if (snapshot.exists()) {
+                        console.log('عدد الرسائل:', snapshot.numChildren());
+                        snapshot.forEach(function(childSnapshot) {
+                            const message = childSnapshot.val();
+                            console.log('رسالة:', message);
                             displayMessage(message);
                         });
-                    }
-                    
-                    // تحميل الرسائل من الخادم المحلي
-                    loadLog();
-                }
-                
-                function initChat() {
-                    // إضافة رسالة ترحيب
-                    addMessageToChat('مرحباً بك في الشات!', 'النظام');
-                    
-                    // تحميل الرسائل المحفوظة من Firebase
-                    loadSavedMessages();
-                }
-                
-                function loadSavedMessages() {
-                    if (messagesRef) {
-                        messagesRef.orderByChild('timestamp').once('value', function(snapshot) {
-                            if (snapshot.exists()) {
-                                console.log('تم العثور على رسائل محفوظة:', snapshot.numChildren());
-                                snapshot.forEach(function(childSnapshot) {
-                                    const message = childSnapshot.val();
-                                    displayMessage(message);
-                                });
-                            } else {
-                                console.log('لا توجد رسائل محفوظة');
-                            }
-                        }).catch(function(error) {
-                            console.error('خطأ في تحميل الرسائل المحفوظة:', error);
-                        });
                     } else {
-                        console.log('Firebase غير متوفر، لا يمكن تحميل الرسائل المحفوظة');
+                        console.log('لا توجد رسائل محفوظة');
+                        addMessageToChat('مرحباً بك في الشات!', 'النظام');
                     }
-                }
-                
-                function loadLog() {
-                    const oldScrollHeight = chatbox[0].scrollHeight;
-                    $.ajax({
-                        url: "chathelper",
-                        cache: false,
-                        success: function (html) {
-                            // إضافة الرسائل من الخادم المحلي
-                            if (html && html.trim()) {
-                                chatbox.append(html);
-                                const newScrollHeight = chatbox[0].scrollHeight;
-                                if (newScrollHeight > oldScrollHeight) {
-                                    chatbox.animate({ scrollTop: newScrollHeight }, 'normal');
-                                }
-                            }
-                        },
-                        error: function() {
-                            console.log('فشل تحميل الرسائل من الخادم المحلي');
-                        }
-                    });
-                }
+                }).catch(function(error) {
+                    console.error('خطأ في تحميل الرسائل:', error);
+                });
 
-                function displayMessage(message) {
-                    const messageElement = $('<div class="msgln"></div>');
-                    const messageContent = $('<div class="y0"></div>');
-                    
-                    const textDiv = $('<div class="x0 chatext"></div>');
-                    
-                    // إضافة النص
-                    if (message.text) {
-                        textDiv.append($('<div></div>').text(message.text));
-                    }
-                    
-                    // إضافة الصورة إذا كانت موجودة
-                    if (message.hasFile && message.imageUrl) {
-                        const imageDiv = $('<div style="margin-top: 5px;"></div>');
-                        const img = $('<img>').attr({
-                            'src': message.imageUrl,
-                            'alt': message.fileName,
-                            'class': 'chat-image'
-                        });
-                        
-                        // إضافة اسم الملف
-                        const fileNameDiv = $('<div style="font-size: 12px; color: #666; margin-top: 2px;"></div>').text('📎 ' + message.fileName);
-                        
-                        imageDiv.append(img).append(fileNameDiv);
-                        textDiv.append(imageDiv);
-                        
-                        // إضافة إمكانية فتح الصورة في نافذة جديدة
-                        img.on('click', function() {
-                            window.open(message.imageUrl, '_blank');
-                        });
-                    } else if (message.hasFile) {
-                        // إذا لم تكن هناك صورة، اعرض اسم الملف فقط
-                        const fileDiv = $('<div style="margin-top: 5px;"></div>').text('📎 ' + message.fileName);
-                        textDiv.append(fileDiv);
-                    }
-                    
-                    const userDiv = $('<div class="x1"></div>').text(message.username || 'مجهول');
-                    
-                    messageContent.append(textDiv).append(userDiv);
-                    messageElement.append(messageContent);
-                    
-                    chatbox.append(messageElement);
-                    chatbox.scrollTop(chatbox[0].scrollHeight);
-                }
-                
-                function displayImageMessage(message) {
-                    const messageElement = $('<div class="msgln"></div>');
-                    const messageContent = $('<div class="y0"></div>');
-                    
-                    const textDiv = $('<div class="x0 chatext"></div>');
-                    
-                    if (message.text) {
-                        textDiv.append($('<div></div>').text(message.text));
-                    }
-                    
-                    if (message.hasFile) {
-                        const fileDiv = $('<div style="margin-top: 5px;"></div>');
-                        fileDiv.append($('<span>📎 ' + message.fileName + '</span>'));
-                        textDiv.append(fileDiv);
-                    }
-                    
-                    const userDiv = $('<div class="x1"></div>').text(message.username || 'مجهول');
-                    
-                    messageContent.append(textDiv).append(userDiv);
-                    messageElement.append(messageContent);
-                    
-                    chatbox.append(messageElement);
-                    chatbox.scrollTop(chatbox[0].scrollHeight);
-                }
-                
-                function addMessageToChat(text, username) {
-                    const messageElement = $('<div class="msgln"></div>');
-                    const messageContent = $('<div class="y0"></div>');
-                    
-                    const textDiv = $('<div class="x0 chatext"></div>').text(text);
-                    const userDiv = $('<div class="x1"></div>').text(username || 'مجهول');
-                    
-                    messageContent.append(textDiv).append(userDiv);
-                    messageElement.append(messageContent);
-                    
-                    chatbox.append(messageElement);
-                    chatbox.scrollTop(chatbox[0].scrollHeight);
-                }
-
-                function initEvents() {
-                    submitBtn.on('click.chat', function (e) {
-                        e.preventDefault();
-                        sendMessage();
-                    });
-
-                    usermsg.on('keypress.chat', function (e) {
-                        if (e.which === 13) {
-                            e.preventDefault();
-                            sendMessage();
-                        }
-                    });
-
-                    fileBtn.on('click', function() {
-                        screenInput.click();
-                    });
-
-
-
-                    screenInput.on('change', function() {
-                        if (this.files[0]) {
-                            fileBtn.text('📎 ' + this.files[0].name);
-                        }
-                    });
-                }
-
-                function startAutoLoad() {
-                    if (!poller) {
-                        poller = setInterval(function () {
-                            if (window.location.pathname === '/chat' && document.hasFocus()) {
-                                loadLog();
-                            }
-                        }, 2500);
-                    }
-                }
-                
-                function stopAutoLoad() {
-                    if (poller) {
-                        clearInterval(poller);
-                        poller = null;
-                    }
-                }
-
-                return {
-                    init: function () {
-                        initChat();
-                        initAuth();
-                        initEvents();
-                        startAutoLoad();
-                    }
-                };
-            })();
-            chatModule.init();
-        });
-
-        function reportChat(id, playerId) {
-            event.preventDefault();
-            if (currentUser) {
-                database.ref('reports').push({
-                    chatId: id,
-                    playerId: playerId,
-                    reporterId: currentUser.uid,
-                    timestamp: firebase.database.ServerValue.TIMESTAMP
+                // الاستماع للرسائل الجديدة
+                messagesRef.on('child_added', function(snapshot) {
+                    const message = snapshot.val();
+                    console.log('رسالة جديدة:', message);
+                    displayMessage(message);
                 });
             }
-        }
+
+            // عرض الرسالة
+            function displayMessage(message) {
+                console.log('عرض الرسالة:', message);
+                
+                const messageElement = $('<div class="msgln"></div>');
+                const messageContent = $('<div class="y0"></div>');
+                
+                const textDiv = $('<div class="x0 chatext"></div>');
+                
+                // إضافة النص
+                if (message.text) {
+                    textDiv.append($('<div></div>').text(message.text));
+                }
+                
+                // إضافة الصورة إذا كانت موجودة
+                if (message.hasFile && message.imageUrl) {
+                    console.log('عرض الصورة:', message.imageUrl);
+                    const imageDiv = $('<div style="margin-top: 5px;"></div>');
+                    const img = $('<img>').attr({
+                        'src': message.imageUrl,
+                        'alt': message.fileName,
+                        'class': 'chat-image'
+                    });
+                    
+                    // إضافة اسم الملف
+                    const fileNameDiv = $('<div style="font-size: 12px; color: #666; margin-top: 2px;"></div>').text('📎 ' + message.fileName);
+                    
+                    imageDiv.append(img).append(fileNameDiv);
+                    textDiv.append(imageDiv);
+                    
+                    // إضافة إمكانية فتح الصورة في نافذة جديدة
+                    img.on('click', function() {
+                        window.open(message.imageUrl, '_blank');
+                    });
+                } else if (message.hasFile) {
+                    // إذا لم تكن هناك صورة، اعرض اسم الملف فقط
+                    const fileDiv = $('<div style="margin-top: 5px;"></div>').text('📎 ' + message.fileName);
+                    textDiv.append(fileDiv);
+                }
+                
+                const userDiv = $('<div class="x1"></div>').text(message.username || 'مجهول');
+                
+                messageContent.append(textDiv).append(userDiv);
+                messageElement.append(messageContent);
+                
+                chatbox.append(messageElement);
+                chatbox.scrollTop(chatbox[0].scrollHeight);
+            }
+            
+            // إضافة رسالة للشات
+            function addMessageToChat(text, username) {
+                const messageElement = $('<div class="msgln"></div>');
+                const messageContent = $('<div class="y0"></div>');
+                
+                const textDiv = $('<div class="x0 chatext"></div>').text(text);
+                const userDiv = $('<div class="x1"></div>').text(username || 'مجهول');
+                
+                messageContent.append(textDiv).append(userDiv);
+                messageElement.append(messageContent);
+                
+                chatbox.append(messageElement);
+                chatbox.scrollTop(chatbox[0].scrollHeight);
+            }
+
+            // إرسال الرسالة
+            function sendMessage() {
+                const clientMsg = usermsg.val().trim();
+                const fileInput = screenInput[0].files[0];
+                
+                console.log('إرسال رسالة:', clientMsg, fileInput);
+                
+                if (clientMsg || fileInput) {
+                    if (fileInput) {
+                        console.log('رفع صورة:', fileInput.name);
+                        // رفع الصورة
+                        uploadFileToStorage(fileInput, clientMsg);
+                    } else {
+                        console.log('إرسال رسالة نصية');
+                        // إرسال رسالة نصية فقط
+                        sendTextMessage(clientMsg);
+                    }
+                    
+                    usermsg.val("");
+                    screenInput.val("");
+                    fileBtn.text('📎');
+                }
+                usermsg.focus();
+            }
+
+            // رفع الملف إلى Firebase Storage
+            function uploadFileToStorage(file, text) {
+                console.log('بدء رفع الملف:', file.name);
+                const fileName = Date.now() + '_' + file.name;
+                const storageRef = storage.ref('chat-images/' + fileName);
+                
+                storageRef.put(file).then(function(snapshot) {
+                    console.log('تم رفع الملف بنجاح');
+                    
+                    // الحصول على رابط التحميل
+                    snapshot.ref.getDownloadURL().then(function(downloadURL) {
+                        console.log('رابط الصورة:', downloadURL);
+                        
+                        // حفظ الرسالة مع رابط الصورة
+                        const messageData = {
+                            text: text,
+                            timestamp: firebase.database.ServerValue.TIMESTAMP,
+                            userId: currentUser.uid,
+                            username: currentUser.displayName || 'مجهول',
+                            hasFile: true,
+                            fileName: file.name,
+                            fileSize: file.size,
+                            fileType: file.type,
+                            imageUrl: downloadURL
+                        };
+                        
+                        console.log('حفظ الرسالة:', messageData);
+                        messagesRef.push(messageData).then(function() {
+                            console.log('تم حفظ الرسالة مع الصورة في Firebase');
+                        }).catch(function(error) {
+                            console.error('خطأ في حفظ الرسالة:', error);
+                        });
+                    }).catch(function(error) {
+                        console.error('خطأ في الحصول على رابط الصورة:', error);
+                    });
+                }).catch(function(error) {
+                    console.error('خطأ في رفع الملف:', error);
+                    // في حالة فشل الرفع، أرسل رسالة نصية فقط
+                    sendTextMessage(text);
+                });
+            }
+
+            // إرسال رسالة نصية
+            function sendTextMessage(text) {
+                const messageData = {
+                    text: text,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP,
+                    userId: currentUser.uid,
+                    username: currentUser.displayName || 'مجهول'
+                };
+                
+                console.log('حفظ الرسالة النصية:', messageData);
+                messagesRef.push(messageData).then(function() {
+                    console.log('تم حفظ الرسالة النصية في Firebase');
+                }).catch(function(error) {
+                    console.error('خطأ في حفظ الرسالة:', error);
+                });
+            }
+
+            // أحداث الأزرار
+            submitBtn.on('click', function (e) {
+                e.preventDefault();
+                sendMessage();
+            });
+
+            usermsg.on('keypress', function (e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            fileBtn.on('click', function() {
+                screenInput.click();
+            });
+
+            screenInput.on('change', function() {
+                if (this.files[0]) {
+                    fileBtn.text('📎 ' + this.files[0].name);
+                }
+            });
+        });
     </script>
 </body>
 </html>
