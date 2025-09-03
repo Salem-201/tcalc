@@ -29,13 +29,14 @@ div.chat {
     }
     
     div.chat {
-        width: 100%;
-        min-width: 100%;
+        width: 100vw;
+        min-width: 100vw;
         height: 100vh;
         margin: 0;
-        padding: 10px;
+        padding: 5px;
         border-radius: 0;
         box-shadow: none;
+        box-sizing: border-box;
     }
     
     .chat-header h3 {
@@ -50,7 +51,7 @@ div.chat {
     }
     
     #chatbox {
-        height: calc(100vh - 180px) !important;
+        height: calc(100vh - 160px) !important;
     }
     
     .media-btn, .send-btn {
