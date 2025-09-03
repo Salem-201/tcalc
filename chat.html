@@ -149,6 +149,13 @@
                                 console.log('تم النزول للأسفل');
                             } else {
                                 console.log('المستخدم في الأعلى - لم يتم النزول للأسفل');
+                                // نعرض إشعار للرسالة التي أرسلها المستخدم نفسه
+                                newMessageCount++;
+                                if (!firstNewMessageId) {
+                                    firstNewMessageId = message.timestamp + '_' + message.userId;
+                                }
+                                console.log('إظهار إشعار للرسالة المرسلة - عدد الرسائل:', newMessageCount);
+                                updateNotification();
                             }
                         } else {
                             // رسالة قديمة، عرضها فقط
@@ -320,8 +327,7 @@
                     }
                     
                     usermsg.val("");
-                    // تعيين المستخدم في الأسفل بعد إرسال الرسالة
-                    isUserAtBottom = true;
+                    // لا نعيد تعيين isUserAtBottom هنا، نتركه كما هو
                 }
                 usermsg.focus();
             }
@@ -409,6 +415,10 @@
                 } else {
                     isUserAtBottom = true;
                     console.log('المستخدم في الأسفل - تم تعيين isUserAtBottom = true');
+                    // إخفاء الإشعار إذا كان المستخدم في الأسفل
+                    if (newMessageCount > 0) {
+                        hideNotification();
+                    }
                 }
             });
 
