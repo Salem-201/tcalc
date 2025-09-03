@@ -346,7 +346,6 @@
                     // إعادة تعيين ارتفاع النص وإخفاء السكرول
                     usermsg[0].style.height = '45px';
                     usermsg[0].style.overflowY = 'hidden';
-                    usermsg[0].style.overflow = 'hidden';
                     // لا نعيد تعيين isUserAtBottom هنا، نتركه كما هو
                 }
                 usermsg.focus();
@@ -425,13 +424,11 @@
                 const newHeight = Math.min(this.scrollHeight, 95);
                 this.style.height = newHeight + 'px';
                 
-                // إخفاء السكرول إذا كان النص قصير
-                if (newHeight <= 45) {
-                    this.style.overflowY = 'hidden';
-                    this.style.overflow = 'hidden';
-                } else {
+                // إظهار السكرول فقط عند الحاجة
+                if (newHeight >= 95) {
                     this.style.overflowY = 'auto';
-                    this.style.overflow = 'auto';
+                } else {
+                    this.style.overflowY = 'hidden';
                 }
             });
             
