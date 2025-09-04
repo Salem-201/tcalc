@@ -73,6 +73,7 @@
         let newMessageCount = 0;
         let isUserAtBottom = true;
         let firstNewMessageId = null;
+        let lastMessageDate = null;
         
         try {
             app = firebase.initializeApp(firebaseConfig);
@@ -204,6 +205,15 @@
                     return;
                 }
                 
+                // إضافة التاريخ إذا تغير اليوم
+                const messageDate = formatDate(message.timestamp);
+                if (lastMessageDate !== messageDate) {
+                    const dateDiv = $('<div class="date-separator"></div>');
+                    dateDiv.text(messageDate);
+                    chatbox.append(dateDiv);
+                    lastMessageDate = messageDate;
+                }
+                
                 const messageElement = $('<div class="msgln" id="msg_' + messageId + '"></div>');
                 const messageContent = $('<div class="y0"></div>');
                 
@@ -234,6 +244,15 @@
             
             // إضافة رسالة للشات
             function addMessageToChat(text, username, shouldScroll = true) {
+                // إضافة التاريخ إذا تغير اليوم
+                const currentDate = formatDate(Date.now());
+                if (lastMessageDate !== currentDate) {
+                    const dateDiv = $('<div class="date-separator"></div>');
+                    dateDiv.text(currentDate);
+                    chatbox.append(dateDiv);
+                    lastMessageDate = currentDate;
+                }
+                
                 const messageElement = $('<div class="msgln"></div>');
                 const messageContent = $('<div class="y0"></div>');
                 
@@ -262,6 +281,15 @@
                 if (shouldScroll) {
                     chatbox.scrollTop(chatbox[0].scrollHeight);
                 }
+            }
+            
+            // تنسيق التاريخ
+            function formatDate(timestamp) {
+                const date = new Date(timestamp);
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const year = date.getFullYear();
+                return day + '/' + month + '/' + year;
             }
             
             // تنسيق الوقت
