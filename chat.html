@@ -103,20 +103,6 @@
 
         $(function () {
             const chatbox = $('#chatbox');
-            
-            function adjustForKeyboard() {
-                if (window.visualViewport) {
-                    const viewport = window.visualViewport;
-                    const height = viewport.height;
-                    const chatHeight = height - 200;
-                    chatbox.css('height', chatHeight + 'px');
-                    chatbox.css('max-height', chatHeight + 'px');
-                }
-            }
-            
-            if (window.visualViewport) {
-                window.visualViewport.addEventListener('resize', adjustForKeyboard);
-            }
             const usermsg = $('#usermsg');
             const submitBtn = $('#submitmsg');
 
