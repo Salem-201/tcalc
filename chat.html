@@ -54,7 +54,6 @@
                     </div>
                 </div>
                 
-                <!-- رابط خيارات الراديو -->
                 <div id="linkOptions" class="link-options" style="display: none;">
                     <div class="link-options-row">
                         <div class="link-option">
@@ -99,9 +98,7 @@
             database = firebase.database();
             auth = firebase.auth();
             messagesRef = database.ref('messages');
-            console.log('تم تهيئة Firebase بنجاح');
         } catch (error) {
-            console.error('خطأ في تهيئة Firebase:', error);
         }
 
         $(function () {
@@ -119,115 +116,73 @@
             const notification = $('#newMessageNotification');
             const notificationText = $('#notificationText');
             
-            // إخفاء الإشعار في البداية
             notification.removeClass('show');
             newMessageCount = 0;
             firstNewMessageId = null;
-
-            // تسجيل الدخول التلقائي
             if (auth) {
                 auth.signInAnonymously().then(function(userCredential) {
                     currentUser = userCredential.user;
-                    console.log('تم تسجيل الدخول:', currentUser);
-                    console.log('User UID:', currentUser.uid);
-                    console.log('User Display Name:', currentUser.displayName);
                     loadMessages();
                 }).catch(function(error) {
-                    console.error('خطأ في تسجيل الدخول:', error);
-                    // حتى لو فشل تسجيل الدخول، الشات يعمل
                     loadMessages();
                 });
             } else {
-                console.log('Firebase غير متوفر، الشات يعمل بدون حفظ');
                 loadMessages();
             }
 
-            // تحميل الرسائل المحفوظة
             function loadMessages() {
-                console.log('بدء تحميل الرسائل...');
-                
                 if (messagesRef) {
                     messagesRef.once('value', function(snapshot) {
-                        console.log('تم تحميل البيانات:', snapshot.exists());
                         if (snapshot.exists()) {
-                            console.log('عدد الرسائل:', snapshot.numChildren());
                             snapshot.forEach(function(childSnapshot) {
                                 const message = childSnapshot.val();
-                                console.log('رسالة:', message);
                                 displayMessage(message);
                             });
-                            // بعد تحميل جميع الرسائل، ننزل للأسفل
                             setTimeout(function() {
                                 chatbox.scrollTop(chatbox[0].scrollHeight);
-                                console.log('تم النزول للأسفل بعد تحميل الرسائل');
                             }, 100);
                         } else {
-                            console.log('لا توجد رسائل محفوظة');
                             addMessageToChat('مرحباً بك في الشات!', 'النظام', true);
                         }
                     }).catch(function(error) {
-                        console.error('خطأ في تحميل الرسائل:', error);
                     });
 
-                    // الاستماع للرسائل الجديدة
                     let lastMessageTime = Date.now();
                     
                     messagesRef.on('child_added', function(snapshot) {
                         const message = snapshot.val();
-                        console.log('رسالة جديدة:', message);
                         
-                        // التحقق من أن الرسالة ليست من المستخدم الحالي
-                        console.log('مقارنة userIds - رسالة:', message.userId, 'حالي:', currentUser.uid);
-                        
-                        // التحقق من أن الرسالة جديدة (أرسلت في آخر 5 ثوان)
                         const messageTime = message.timestamp || Date.now();
                         const isNewMessage = (Date.now() - messageTime) < 5000;
                         
-                        console.log('هل الرسالة جديدة؟', isNewMessage, 'وقت الرسالة:', messageTime, 'الوقت الحالي:', Date.now());
-                        
                         if (isNewMessage) {
-                            console.log('رسالة جديدة - في الأسفل:', isUserAtBottom);
                             
-                            // عرض الرسالة أولاً
                             displayMessage(message);
                             
                             if (isUserAtBottom) {
-                                // المستخدم في الأسفل، ننزل للأسفل
                                 chatbox.scrollTop(chatbox[0].scrollHeight);
-                                console.log('تم النزول للأسفل');
                             } else {
-                                // المستخدم ليس في الأسفل، إظهار الإشعار
                                 newMessageCount++;
                                 if (!firstNewMessageId) {
                                     firstNewMessageId = message.timestamp + '_' + message.userId;
                                 }
-                                console.log('إظهار إشعار - عدد الرسائل:', newMessageCount);
                                 updateNotification();
                             }
                         } else {
-                            // رسالة قديمة، عرضها فقط
-                            console.log('رسالة قديمة - عرض فقط');
                             displayMessage(message);
                         }
                     });
                 } else {
-                    console.log('Firebase غير متوفر، لا يمكن تحميل الرسائل');
                     addMessageToChat('مرحباً بك في الشات!', 'النظام', true);
                 }
             }
 
-            // عرض الرسالة
             function displayMessage(message) {
-                console.log('عرض الرسالة:', message);
-                
-                // تجنب عرض الرسائل المكررة
                 const messageId = message.timestamp + '_' + message.userId;
                 if ($('#msg_' + messageId).length > 0) {
-                    console.log('رسالة مكررة، تم تجاهلها');
                     return;
                 }
                 
-                // إضافة التاريخ إذا تغير اليوم
                 const messageDate = formatDate(message.timestamp);
                 if (lastMessageDate !== messageDate) {
                     const dateDiv = $('<div class="date-separator"></div>');
@@ -241,12 +196,10 @@
                 
                 const textDiv = $('<div class="x0 chatext"></div>');
                 
-                // إضافة النص والوقت في نفس السطر (فقط إذا لم يكن فيديو يوتيوب)
                 if (message.text && !message.isYouTubeVideo) {
                     const textAndTimeDiv = $('<div class="text-with-time"></div>');
                     textAndTimeDiv.append($('<span class="message-text"></span>').text(message.text));
                     
-                    // إضافة الوقت
                     const timeSpan = $('<span class="message-time"></span>');
                     const messageTime = formatTime(message.timestamp);
                     timeSpan.text(messageTime);
@@ -255,9 +208,7 @@
                     textDiv.append(textAndTimeDiv);
                 }
                 
-                // إضافة فيديو يوتيوب إذا كان متوفراً
                 if (message.isYouTubeVideo && message.videoId) {
-                    // إضافة الوقت فقط للفيديو
                     const timeSpan = $('<span class="message-time youtube-time"></span>');
                     const messageTime = formatTime(message.timestamp);
                     timeSpan.text(messageTime);
@@ -274,7 +225,6 @@
                         .attr('loading', 'lazy')
                         .addClass('youtube-iframe')
                         .on('error', function() {
-                            console.log('خطأ في تحميل فيديو يوتيوب');
                             $(this).replaceWith('<div class="youtube-error">فشل في تحميل الفيديو</div>');
                         });
                     
@@ -287,7 +237,6 @@
                 messageContent.append(textDiv).append(userDiv);
                 messageElement.append(messageContent);
                 
-                // إضافة أيقونة الحذف إذا كانت الرسالة من المستخدم الحالي
                 if (message.userId === currentUser.uid) {
                     const deleteBtn = $('<button class="delete-message-btn" title="حذف الرسالة"></button>');
                     deleteBtn.html('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"/></svg>');
@@ -300,12 +249,9 @@
                 }
                 
                 chatbox.append(messageElement);
-                // لا ننزل للأسفل تلقائياً هنا، يتم التحكم في ذلك من مكان آخر
             }
             
-            // إضافة رسالة للشات
             function addMessageToChat(text, username, shouldScroll = true, isYouTubeVideo = false, videoId = null) {
-                // إضافة التاريخ إذا تغير اليوم
                 const currentDate = formatDate(Date.now());
                 if (lastMessageDate !== currentDate) {
                     const dateDiv = $('<div class="date-separator"></div>');
@@ -319,12 +265,10 @@
                 
                 const textDiv = $('<div class="x0 chatext"></div>');
                 
-                // إضافة النص والوقت في نفس السطر (فقط إذا لم يكن فيديو يوتيوب)
                 if (!isYouTubeVideo) {
                     const textAndTimeDiv = $('<div class="text-with-time"></div>');
                     textAndTimeDiv.append($('<span class="message-text"></span>').text(text));
                     
-                    // إضافة الوقت الحالي
                     const timeSpan = $('<span class="message-time"></span>');
                     const currentTime = formatTime(Date.now());
                     timeSpan.text(currentTime);
@@ -333,9 +277,7 @@
                     textDiv.append(textAndTimeDiv);
                 }
                 
-                // إضافة فيديو يوتيوب إذا كان متوفراً
                 if (isYouTubeVideo && videoId) {
-                    // إضافة الوقت فقط للفيديو
                     const timeSpan = $('<span class="message-time youtube-time"></span>');
                     const currentTime = formatTime(Date.now());
                     timeSpan.text(currentTime);
@@ -352,7 +294,6 @@
                         .attr('loading', 'lazy')
                         .addClass('youtube-iframe')
                         .on('error', function() {
-                            console.log('خطأ في تحميل فيديو يوتيوب');
                             $(this).replaceWith('<div class="youtube-error">فشل في تحميل الفيديو</div>');
                         });
                     
@@ -365,13 +306,11 @@
                 messageContent.append(textDiv).append(userDiv);
                 messageElement.append(messageContent);
                 
-                // إضافة أيقونة الحذف للرسائل المحلية (إذا كان المستخدم هو المرسل)
                 if (username === 'أنت' && currentUser) {
                     const deleteBtn = $('<button class="delete-message-btn" title="حذف الرسالة"></button>');
                     deleteBtn.html('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"/></svg>');
                     deleteBtn.on('click', function() {
                         if (confirm('هل أنت متأكد من حذف هذه الرسالة؟')) {
-                            // حذف محلي فقط للرسائل المحلية
                             messageElement.fadeOut(300, function() {
                                 $(this).remove();
                             });
@@ -382,13 +321,11 @@
                 
                 chatbox.append(messageElement);
                 
-                // فقط ننزل للأسفل إذا كان مطلوباً
                 if (shouldScroll) {
                     chatbox.scrollTop(chatbox[0].scrollHeight);
                 }
             }
             
-            // تنسيق التاريخ
             function formatDate(timestamp) {
                 const date = new Date(timestamp);
                 const day = date.getDate().toString().padStart(2, '0');
@@ -397,41 +334,31 @@
                 return day + '/' + month + '/' + year;
             }
             
-            // تنسيق الوقت
             function formatTime(timestamp) {
                 const date = new Date(timestamp);
                 let hours = date.getHours();
                 const minutes = date.getMinutes().toString().padStart(2, '0');
                 const ampm = hours >= 12 ? 'PM' : 'AM';
                 hours = hours % 12;
-                hours = hours ? hours : 12; // الساعة 0 تصبح 12
+                hours = hours ? hours : 12;
                 return hours + ':' + minutes + ' ' + ampm;
             }
 
-            // تحديث الإشعار
             function updateNotification() {
-                console.log('تحديث الإشعار - عدد الرسائل الجديدة:', newMessageCount);
-                console.log('الإشعار موجود:', notification.length > 0);
                 if (newMessageCount > 0) {
                     notificationText.text('+' + newMessageCount + ' رسالة جديدة');
                     notification.addClass('show');
-                    console.log('تم إظهار الإشعار - class show مضاف');
-                    console.log('classes الحالية:', notification.attr('class'));
                 } else {
                     notification.removeClass('show');
-                    console.log('تم إخفاء الإشعار - class show محذوف');
                 }
             }
 
-            // إخفاء الإشعار
             function hideNotification() {
                 newMessageCount = 0;
                 firstNewMessageId = null;
                 notification.removeClass('show');
-                console.log('تم إخفاء الإشعار وإعادة تعيين العداد');
             }
 
-            // الانتقال للرسالة الجديدة
             function scrollToNewMessage() {
                 if (firstNewMessageId) {
                     const firstNewMessage = $('#msg_' + firstNewMessageId);
@@ -439,7 +366,6 @@
                         const messageOffset = firstNewMessage.offset().top - chatbox.offset().top + chatbox.scrollTop() - 50;
                         chatbox.scrollTop(messageOffset);
                         
-                        // إضافة تأثير وميض للرسائل الجديدة
                         highlightNewMessages();
                     } else {
                         chatbox.scrollTop(chatbox[0].scrollHeight);
@@ -449,75 +375,52 @@
                 }
                 hideNotification();
                 isUserAtBottom = true;
-                console.log('تم الانتقال للرسالة الجديدة وتعيين المستخدم في الأسفل');
             }
 
-            // تأثير وميض للرسائل الجديدة
             function highlightNewMessages() {
-                // العثور على جميع الرسائل الجديدة
                 const newMessages = chatbox.find('.msgln').slice(-newMessageCount);
                 
-                // إضافة class للرسائل الجديدة
                 newMessages.addClass('new-message-highlight');
                 
-                // إزالة class بعد 3 ثوان
                 setTimeout(function() {
                     newMessages.removeClass('new-message-highlight');
                 }, 3000);
             }
 
-            // كشف موقع المستخدم في الشات
             function checkScrollPosition() {
                 const scrollTop = chatbox.scrollTop();
                 const scrollHeight = chatbox[0].scrollHeight;
                 const clientHeight = chatbox[0].clientHeight;
                 
-                // إذا كان المستخدم في الأسفل (مع هامش 100px)
                 isUserAtBottom = (scrollTop + clientHeight >= scrollHeight - 100);
                 
-                console.log('موقع التمرير - في الأسفل:', isUserAtBottom, 'عدد الرسائل الجديدة:', newMessageCount);
-                console.log('scrollTop:', scrollTop, 'scrollHeight:', scrollHeight, 'clientHeight:', clientHeight);
                 
-                // إذا كان المستخدم في الأسفل، إخفاء الإشعار
                 if (isUserAtBottom && newMessageCount > 0) {
                     hideNotification();
                 }
             }
 
-            // إرسال الرسالة
             function sendMessage() {
                 const clientMsg = usermsg.val().trim();
                 
-                console.log('إرسال رسالة:', clientMsg);
-                console.log('currentUser موجود:', !!currentUser);
-                console.log('messagesRef موجود:', !!messagesRef);
-                
                 if (clientMsg) {
                     if (currentUser && messagesRef) {
-                        console.log('إرسال رسالة نصية');
-                        // إرسال رسالة نصية فقط
                         sendTextMessage(clientMsg);
                     } else {
-                        console.log('Firebase غير متوفر، الرسالة تظهر محلياً فقط');
-                        // إضافة الرسالة محلياً فقط
                         addMessageToChat(clientMsg, 'أنت', isUserAtBottom);
                     }
                     
                     usermsg.val("");
-                    // إعادة تعيين ارتفاع النص وإخفاء السكرول
                     usermsg[0].style.height = '83px';
                     usermsg[0].style.overflowY = 'hidden';
-                    // لا نعيد تعيين isUserAtBottom هنا، نتركه كما هو
                 }
                 usermsg.focus();
             }
 
 
 
-            // إرسال رسالة نصية
             function sendTextMessage(text) {
                 if (!currentUser || !messagesRef) {
-                    console.log('لا يمكن حفظ الرسالة - Firebase غير متوفر');
                     return;
                 }
                 
@@ -528,39 +431,26 @@
                     username: currentUser.displayName || 'مجهول'
                 };
                 
-                console.log('حفظ الرسالة النصية:', messageData);
-                console.log('currentUser:', currentUser);
-                console.log('messagesRef:', messagesRef);
-                
                 messagesRef.push(messageData).then(function() {
-                    console.log('تم حفظ الرسالة النصية في Firebase');
                 }).catch(function(error) {
-                    console.error('خطأ في حفظ الرسالة:', error);
                 });
             }
             
-                         // حذف رسالة واحدة
              function deleteMessage(timestamp, userId) {
                  if (!messagesRef) {
-                     console.log('Firebase غير متوفر، لا يمكن حذف الرسالة');
                      return;
                  }
                  
-                 // البحث عن الرسالة في Firebase
                  messagesRef.orderByChild('timestamp').equalTo(timestamp).once('value', function(snapshot) {
                      snapshot.forEach(function(childSnapshot) {
                          const message = childSnapshot.val();
                          if (message.userId === userId) {
-                             // حذف الرسالة من Firebase
                              childSnapshot.ref.remove().then(function() {
-                                 console.log('تم حذف الرسالة من Firebase');
-                                 // حذف الرسالة من الواجهة
                                  const messageId = timestamp + '_' + userId;
                                  $('#msg_' + messageId).fadeOut(300, function() {
                                      $(this).remove();
                                  });
                              }).catch(function(error) {
-                                 console.error('خطأ في حذف الرسالة:', error);
                                  alert('فشل في حذف الرسالة');
                              });
                          }
@@ -568,26 +458,21 @@
                  });
              }
              
-             // حذف جميع الرسائل
              function clearAllMessages() {
                  if (confirm('هل أنت متأكد من حذف جميع الرسائل؟')) {
                      if (messagesRef) {
                          messagesRef.remove().then(function() {
-                             console.log('تم حذف جميع الرسائل من Firebase');
                              chatbox.empty();
                              addMessageToChat('تم حذف جميع الرسائل', 'النظام', true);
                          }).catch(function(error) {
-                             console.error('خطأ في حذف الرسائل:', error);
                          });
                      } else {
-                         console.log('Firebase غير متوفر، حذف محلي فقط');
                          chatbox.empty();
                          addMessageToChat('تم حذف جميع الرسائل', 'النظام', true);
                      }
                  }
              }
 
-            // أحداث الأزرار
             submitBtn.on('click', function (e) {
                 e.preventDefault();
                 sendMessage();
@@ -600,7 +485,6 @@
                 }
             });
 
-            // تفعيل/إلغاء تفعيل زر الإرسال وتكبير النص تلقائياً
             usermsg.on('input', function() {
                 const hasText = $(this).val().trim().length > 0;
                 if (hasText) {
@@ -609,12 +493,10 @@
                     submitBtn.removeClass('active');
                 }
                 
-                // تكبير النص تلقائياً
                 this.style.height = 'auto';
                 const newHeight = Math.min(this.scrollHeight, 97);
                 this.style.height = newHeight + 'px';
                 
-                // إظهار السكرول فقط عند الحاجة
                 if (newHeight >= 97) {
                     this.style.overflowY = 'auto';
                 } else {
@@ -624,15 +506,13 @@
             
 
 
-            // إظهار/إخفاء قائمة الوسائط
             mediaBtn.on('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 mediaDropdown.toggle();
-                linkOptions.hide(); // إخفاء خيارات الرابط عند فتح القائمة الرئيسية
+                linkOptions.hide();
             });
 
-            // إخفاء القائمة عند النقر خارجها
             $(document).on('click', function(e) {
                 if (!$(e.target).closest('.media-btn, .media-dropdown, .link-options').length) {
                     mediaDropdown.hide();
@@ -640,44 +520,34 @@
                 }
             });
 
-            // معالجة خيارات الوسائط
             imageOption.on('click', function() {
-                console.log('إرسال صورة');
                 mediaDropdown.hide();
                 linkOptions.hide();
-                // هنا يمكن إضافة منطق رفع الصورة
             });
 
             linkOption.on('click', function() {
-                console.log('إرسال رابط');
                 mediaDropdown.hide();
                 linkOptions.show();
                 linkInput.focus();
             });
 
-            // استخراج معرف فيديو يوتيوب من الرابط
             function extractYouTubeVideoId(url) {
                 const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
                 const match = url.match(regExp);
                 return (match && match[2].length === 11) ? match[2] : null;
             }
 
-            // إرسال الرابط
             sendLinkBtn.on('click', function() {
                 const linkUrl = linkInput.val().trim();
                 const linkType = $('input[name="linkType"]:checked').val();
                 
                 if (linkUrl) {
-                    console.log('إرسال رابط:', linkType, linkUrl);
-                    
-                    // التحقق من نوع الرابط
                     let linkText = '';
                     let isYouTubeVideo = false;
                     let videoId = null;
                     let isValidLink = true;
                     
                     if (linkType === 'report') {
-                        // التحقق من أن الرابط ليس رابط يوتيوب
                         if (linkUrl.includes('youtube.com') || linkUrl.includes('youtu.be')) {
                             alert('هذا رابط يوتيوب. يرجى اختيار "رابط يوتيوب" أو إدخال رابط تقرير صحيح.');
                             isValidLink = false;
@@ -695,7 +565,6 @@
                         }
                     }
                     
-                    // إرسال الرابط فقط إذا كان صحيحاً
                     if (isValidLink) {
                         if (currentUser && messagesRef) {
                             const messageData = {
@@ -708,11 +577,9 @@
                             };
                             
                             messagesRef.push(messageData).then(function() {
-                                console.log('تم إرسال الرابط');
                                 linkInput.val('');
                                 linkOptions.hide();
                             }).catch(function(error) {
-                                console.error('خطأ في إرسال الرابط:', error);
                             });
                         } else {
                             addMessageToChat(linkText, 'أنت', isUserAtBottom, isYouTubeVideo, videoId);
@@ -720,17 +587,14 @@
                             linkOptions.hide();
                         }
                     } else {
-                        // في حالة الخطأ، نمسح الرابط من مربع النص
-                        console.log('الرابط غير صحيح، تم مسحه من مربع النص');
-                        linkInput.val(''); // مسح الرابط
-                        linkInput.focus(); // إعادة التركيز على مربع النص
+                        linkInput.val(''); 
+                        linkInput.focus(); 
                     }
                 } else {
                     alert('يرجى إدخال رابط صحيح');
                 }
             });
 
-            // إرسال الرابط عند الضغط على Enter
             linkInput.on('keypress', function(e) {
                 if (e.which === 13) {
                     e.preventDefault();
@@ -738,56 +602,38 @@
                 }
             });
 
-            // تنظيف حقل الإدخال عند تغيير نوع الرابط
             $('input[name="linkType"]').on('change', function() {
                 linkInput.val('');
-                console.log('تم تغيير نوع الرابط إلى:', $(this).val());
             });
 
-            // أحداث الإشعار والتمرير
             notification.on('click', function() {
                 scrollToNewMessage();
-                console.log('تم النقر على الإشعار');
             });
 
             chatbox.on('scroll', function() {
                 checkScrollPosition();
                 
-                // إذا كان المستخدم يمرر لأعلى، تعيين isUserAtBottom = false
                 const scrollTop = chatbox.scrollTop();
                 const scrollHeight = chatbox[0].scrollHeight;
                 const clientHeight = chatbox[0].clientHeight;
                 
                 if (scrollTop + clientHeight < scrollHeight - 100) {
                     isUserAtBottom = false;
-                    console.log('المستخدم يقرأ في الأعلى - تم تعيين isUserAtBottom = false');
                 } else {
                     isUserAtBottom = true;
-                    console.log('المستخدم في الأسفل - تم تعيين isUserAtBottom = true');
-                    // إخفاء الإشعار إذا كان المستخدم في الأسفل
+
                     if (newMessageCount > 0) {
                         hideNotification();
                     }
                 }
             });
 
-            // كشف التمرير عند بدء التطبيق
             checkScrollPosition();
             
-            // تعيين المستخدم في الأسفل عند بدء التطبيق
             setTimeout(function() {
-                console.log('تم تهيئة الشات - المستخدم في الأسفل');
-                // إخفاء أي إشعار موجود عند بدء التطبيق
                 hideNotification();
             }, 1000);
-
-
-
-
-
         });
     </script>
 </body>
 </html>
-
-
