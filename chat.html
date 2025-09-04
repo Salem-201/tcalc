@@ -53,6 +53,25 @@
                         <span>إرسال رابط</span>
                     </div>
                 </div>
+                
+                <!-- رابط خيارات الراديو -->
+                <div id="linkOptions" class="link-options" style="display: none;">
+                    <div class="link-options-row">
+                        <div class="link-option">
+                            <input type="radio" id="reportLink" name="linkType" value="report" checked>
+                            <label for="reportLink">رابط تقرير</label>
+                        </div>
+                        <div class="link-option">
+                            <input type="radio" id="youtubeLink" name="linkType" value="youtube">
+                            <label for="youtubeLink">رابط يوتيوب</label>
+                        </div>
+                    </div>
+                    <div class="link-input-container">
+                        <input type="text" id="linkInput" placeholder="الصق الرابط هنا..." class="link-input">
+                        <button id="sendLink" class="send-link-btn">إرسال</button>
+                    </div>
+                </div>
+                </div>
 
             </div>
         </div>
@@ -94,6 +113,9 @@
             const mediaDropdown = $('#mediaDropdown');
             const imageOption = $('#imageOption');
             const linkOption = $('#linkOption');
+            const linkOptions = $('#linkOptions');
+            const linkInput = $('#linkInput');
+            const sendLinkBtn = $('#sendLink');
             const notification = $('#newMessageNotification');
             const notificationText = $('#notificationText');
             
@@ -219,8 +241,8 @@
                 
                 const textDiv = $('<div class="x0 chatext"></div>');
                 
-                // إضافة النص والوقت في نفس السطر
-                if (message.text) {
+                // إضافة النص والوقت في نفس السطر (فقط إذا لم يكن فيديو يوتيوب)
+                if (message.text && !message.isYouTubeVideo) {
                     const textAndTimeDiv = $('<div class="text-with-time"></div>');
                     textAndTimeDiv.append($('<span class="message-text"></span>').text(message.text));
                     
@@ -233,7 +255,47 @@
                     textDiv.append(textAndTimeDiv);
                 }
                 
-                const userDiv = $('<div class="x1"></div>').text(message.username || 'مجهول');
+                // إضافة فيديو يوتيوب إذا كان متوفراً
+                if (message.isYouTubeVideo && message.videoId) {
+                    // إضافة الوقت فقط للفيديو
+                    const timeSpan = $('<span class="message-time youtube-time"></span>');
+                    const messageTime = formatTime(message.timestamp);
+                    timeSpan.text(messageTime);
+                    textDiv.append(timeSpan);
+                    
+                    const videoContainer = $('<div class="youtube-video-container"></div>');
+                    const iframe = $('<iframe></iframe>')
+                        .attr('src', `https://www.youtube.com/embed/${message.videoId}?rel=0&modestbranding=1`)
+                        .attr('title', 'YouTube video player')
+                        .attr('frameborder', '0')
+                        .attr('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share')
+                        .attr('referrerpolicy', 'no-referrer-when-downgrade')
+                        .attr('allowfullscreen', 'true')
+                        .attr('loading', 'lazy')
+                        .addClass('youtube-iframe')
+                        .on('error', function() {
+                            console.log('خطأ في تحميل فيديو يوتيوب');
+                            $(this).replaceWith('<div class="youtube-error">فشل في تحميل الفيديو</div>');
+                        });
+                    
+                    videoContainer.append(iframe);
+                    textDiv.append(videoContainer);
+                }
+                
+                const userDiv = $('<div class="x1"></div>');
+                userDiv.text(message.username || 'مجهول');
+                
+                // إضافة أيقونة الحذف إذا كانت الرسالة من المستخدم الحالي
+                if (message.userId === currentUser.uid) {
+                    const deleteBtn = $('<button class="delete-message-btn" title="حذف الرسالة"></button>');
+                    deleteBtn.html('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"/></svg>');
+                    deleteBtn.on('click', function() {
+                        if (confirm('هل أنت متأكد من حذف هذه الرسالة؟')) {
+                            deleteMessage(message.timestamp, message.userId);
+                        }
+                    });
+                    userDiv.append(deleteBtn);
+                }
                 
                 messageContent.append(textDiv).append(userDiv);
                 messageElement.append(messageContent);
@@ -243,7 +305,7 @@
             }
             
             // إضافة رسالة للشات
-            function addMessageToChat(text, username, shouldScroll = true) {
+            function addMessageToChat(text, username, shouldScroll = true, isYouTubeVideo = false, videoId = null) {
                 // إضافة التاريخ إذا تغير اليوم
                 const currentDate = formatDate(Date.now());
                 if (lastMessageDate !== currentDate) {
@@ -258,19 +320,64 @@
                 
                 const textDiv = $('<div class="x0 chatext"></div>');
                 
-                // إضافة النص والوقت في نفس السطر
-                const textAndTimeDiv = $('<div class="text-with-time"></div>');
-                textAndTimeDiv.append($('<span class="message-text"></span>').text(text));
+                // إضافة النص والوقت في نفس السطر (فقط إذا لم يكن فيديو يوتيوب)
+                if (!isYouTubeVideo) {
+                    const textAndTimeDiv = $('<div class="text-with-time"></div>');
+                    textAndTimeDiv.append($('<span class="message-text"></span>').text(text));
+                    
+                    // إضافة الوقت الحالي
+                    const timeSpan = $('<span class="message-time"></span>');
+                    const currentTime = formatTime(Date.now());
+                    timeSpan.text(currentTime);
+                    textAndTimeDiv.append(timeSpan);
+                    
+                    textDiv.append(textAndTimeDiv);
+                }
                 
-                // إضافة الوقت الحالي
-                const timeSpan = $('<span class="message-time"></span>');
-                const currentTime = formatTime(Date.now());
-                timeSpan.text(currentTime);
-                textAndTimeDiv.append(timeSpan);
+                // إضافة فيديو يوتيوب إذا كان متوفراً
+                if (isYouTubeVideo && videoId) {
+                    // إضافة الوقت فقط للفيديو
+                    const timeSpan = $('<span class="message-time youtube-time"></span>');
+                    const currentTime = formatTime(Date.now());
+                    timeSpan.text(currentTime);
+                    textDiv.append(timeSpan);
+                    
+                    const videoContainer = $('<div class="youtube-video-container"></div>');
+                    const iframe = $('<iframe></iframe>')
+                        .attr('src', `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`)
+                        .attr('title', 'YouTube video player')
+                        .attr('frameborder', '0')
+                        .attr('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share')
+                        .attr('referrerpolicy', 'no-referrer-when-downgrade')
+                        .attr('allowfullscreen', 'true')
+                        .attr('loading', 'lazy')
+                        .addClass('youtube-iframe')
+                        .on('error', function() {
+                            console.log('خطأ في تحميل فيديو يوتيوب');
+                            $(this).replaceWith('<div class="youtube-error">فشل في تحميل الفيديو</div>');
+                        });
+                    
+                    videoContainer.append(iframe);
+                    textDiv.append(videoContainer);
+                }
                 
-                textDiv.append(textAndTimeDiv);
+                const userDiv = $('<div class="x1"></div>');
+                userDiv.text(username || 'مجهول');
                 
-                const userDiv = $('<div class="x1"></div>').text(username || 'مجهول');
+                // إضافة أيقونة الحذف للرسائل المحلية (إذا كان المستخدم هو المرسل)
+                if (username === 'أنت' && currentUser) {
+                    const deleteBtn = $('<button class="delete-message-btn" title="حذف الرسالة"></button>');
+                    deleteBtn.html('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"/></svg>');
+                    deleteBtn.on('click', function() {
+                        if (confirm('هل أنت متأكد من حذف هذه الرسالة؟')) {
+                            // حذف محلي فقط للرسائل المحلية
+                            messageElement.fadeOut(300, function() {
+                                $(this).remove();
+                            });
+                        }
+                    });
+                    userDiv.append(deleteBtn);
+                }
                 
                 messageContent.append(textDiv).append(userDiv);
                 messageElement.append(messageContent);
@@ -434,24 +541,53 @@
                 });
             }
             
-            // حذف جميع الرسائل
-            function clearAllMessages() {
-                if (confirm('هل أنت متأكد من حذف جميع الرسائل؟')) {
-                    if (messagesRef) {
-                        messagesRef.remove().then(function() {
-                            console.log('تم حذف جميع الرسائل من Firebase');
-                            chatbox.empty();
-                            addMessageToChat('تم حذف جميع الرسائل', 'النظام', true);
-                        }).catch(function(error) {
-                            console.error('خطأ في حذف الرسائل:', error);
-                        });
-                                            } else {
-                            console.log('Firebase غير متوفر، حذف محلي فقط');
-                            chatbox.empty();
-                            addMessageToChat('تم حذف جميع الرسائل', 'النظام', true);
-                        }
-                }
-            }
+                         // حذف رسالة واحدة
+             function deleteMessage(timestamp, userId) {
+                 if (!messagesRef) {
+                     console.log('Firebase غير متوفر، لا يمكن حذف الرسالة');
+                     return;
+                 }
+                 
+                 // البحث عن الرسالة في Firebase
+                 messagesRef.orderByChild('timestamp').equalTo(timestamp).once('value', function(snapshot) {
+                     snapshot.forEach(function(childSnapshot) {
+                         const message = childSnapshot.val();
+                         if (message.userId === userId) {
+                             // حذف الرسالة من Firebase
+                             childSnapshot.ref.remove().then(function() {
+                                 console.log('تم حذف الرسالة من Firebase');
+                                 // حذف الرسالة من الواجهة
+                                 const messageId = timestamp + '_' + userId;
+                                 $('#msg_' + messageId).fadeOut(300, function() {
+                                     $(this).remove();
+                                 });
+                             }).catch(function(error) {
+                                 console.error('خطأ في حذف الرسالة:', error);
+                                 alert('فشل في حذف الرسالة');
+                             });
+                         }
+                     });
+                 });
+             }
+             
+             // حذف جميع الرسائل
+             function clearAllMessages() {
+                 if (confirm('هل أنت متأكد من حذف جميع الرسائل؟')) {
+                     if (messagesRef) {
+                         messagesRef.remove().then(function() {
+                             console.log('تم حذف جميع الرسائل من Firebase');
+                             chatbox.empty();
+                             addMessageToChat('تم حذف جميع الرسائل', 'النظام', true);
+                         }).catch(function(error) {
+                             console.error('خطأ في حذف الرسائل:', error);
+                         });
+                     } else {
+                         console.log('Firebase غير متوفر، حذف محلي فقط');
+                         chatbox.empty();
+                         addMessageToChat('تم حذف جميع الرسائل', 'النظام', true);
+                     }
+                 }
+             }
 
             // أحداث الأزرار
             submitBtn.on('click', function (e) {
@@ -495,12 +631,14 @@
                 e.preventDefault();
                 e.stopPropagation();
                 mediaDropdown.toggle();
+                linkOptions.hide(); // إخفاء خيارات الرابط عند فتح القائمة الرئيسية
             });
 
             // إخفاء القائمة عند النقر خارجها
             $(document).on('click', function(e) {
-                if (!$(e.target).closest('.media-btn, .media-dropdown').length) {
+                if (!$(e.target).closest('.media-btn, .media-dropdown, .link-options').length) {
                     mediaDropdown.hide();
+                    linkOptions.hide();
                 }
             });
 
@@ -508,13 +646,104 @@
             imageOption.on('click', function() {
                 console.log('إرسال صورة');
                 mediaDropdown.hide();
+                linkOptions.hide();
                 // هنا يمكن إضافة منطق رفع الصورة
             });
 
             linkOption.on('click', function() {
                 console.log('إرسال رابط');
                 mediaDropdown.hide();
-                // هنا يمكن إضافة منطق إرسال الرابط
+                linkOptions.show();
+                linkInput.focus();
+            });
+
+            // استخراج معرف فيديو يوتيوب من الرابط
+            function extractYouTubeVideoId(url) {
+                const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+                const match = url.match(regExp);
+                return (match && match[2].length === 11) ? match[2] : null;
+            }
+
+            // إرسال الرابط
+            sendLinkBtn.on('click', function() {
+                const linkUrl = linkInput.val().trim();
+                const linkType = $('input[name="linkType"]:checked').val();
+                
+                if (linkUrl) {
+                    console.log('إرسال رابط:', linkType, linkUrl);
+                    
+                    // التحقق من نوع الرابط
+                    let linkText = '';
+                    let isYouTubeVideo = false;
+                    let videoId = null;
+                    let isValidLink = true;
+                    
+                    if (linkType === 'report') {
+                        // التحقق من أن الرابط ليس رابط يوتيوب
+                        if (linkUrl.includes('youtube.com') || linkUrl.includes('youtu.be')) {
+                            alert('هذا رابط يوتيوب. يرجى اختيار "رابط يوتيوب" أو إدخال رابط تقرير صحيح.');
+                            isValidLink = false;
+                        } else {
+                            linkText = `📊 رابط تقرير: ${linkUrl}`;
+                        }
+                    } else if (linkType === 'youtube') {
+                        videoId = extractYouTubeVideoId(linkUrl);
+                        if (videoId) {
+                            linkText = `🎥 فيديو يوتيوب: ${linkUrl}`;
+                            isYouTubeVideo = true;
+                        } else {
+                            alert('هذا ليس رابط يوتيوب صحيح. يرجى إدخال رابط يوتيوب صحيح.');
+                            isValidLink = false;
+                        }
+                    }
+                    
+                    // إرسال الرابط فقط إذا كان صحيحاً
+                    if (isValidLink) {
+                        if (currentUser && messagesRef) {
+                            const messageData = {
+                                text: linkText,
+                                timestamp: firebase.database.ServerValue.TIMESTAMP,
+                                userId: currentUser.uid,
+                                username: currentUser.displayName || 'مجهول',
+                                isYouTubeVideo: isYouTubeVideo,
+                                videoId: videoId
+                            };
+                            
+                            messagesRef.push(messageData).then(function() {
+                                console.log('تم إرسال الرابط');
+                                linkInput.val('');
+                                linkOptions.hide();
+                            }).catch(function(error) {
+                                console.error('خطأ في إرسال الرابط:', error);
+                            });
+                        } else {
+                            addMessageToChat(linkText, 'أنت', isUserAtBottom, isYouTubeVideo, videoId);
+                            linkInput.val('');
+                            linkOptions.hide();
+                        }
+                    } else {
+                        // في حالة الخطأ، نمسح الرابط من مربع النص
+                        console.log('الرابط غير صحيح، تم مسحه من مربع النص');
+                        linkInput.val(''); // مسح الرابط
+                        linkInput.focus(); // إعادة التركيز على مربع النص
+                    }
+                } else {
+                    alert('يرجى إدخال رابط صحيح');
+                }
+            });
+
+            // إرسال الرابط عند الضغط على Enter
+            linkInput.on('keypress', function(e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    sendLinkBtn.click();
+                }
+            });
+
+            // تنظيف حقل الإدخال عند تغيير نوع الرابط
+            $('input[name="linkType"]').on('change', function() {
+                linkInput.val('');
+                console.log('تم تغيير نوع الرابط إلى:', $(this).val());
             });
 
             // أحداث الإشعار والتمرير
@@ -562,4 +791,5 @@
     </script>
 </body>
 </html>
+
 
