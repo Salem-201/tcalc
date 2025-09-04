@@ -98,6 +98,13 @@ div.chat {
         font-size: 13px;
     }
     
+    .input-wrapper {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+    
     .new-message-notification {
         bottom: 180px !important;
         left: 20px !important;
@@ -208,10 +215,6 @@ div.chat {
     scrollbar-color: #c1c1c1 transparent;
 }
     .input-wrapper {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
         display: flex;
         align-items: flex-end;
         margin: 0;
