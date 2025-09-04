@@ -106,8 +106,10 @@ div.chat {
     }
     
     .date-separator {
-        margin: 10px 0;
-        font-size: 12px;
+        margin: 6px 0;
+        padding: 4px 10px;
+        font-size: 11px;
+        border-radius: 12px;
     }
     
     .new-message-notification {
@@ -578,29 +580,16 @@ div.chat {
 
 .date-separator {
     text-align: center;
-    margin: 15px 0;
-    padding: 8px 0;
-    color: #6c757d;
-    font-size: 14px;
+    margin: 8px 0;
+    padding: 6px 12px;
+    color: white;
+    font-size: 13px;
     font-weight: 600;
-    position: relative;
-}
-
-.date-separator::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: #dee2e6;
-    z-index: 1;
-}
-
-.date-separator span {
-    background: #f8f9fa;
-    padding: 0 15px;
-    position: relative;
-    z-index: 2;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    display: inline-block;
+    margin-left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
