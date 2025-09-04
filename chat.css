@@ -363,8 +363,8 @@ div.chat {
 
 .media-dropdown {
     position: absolute;
-    bottom: 88px;
-    left: 15px;
+    bottom: 124px;
+    left: 59px;
     background: white;
     border: 1px solid #dee2e6;
     border-radius: 8px;
@@ -407,6 +407,195 @@ div.chat {
 
 .media-option:hover span {
     color: white;
+}
+
+/* رابط خيارات الراديو */
+.link-options {
+    position: absolute;
+    bottom: 124px;
+    left: 59px;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    min-width: 280px;
+    padding: 15px;
+}
+
+.link-options-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.link-option {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+}
+
+.link-option input[type="radio"] {
+    margin-left: 8px;
+    cursor: pointer;
+}
+
+.link-option label {
+    font-size: 14px;
+    color: #495057;
+    cursor: pointer;
+    margin: 0;
+}
+
+.link-input-container {
+    display: flex;
+    gap: 8px;
+}
+
+.link-input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.link-input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.send-link-btn {
+    padding: 8px 16px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.send-link-btn:hover {
+    background: #0056b3;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+/* تنسيق فيديو يوتيوب */
+.youtube-video-container {
+    margin-top: 10px;
+    width: 100%;
+    max-width: 400px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.youtube-iframe {
+    width: 100%;
+    height: 225px;
+    border: none;
+    border-radius: 8px;
+    transition: transform 0.2s ease;
+}
+
+.youtube-iframe:hover {
+    transform: scale(1.02);
+}
+
+.youtube-error {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 14px;
+    border: 1px solid #f5c6cb;
+    margin-top: 10px;
+}
+
+.delete-message-btn {
+    background: none;
+    border: none;
+    color: #dc3545;
+    cursor: pointer;
+    padding: 2px;
+    margin-left: 5px;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+    opacity: 0.7;
+}
+
+.delete-message-btn:hover {
+    opacity: 1;
+    background-color: rgba(220, 53, 69, 0.1);
+    transform: scale(1.1);
+}
+
+.delete-message-btn svg {
+    display: block;
+}
+
+.youtube-time {
+    margin-bottom: 8px;
+    display: block;
+}
+
+/* تصميم متجاوب للجوال - خيارات الرابط */
+@media (max-width: 768px) {
+    .link-options {
+        position: fixed;
+        bottom: 180px;
+        left: 20px;
+        right: 20px;
+        min-width: auto;
+        width: calc(100vw - 40px);
+        max-width: 350px;
+        margin: 0 auto;
+    }
+    
+    .link-options-row {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
+    
+    .link-option {
+        width: 100%;
+        padding: 10px 0;
+    }
+    
+    .link-input-container {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .link-input {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+    }
+    
+    .send-link-btn {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+    }
+    
+    /* تنسيق فيديو يوتيوب للجوال */
+    .youtube-video-container {
+        max-width: 100%;
+        margin-top: 8px;
+    }
+    
+    .youtube-iframe {
+        height: 200px;
+    }
 }
 
 .send-btn svg {
@@ -593,4 +782,5 @@ div.chat {
     margin-left: auto;
     margin-right: auto;
 }
+
 
