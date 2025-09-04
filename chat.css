@@ -24,15 +24,17 @@ div.chat {
         padding: 0;
         margin: 0;
         height: 100vh;
+        height: -webkit-fill-available;
         overflow: hidden;
         position: fixed;
         width: 100%;
     }
     
-div.chat {
+    div.chat {
         width: 100vw;
         min-width: 100vw;
         height: 100vh;
+        height: -webkit-fill-available;
         margin: 0;
         padding: 5px;
         border-radius: 0;
@@ -58,6 +60,7 @@ div.chat {
         background: #f8f9fa;
         width: 100%;
         height: calc(100vh - 200px) !important;
+        height: calc(-webkit-fill-available - 200px) !important;
         text-align: right;
         overflow-x: hidden;
         overflow-y: auto;
@@ -581,6 +584,20 @@ div.chat {
         padding: 12px;
         font-size: 16px;
         box-sizing: border-box;
+    }
+    
+    @supports (-webkit-touch-callout: none) {
+        body {
+            height: -webkit-fill-available;
+        }
+        
+        div.chat {
+            height: -webkit-fill-available;
+        }
+        
+        #chatbox {
+            height: calc(-webkit-fill-available - 200px) !important;
+        }
     }
     
     .send-link-btn {
