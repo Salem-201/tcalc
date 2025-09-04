@@ -19,7 +19,6 @@ div.chat {
     background: white;
 }
 
-/* تصميم متجاوب للجوال */
 @media (max-width: 768px) {
     body {
         padding: 0;
@@ -30,7 +29,7 @@ div.chat {
         width: 100%;
     }
     
-    div.chat {
+div.chat {
         width: 100vw;
         min-width: 100vw;
         height: 100vh;
@@ -166,7 +165,7 @@ div.chat {
     padding: 10px;
     box-sizing: border-box;
 }
-/* تخصيص شريط التمرير للشات - Chrome/Safari/Edge */
+
 #chatbox::-webkit-scrollbar {
     width: 6px;
 }
@@ -192,13 +191,12 @@ div.chat {
     display: none;
 }
 
-/* تخصيص شريط التمرير للشات - Firefox */
+
 #chatbox {
     scrollbar-width: thin;
     scrollbar-color: #c1c1c1 transparent;
 }
 
-/* تخصيص شريط التمرير العام - Chrome/Safari/Edge */
 .ScrollBar_v1::-webkit-scrollbar {
     width: 6px;
 }
@@ -216,7 +214,7 @@ div.chat {
     display: none;
 }
 
-/* تخصيص شريط التمرير العام - Firefox */
+
 .ScrollBar_v1 {
     scrollbar-width: thin;
     scrollbar-color: #c1c1c1 transparent;
@@ -262,7 +260,6 @@ div.chat {
     background: transparent;
 }
 
-/* تخصيص شريط التمرير لمربع النص - Chrome/Safari/Edge */
 #usermsg::-webkit-scrollbar {
     width: 6px;
 }
@@ -288,7 +285,7 @@ div.chat {
     display: none;
 }
 
-/* تخصيص شريط التمرير لمربع النص - Firefox */
+
 #usermsg {
     scrollbar-width: thin;
     scrollbar-color: #c1c1c1 transparent;
@@ -409,7 +406,6 @@ div.chat {
     color: white;
 }
 
-/* رابط خيارات الراديو */
 .link-options {
     position: absolute;
     bottom: 124px;
@@ -486,7 +482,7 @@ div.chat {
     box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
 }
 
-/* تنسيق فيديو يوتيوب */
+
 .youtube-video-container {
     margin-top: 10px;
     width: 100%;
@@ -551,7 +547,7 @@ div.chat {
     display: block;
 }
 
-/* تصميم متجاوب للجوال - خيارات الرابط */
+
 @media (max-width: 768px) {
     .link-options {
         position: fixed;
@@ -593,7 +589,7 @@ div.chat {
         font-size: 16px;
     }
     
-    /* تنسيق فيديو يوتيوب للجوال */
+
     .youtube-video-container {
         max-width: 100%;
         margin-top: 8px;
