@@ -595,6 +595,7 @@ div.chat {
     
     @media screen and (-webkit-min-device-pixel-ratio: 0) and (min-resolution: .001dpcm) {
         #chatbox {
+            height: calc(100vh - 200px) !important;
             margin-bottom: 0;
             padding-bottom: 5px;
         }
@@ -602,6 +603,20 @@ div.chat {
         .input-container {
             margin-top: 0;
             padding-top: 5px;
+        }
+    }
+    
+    @supports (-webkit-touch-callout: none) {
+        body {
+            height: -webkit-fill-available;
+        }
+        
+        div.chat {
+            height: -webkit-fill-available;
+        }
+        
+        #chatbox {
+            height: calc(-webkit-fill-available - 200px) !important;
         }
     }
     
