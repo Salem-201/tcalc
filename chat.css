@@ -105,6 +105,11 @@ div.chat {
         right: 0;
     }
     
+    .date-separator {
+        margin: 10px 0;
+        font-size: 12px;
+    }
+    
     .new-message-notification {
         bottom: 180px !important;
         left: 20px !important;
@@ -569,5 +574,33 @@ div.chat {
     100% {
         box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
     }
+}
+
+.date-separator {
+    text-align: center;
+    margin: 15px 0;
+    padding: 8px 0;
+    color: #6c757d;
+    font-size: 14px;
+    font-weight: 600;
+    position: relative;
+}
+
+.date-separator::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #dee2e6;
+    z-index: 1;
+}
+
+.date-separator span {
+    background: #f8f9fa;
+    padding: 0 15px;
+    position: relative;
+    z-index: 2;
 }
 
