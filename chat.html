@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Testing Chat</title>
+    <title>Chat</title>
     <link rel="stylesheet" href="chat.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -103,6 +103,20 @@
 
         $(function () {
             const chatbox = $('#chatbox');
+            
+            function adjustForKeyboard() {
+                if (window.visualViewport) {
+                    const viewport = window.visualViewport;
+                    const height = viewport.height;
+                    const chatHeight = height - 200;
+                    chatbox.css('height', chatHeight + 'px');
+                    chatbox.css('max-height', chatHeight + 'px');
+                }
+            }
+            
+            if (window.visualViewport) {
+                window.visualViewport.addEventListener('resize', adjustForKeyboard);
+            }
             const usermsg = $('#usermsg');
             const submitBtn = $('#submitmsg');
 
@@ -645,4 +659,3 @@
     </script>
 </body>
 </html>
-
