@@ -406,6 +406,11 @@
                 if (clientMsg) {
                     if (currentUser && messagesRef) {
                         sendTextMessage(clientMsg);
+                        if (isUserAtBottom) {
+                            setTimeout(function() {
+                                chatbox.scrollTop(chatbox[0].scrollHeight);
+                            }, 100);
+                        }
                     } else {
                         addMessageToChat(clientMsg, 'أنت', isUserAtBottom);
                     }
@@ -441,18 +446,16 @@
                      return;
                  }
                  
+                 const messageId = timestamp + '_' + userId;
+                 $('#msg_' + messageId).fadeOut(300, function() {
+                     $(this).remove();
+                 });
+                 
                  messagesRef.orderByChild('timestamp').equalTo(timestamp).once('value', function(snapshot) {
                      snapshot.forEach(function(childSnapshot) {
                          const message = childSnapshot.val();
                          if (message.userId === userId) {
-                             childSnapshot.ref.remove().then(function() {
-                                 const messageId = timestamp + '_' + userId;
-                                 $('#msg_' + messageId).fadeOut(300, function() {
-                                     $(this).remove();
-                                 });
-                             }).catch(function(error) {
-                                 alert('فشل في حذف الرسالة');
-                             });
+                             childSnapshot.ref.remove();
                          }
                      });
                  });
@@ -579,6 +582,11 @@
                             messagesRef.push(messageData).then(function() {
                                 linkInput.val('');
                                 linkOptions.hide();
+                                if (isUserAtBottom) {
+                                    setTimeout(function() {
+                                        chatbox.scrollTop(chatbox[0].scrollHeight);
+                                    }, 100);
+                                }
                             }).catch(function(error) {
                             });
                         } else {
