@@ -586,33 +586,6 @@ div.chat {
         box-sizing: border-box;
     }
     
-    @supports (-webkit-touch-callout: none) {
-        body {
-            height: -webkit-fill-available;
-            position: fixed;
-            width: 100%;
-        }
-        
-        div.chat {
-            height: -webkit-fill-available;
-            position: fixed;
-            top: 0;
-            left: 0;
-        }
-        
-        #chatbox {
-            height: calc(-webkit-fill-available - 200px) !important;
-            max-height: calc(-webkit-fill-available - 200px) !important;
-        }
-        
-        .input-container {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-        }
-    }
     
     .send-link-btn {
         width: 100%;
