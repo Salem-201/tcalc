@@ -282,8 +282,10 @@
                     textDiv.append(videoContainer);
                 }
                 
-                const userDiv = $('<div class="x1"></div>');
-                userDiv.text(message.username || 'مجهول');
+                const userDiv = $('<div class="x1"></div>').text(message.username || 'مجهول');
+                
+                messageContent.append(textDiv).append(userDiv);
+                messageElement.append(messageContent);
                 
                 // إضافة أيقونة الحذف إذا كانت الرسالة من المستخدم الحالي
                 if (message.userId === currentUser.uid) {
@@ -294,11 +296,8 @@
                             deleteMessage(message.timestamp, message.userId);
                         }
                     });
-                    userDiv.append(deleteBtn);
+                    messageElement.append(deleteBtn);
                 }
-                
-                messageContent.append(textDiv).append(userDiv);
-                messageElement.append(messageContent);
                 
                 chatbox.append(messageElement);
                 // لا ننزل للأسفل تلقائياً هنا، يتم التحكم في ذلك من مكان آخر
@@ -361,8 +360,10 @@
                     textDiv.append(videoContainer);
                 }
                 
-                const userDiv = $('<div class="x1"></div>');
-                userDiv.text(username || 'مجهول');
+                const userDiv = $('<div class="x1"></div>').text(username || 'مجهول');
+                
+                messageContent.append(textDiv).append(userDiv);
+                messageElement.append(messageContent);
                 
                 // إضافة أيقونة الحذف للرسائل المحلية (إذا كان المستخدم هو المرسل)
                 if (username === 'أنت' && currentUser) {
@@ -376,11 +377,8 @@
                             });
                         }
                     });
-                    userDiv.append(deleteBtn);
+                    messageElement.append(deleteBtn);
                 }
-                
-                messageContent.append(textDiv).append(userDiv);
-                messageElement.append(messageContent);
                 
                 chatbox.append(messageElement);
                 
