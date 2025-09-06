@@ -1044,6 +1044,53 @@ div.chat {
     width: 100%;
 }
 
+/* زيادة المساحة الإضافية للتمرير في متصفحات الجوال فقط */
+@media (max-width: 768px) {
+    #chatbox::after {
+        height: 15px;
+    }
+    
+    /* تحسينات إضافية للشاشات الصغيرة */
+    #chatbox .y0:last-child {
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+    }
+}
+
+/* تحسينات للشاشات الصغيرة جداً */
+@media (max-width: 480px) {
+    #chatbox::after {
+        height: 20px;
+    }
+    
+    #chatbox .y0:last-child {
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+    }
+}
+
+/* تحسينات خاصة لمتصفحات الجوال */
+@media screen and (max-width: 768px) and (orientation: portrait) {
+    #chatbox {
+        padding-bottom: 20px;
+    }
+    
+    #chatbox::after {
+        height: 18px;
+    }
+}
+
+/* تحسينات للشاشات الطويلة */
+@media screen and (max-width: 768px) and (min-height: 600px) {
+    #chatbox::after {
+        height: 25px;
+    }
+    
+    #chatbox .y0:last-child {
+        margin-bottom: 30px;
+    }
+}
+
 /* تحسين التمرير للرسائل */
 .y0 {
     margin: 5px 5px 8px 5px;
