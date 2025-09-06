@@ -4,6 +4,9 @@ body {
     padding: 20px;
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     min-height: 100vh;
+    height: 100vh;
+    height: -webkit-fill-available;
+    overflow: hidden;
 }
 
 div.chat {
@@ -11,12 +14,16 @@ div.chat {
     max-width: 600px;
     min-width: 400px;
     padding: 20px;
-    height: 80vh;
+    height: 100vh;
+    height: -webkit-fill-available;
     position: relative;
     margin: 0 auto;
     border-radius: 10px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     background: white;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
 }
 
 @media (max-width: 768px) {
@@ -59,8 +66,8 @@ div.chat {
     #chatbox {
         background: #f8f9fa;
         width: 100%;
-        height: calc(100vh - 200px) !important;
-        height: calc(-webkit-fill-available - 200px) !important;
+        height: calc(100vh - 180px) !important;
+        height: calc(-webkit-fill-available - 180px) !important;
         text-align: right;
         overflow-x: hidden;
         overflow-y: auto;
@@ -69,6 +76,8 @@ div.chat {
         padding: 10px;
         box-sizing: border-box;
         position: relative;
+        flex: 1;
+        margin-bottom: 0;
     }
     
     .media-btn, .send-btn {
@@ -105,6 +114,11 @@ div.chat {
         bottom: 0;
         left: 0;
         right: 0;
+        margin: 0;
+        padding: 5px;
+        background: white;
+        border-top: 1px solid #dee2e6;
+        box-sizing: border-box;
     }
     
     .date-separator {
@@ -159,7 +173,7 @@ div.chat {
 #chatbox {
     background: #f8f9fa;
     width: 100%;
-    height: calc(100% - 195px) !important;
+    height: calc(100% - 180px) !important;
     text-align: right;
     overflow-x: hidden;
     overflow-y: auto;
@@ -167,6 +181,8 @@ div.chat {
     border-radius: 8px;
     padding: 10px;
     box-sizing: border-box;
+    flex: 1;
+    margin-bottom: 0;
 }
 
 #chatbox::-webkit-scrollbar {
@@ -231,6 +247,7 @@ div.chat {
         background: white;
         border-top: 1px solid #dee2e6;
         box-sizing: border-box;
+        flex-shrink: 0;
     }
 
 .textarea-wrapper {
@@ -595,7 +612,7 @@ div.chat {
     
     @media screen and (-webkit-min-device-pixel-ratio: 0) and (min-resolution: .001dpcm) {
         #chatbox {
-            height: calc(100vh - 200px) !important;
+            height: calc(100vh - 180px) !important;
             margin-bottom: 0;
             padding-bottom: 5px;
         }
@@ -616,7 +633,7 @@ div.chat {
         }
         
         #chatbox {
-            height: calc(-webkit-fill-available - 200px) !important;
+            height: calc(-webkit-fill-available - 180px) !important;
         }
     }
     
