@@ -513,8 +513,11 @@
             });
 
             usermsg.on('input', function() {
-                const hasText = $(this).val().trim().length > 0;
-                if (hasText) {
+                const text = $(this).val().trim();
+                const hasText = text.length > 0;
+                const hasEmoji = /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F900}-\u{1F9FF}]|[\u{1FA70}-\u{1FAFF}]|[\u{1F018}-\u{1F0FF}]|[\u{1F200}-\u{1F2FF}]/u.test(text);
+                
+                if (hasText || hasEmoji) {
                     submitBtn.addClass('active');
                 } else {
                     submitBtn.removeClass('active');
@@ -735,6 +738,17 @@
                 textarea.selectionStart = textarea.selectionEnd = start + emoji.length;
                 usermsg.focus();
                 
+                // Update send button state
+                const trimmedText = newText.trim();
+                const hasText = trimmedText.length > 0;
+                const hasEmoji = /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/u.test(trimmedText);
+                
+                if (hasText || hasEmoji) {
+                    submitBtn.addClass('active');
+                } else {
+                    submitBtn.removeClass('active');
+                }
+                
                 // Hide emoji picker
                 emojiPicker.hide();
             }
@@ -748,6 +762,22 @@
             
             // Initialize with smileys
             loadEmojis('smileys');
+            
+            // Initialize send button state
+            function updateSendButtonState() {
+                const text = usermsg.val().trim();
+                const hasText = text.length > 0;
+                const hasEmoji = /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F900}-\u{1F9FF}]|[\u{1FA70}-\u{1FAFF}]|[\u{1F018}-\u{1F0FF}]|[\u{1F200}-\u{1F2FF}]/u.test(text);
+                
+                if (hasText || hasEmoji) {
+                    submitBtn.addClass('active');
+                } else {
+                    submitBtn.removeClass('active');
+                }
+            }
+            
+            // Initialize button state
+            updateSendButtonState();
         });
     </script>
 </body>
