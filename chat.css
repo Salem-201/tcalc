@@ -76,7 +76,7 @@ div.chat {
         padding: 10px;
         box-sizing: border-box;
         position: relative;
-        flex: 1;
+        flex: auto;
         margin-bottom: 35px;
     }
     
@@ -838,6 +838,7 @@ div.chat {
     margin-left: auto;
     margin-right: auto;
 }
+
 
 
 
