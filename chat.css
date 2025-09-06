@@ -73,7 +73,7 @@ div.chat {
         overflow-y: auto;
         border: 1px solid #dee2e6;
         border-radius: 8px;
-        padding: 10px 10px 15px 10px;
+        padding: 10px 10px 12px 10px;
         box-sizing: border-box;
         position: relative;
         flex: auto;
@@ -181,7 +181,7 @@ div.chat {
     overflow-y: auto;
     border: 1px solid #dee2e6;
     border-radius: 8px;
-    padding: 10px 10px 15px 10px;
+    padding: 10px 10px 12px 10px;
     box-sizing: border-box;
     flex: 1;
     margin-bottom: 15px;
@@ -622,7 +622,7 @@ div.chat {
         #chatbox {
             height: calc(100vh - 180px) !important;
             margin-bottom: 15px;
-            padding: 10px 10px 15px 10px;
+            padding: 10px 10px 12px 10px;
         }
         
         .input-container {
@@ -856,8 +856,8 @@ div.chat {
 }
 
 #chatbox {
-    scroll-padding-bottom: 15px;
-    scroll-margin-bottom: 15px;
+    scroll-padding-bottom: 10px;
+    scroll-margin-bottom: 10px;
 }
 
 /* ضمان عمل التمرير في iframe */
@@ -867,7 +867,7 @@ div.chat {
         height: calc(-webkit-fill-available - 180px) !important;
         max-height: calc(100vh - 180px) !important;
         max-height: calc(-webkit-fill-available - 180px) !important;
-        padding: 10px 10px 15px 10px;
+        padding: 10px 10px 12px 10px;
     }
     
     .input-wrapper {
@@ -924,7 +924,7 @@ div.chat {
 #chatbox::after {
     content: '';
     display: block;
-    height: 5px;
+    height: 2px;
     width: 100%;
 }
 
@@ -938,13 +938,13 @@ div.chat {
 
 /* ضمان ظهور آخر رسالة */
 #chatbox .y0:last-child {
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 #chatbox .y0:last-child {
     scroll-snap-align: end;
-    margin-bottom: 10px;
-    padding-bottom: 5px;
+    margin-bottom: 8px;
+    padding-bottom: 3px;
 }
 
 /* تحسينات إضافية للـ iframe */
@@ -965,7 +965,7 @@ div.chat {
         height: calc(-webkit-fill-available - 160px) !important;
         max-height: calc(100vh - 160px) !important;
         max-height: calc(-webkit-fill-available - 160px) !important;
-        padding: 10px 10px 15px 10px;
+        padding: 10px 10px 12px 10px;
     }
 }
 
@@ -976,7 +976,7 @@ div.chat {
         height: calc(-webkit-fill-available - 150px) !important;
         max-height: calc(100vh - 150px) !important;
         max-height: calc(-webkit-fill-available - 150px) !important;
-        padding: 10px 10px 15px 10px;
+        padding: 10px 10px 12px 10px;
     }
 }
 
