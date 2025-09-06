@@ -856,8 +856,8 @@ div.chat {
 }
 
 #chatbox {
-    scroll-padding-bottom: 30px;
-    scroll-margin-bottom: 30px;
+    scroll-padding-bottom: 5px;
+    scroll-margin-bottom: 5px;
 }
 
 /* ضمان عمل التمرير في iframe */
