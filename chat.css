@@ -65,7 +65,7 @@ div.chat {
     
     #chatbox {
         background: #f8f9fa;
-        width: 100%;
+        width: 150%;
         height: calc(100vh - 200px) !important;
         height: calc(-webkit-fill-available - 200px) !important;
         text-align: right;
@@ -838,6 +838,7 @@ div.chat {
     margin-left: auto;
     margin-right: auto;
 }
+
 
 
 
